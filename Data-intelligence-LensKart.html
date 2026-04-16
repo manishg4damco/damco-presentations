@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LensKart Data Intelligence | Damco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--m:#94122C;--o:#FF9408;--b:#FBEEDB;--w:#fff;--g:#f8fafc;--br:#e5e7eb;--tx:#1e293b;--ts:#64748b;--dm:#5a0a18;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,sans-serif;background:#111827;overflow:hidden;width:100vw;height:100vh;}
+#deck{position:fixed;top:0;left:0;width:calc(100vw / 1.5);height:calc(100vh / 1.5);transform:scale(1.5);transform-origin:top left;}
+
+/* ── Base slide ── */
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .4s ease,transform .4s ease;transform:translateY(12px);overflow:hidden;background:var(--g);}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0);}
+
+/* ── Nav ── */
+#nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.65);backdrop-filter:blur(12px);border-radius:100px;padding:8px 18px;z-index:999;}
+#nav button{background:none;border:1px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;width:28px;height:28px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;opacity:.8;transition:all .2s;}
+#nav button:hover{opacity:1;background:rgba(255,255,255,.15);}
+#counter{color:rgba(255,255,255,.7);font-size:12px;font-weight:500;min-width:52px;text-align:center;}
+
+/* ── Slide Header ── */
+.sh{padding:16px 44px 0;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sh-badge{background:var(--m);color:#fff;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;white-space:nowrap;}
+.sh-title{font-size:20px;font-weight:700;color:var(--tx);white-space:nowrap;}
+.sh-line{flex:1;height:2px;background:var(--br);}
+
+/* ── Slide Body ── */
+.sb{flex:1;padding:12px 44px 14px;overflow:hidden;display:flex;flex-direction:column;}
+
+/* ── Card ── */
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 12px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);}
+
+/* ── Slide Footer ── */
+.sf{height:26px;background:#fff;border-top:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 44px;flex-shrink:0;}
+.sf-brand{font-size:10px;font-weight:700;color:var(--ts);letter-spacing:.08em;text-transform:uppercase;}
+.sf-brand b{color:var(--m);}
+.sf-conf{font-size:10px;color:#d1d5db;}
+
+/* ═══════════════════════════
+   SLIDE 1 — TITLE
+═══════════════════════════ */
+.sl-title{background:linear-gradient(140deg,#94122C 0%,#5a0a18 52%,#1e0409 100%);justify-content:center;align-items:center;text-align:center;}
+.sl-title::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 50%,rgba(255,148,8,.13),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,.05),transparent 50%);}
+.sl-title .sf{position:absolute;bottom:0;left:0;right:0;}
+.t-logo{position:absolute;top:24px;right:36px;font-size:12px;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:.12em;text-transform:uppercase;}
+.t-logo b{color:var(--o);}
+.t-tag{position:relative;display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 16px;border-radius:100px;margin-bottom:18px;}
+.t-main{position:relative;font-size:46px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px;max-width:740px;}
+.t-main b{color:var(--o);}
+.t-sub{position:relative;font-size:16px;color:rgba(255,255,255,.6);margin-bottom:24px;}
+.t-chips{position:relative;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.t-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-size:11.5px;font-weight:500;padding:5px 14px;border-radius:100px;}
+.t-date{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+
+/* ═══════════════════════════
+   SLIDE 2 — AGENDA
+═══════════════════════════ */
+.ag-intro{font-size:13px;color:var(--ts);line-height:1.65;margin-bottom:14px;flex-shrink:0;padding:12px 18px;background:#fff;border-radius:9px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);}
+.ag-intro b{color:var(--tx);}
+.ag-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ag-item{background:#fff;border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);}
+.ag-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ag-num{font-size:10px;font-weight:700;color:var(--ts);letter-spacing:.06em;margin-bottom:3px;text-transform:uppercase;}
+.ag-text{font-size:13.5px;font-weight:700;color:var(--tx);line-height:1.3;}
+.ag-sub{font-size:11px;color:var(--ts);margin-top:4px;line-height:1.5;}
+
+/* ═══════════════════════════
+   SLIDE 3 — PROBLEM
+═══════════════════════════ */
+.prob-split{display:grid;grid-template-columns:1fr 1.75fr;gap:12px;flex:1;}
+.prob-hero{background:linear-gradient(155deg,var(--m) 0%,var(--dm) 100%);border-radius:12px;padding:24px 20px;color:#fff;display:flex;flex-direction:column;gap:14px;}
+.ph-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.ph-title{font-size:20px;font-weight:700;line-height:1.3;}
+.ph-body{font-size:11.5px;color:rgba(255,255,255,.65);line-height:1.65;}
+.ph-stat-row{display:flex;gap:10px;margin-top:6px;}
+.ph-stat{flex:1;background:rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;}
+.ph-num{font-size:22px;font-weight:800;color:var(--o);line-height:1;}
+.ph-slabel{font-size:10px;color:rgba(255,255,255,.55);margin-top:3px;line-height:1.4;}
+.prob-right{display:flex;flex-direction:column;gap:9px;}
+.prob-card{background:#fff;border-radius:9px;padding:12px 16px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);display:flex;gap:12px;align-items:flex-start;}
+.pc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.pc-icon-m{background:#fee2e2;}
+.pc-icon-b{background:#dbeafe;}
+.pc-icon-o{background:#fff7ed;}
+.pc-icon-p{background:#f5f3ff;}
+.pc-title{font-size:12.5px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.pc-text{font-size:11px;color:var(--ts);line-height:1.5;}
+
+/* ═══════════════════════════
+   SLIDE 4 — OOB
+═══════════════════════════ */
+.oob-intro{padding:10px 16px;background:#fff;border-radius:9px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);margin-bottom:10px;flex-shrink:0;font-size:12px;color:var(--ts);line-height:1.5;}
+.oob-intro b{color:var(--tx);}
+.oob-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;flex:1;}
+.oob-card{background:#fff;border-radius:9px;padding:13px 16px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:7px;}
+.oob-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.oob-name{font-size:12.5px;font-weight:700;color:var(--tx);}
+.oob-badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:100px;white-space:nowrap;}
+.oob-free{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+.oob-deprecated{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+.oob-covers{font-size:11px;color:var(--ts);line-height:1.5;}
+.oob-covers span{display:inline-block;background:#f1f5f9;border-radius:3px;padding:1px 7px;font-size:10px;color:#475569;margin:1px 2px 1px 0;}
+.oob-gap{margin-top:4px;padding:7px 10px;background:#fef9f0;border-radius:6px;border-left:3px solid var(--o);}
+.oob-gap-label{font-size:9.5px;font-weight:700;color:#92400e;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;}
+.oob-gap-text{font-size:10.5px;color:#78350f;line-height:1.4;}
+
+/* ═══════════════════════════
+   SLIDE 5 — GAPS
+═══════════════════════════ */
+.gap-intro{padding:10px 16px;background:#fff;border-radius:9px;box-shadow:0 1px 8px rgba(0,0,0,.05);margin-bottom:10px;flex-shrink:0;font-size:12px;color:var(--ts);line-height:1.5;}
+.gap-intro b{color:var(--tx);}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;}
+.gap-card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:8px;}
+.gap-head{display:flex;align-items:flex-start;gap:10px;}
+.gap-num{width:28px;height:28px;background:var(--m);color:#fff;border-radius:7px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gap-title{font-size:13px;font-weight:700;color:var(--tx);line-height:1.3;}
+.gap-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:100px;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+.gap-desc{font-size:11px;color:var(--ts);line-height:1.55;}
+.gap-why{padding:7px 10px;background:#fef2f2;border-radius:6px;font-size:10.5px;color:#b91c1c;line-height:1.4;}
+.gap-why-label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px;color:#991b1b;}
+
+/* ═══════════════════════════
+   SLIDE 6 — CUSTOM BUILD REQUIREMENTS
+═══════════════════════════ */
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;}
+.req-card{background:#fff;border-radius:10px;padding:13px 16px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:8px;overflow:hidden;}
+.req-head{display:flex;align-items:center;gap:9px;}
+.req-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+.req-icon-m{background:#fee2e2;}
+.req-icon-b{background:#dbeafe;}
+.req-icon-g{background:#f0fdf4;}
+.req-icon-p{background:#f5f3ff;}
+.req-title{font-size:12.5px;font-weight:700;color:var(--tx);}
+.req-row{display:flex;gap:7px;align-items:flex-start;}
+.req-lbl{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ts);width:62px;flex-shrink:0;padding-top:1px;}
+.req-val{font-size:10.5px;color:var(--tx);line-height:1.5;flex:1;}
+.req-val code{font-family:'Consolas',monospace;font-size:9px;background:#f1f5f9;color:#475569;padding:1px 5px;border-radius:3px;}
+.req-ocr-yes{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:2px 8px;border-radius:100px;}
+.req-ocr-no{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:2px 8px;border-radius:100px;}
+.req-effort-m{display:inline-block;font-size:10px;font-weight:700;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:100px;border:1px solid #bfdbfe;}
+.req-effort-h{display:inline-block;font-size:10px;font-weight:700;background:#f5f3ff;color:#7c3aed;padding:2px 8px;border-radius:100px;border:1px solid #ddd6fe;}
+
+/* ═══════════════════════════
+   SLIDE 7 — OCR / IDP
+═══════════════════════════ */
+.ocr-top{margin-bottom:10px;flex-shrink:0;}
+.ocr-q{font-size:14px;font-weight:700;color:var(--tx);padding:11px 18px;background:#fff;border-radius:9px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);}
+.ocr-q span{color:var(--m);}
+.ocr-split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;}
+.ocr-panel{border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:9px;}
+.ocr-a{background:#f0fdf4;border:1.5px solid #86efac;}
+.ocr-b{background:#fff7ed;border:1.5px solid #fed7aa;}
+.ocr-scenario{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.ocr-a .ocr-scenario{color:#15803d;}
+.ocr-b .ocr-scenario{color:#c2410c;}
+.ocr-panel-title{font-size:13px;font-weight:700;color:var(--tx);}
+.ocr-item{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--ts);line-height:1.5;}
+.ocr-dot-g{width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0;margin-top:4px;}
+.ocr-dot-o{width:7px;height:7px;border-radius:50%;background:var(--o);flex-shrink:0;margin-top:4px;}
+.ocr-tree{background:#fff;border-radius:9px;padding:12px 16px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);}
+.ocr-tree-title{font-size:10.5px;font-weight:700;color:var(--ts);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;}
+.ocr-tree-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:8px;}
+.ocr-node{padding:6px 13px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap;}
+.ocr-node-q{background:var(--m);color:#fff;}
+.ocr-node-y{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.ocr-node-n{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+.ocr-node-r{background:#f0fdf4;color:#15803d;border:1px solid #86efac;}
+.ocr-node-ri{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+.ocr-arrow{font-size:12px;color:var(--ts);padding:0 6px;font-weight:700;}
+.ocr-arrow-label{font-size:9.5px;color:var(--ts);padding:0 2px;}
+
+/* ═══════════════════════════
+   SLIDE 8 — ARCHITECTURE FABRIC
+═══════════════════════════ */
+.arch-hero{display:flex;flex-direction:column;gap:10px;flex:1;}
+.arch-flow{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:6px;flex-shrink:0;}
+.arch-box{border-radius:9px;padding:10px 14px;text-align:center;flex:1;}
+.arch-box-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;opacity:.75;}
+.arch-box-name{font-size:12.5px;font-weight:700;}
+.arch-box-sub{font-size:10px;opacity:.7;margin-top:2px;line-height:1.3;}
+.ab-d365{background:#dbeafe;} .ab-d365 .arch-box-name{color:#1e40af;} .ab-d365 .arch-box-label{color:#1d4ed8;}
+.ab-link{background:#fff7ed;} .ab-link .arch-box-name{color:#92400e;} .ab-link .arch-box-label{color:#c2410c;}
+.ab-lake{background:#f5f3ff;} .ab-lake .arch-box-name{color:#5b21b6;} .ab-lake .arch-box-label{color:#7c3aed;}
+.ab-pbi{background:#f0fdf4;} .ab-pbi .arch-box-name{color:#14532d;} .ab-pbi .arch-box-label{color:#16a34a;}
+.arch-arrow{color:#94a3b8;font-size:18px;flex-shrink:0;font-weight:700;}
+.lake-layers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex:1;}
+.lake-layer{border-radius:9px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;}
+.ll-bronze{background:#fef3c7;border:1.5px solid #fcd34d;}
+.ll-silver{background:#f1f5f9;border:1.5px solid #cbd5e1;}
+.ll-gold{background:#fff7ed;border:1.5px solid #fcd34d;}
+.ll-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.ll-bronze .ll-label{color:#92400e;}
+.ll-silver .ll-label{color:#475569;}
+.ll-gold .ll-label{color:#b45309;}
+.ll-desc{font-size:10.5px;line-height:1.5;}
+.ll-bronze .ll-desc{color:#78350f;}
+.ll-silver .ll-desc{color:#334155;}
+.ll-gold .ll-desc{color:#92400e;}
+.ll-tag{display:inline-block;font-size:9px;font-weight:600;padding:1px 7px;border-radius:3px;margin-top:2px;}
+.ll-bronze .ll-tag{background:rgba(180,83,9,.12);color:#92400e;}
+.ll-silver .ll-tag{background:rgba(71,85,105,.12);color:#334155;}
+.ll-gold .ll-tag{background:rgba(180,83,9,.12);color:#b45309;}
+.arch-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex-shrink:0;margin-top:8px;}
+.ac-card{background:#fff;border-radius:8px;padding:10px 14px;box-shadow:0 1px 6px rgba(0,0,0,.05);}
+.ac-title{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:5px;}
+.ac-row{display:flex;gap:6px;font-size:10.5px;color:var(--ts);line-height:1.5;}
+.ac-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ac-dot-g{background:#16a34a;}
+.ac-dot-o{background:var(--o);}
+
+/* ═══════════════════════════
+   SLIDE 9 — DATA FLOW DETAIL
+═══════════════════════════ */
+.df2-layout{display:grid;grid-template-columns:1fr 24px 1.4fr;gap:0;flex:1;align-items:stretch;}
+.df2-left{display:flex;flex-direction:column;gap:6px;}
+.df2-right{display:flex;flex-direction:column;gap:6px;}
+.df2-connector{display:flex;align-items:center;justify-content:center;}
+.df2-arrow-v{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:center;gap:4px;}
+.df2-arrow-line{flex:1;width:2px;background:var(--br);}
+.df2-arrow-head{color:#94a3b8;font-size:16px;font-weight:700;}
+.df2-group{background:#fff;border-radius:9px;padding:10px 13px;box-shadow:0 1px 6px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);}
+.df2-group-label{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px;}
+.df2-group-label-b{color:#1d4ed8;}
+.df2-group-label-s{color:#475569;}
+.df2-group-label-g{color:#b45309;}
+.df2-group-label-p{color:#7c3aed;}
+.df2-entity{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--tx);line-height:1.4;margin-bottom:3px;}
+.df2-entity:last-child{margin-bottom:0;}
+.df2-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.df2-dot-b{background:#2563eb;}
+.df2-dot-s{background:#475569;}
+.df2-dot-g{background:#d97706;}
+.df2-dot-p{background:#7c3aed;}
+.df2-entity code{font-family:'Consolas',monospace;font-size:9px;background:#f1f5f9;color:#475569;padding:1px 5px;border-radius:3px;}
+.df2-kpi{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--tx);line-height:1.4;margin-bottom:3px;}
+.df2-kpi:last-child{margin-bottom:0;}
+.df2-kpi-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:#b45309;}
+.df2-mode-note{margin-top:6px;padding:6px 10px;background:var(--b);border-radius:5px;font-size:10px;color:var(--m);font-weight:600;}
+.df2-step-lbl{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-bottom:6px;}
+.df2-step-b{background:#dbeafe;color:#1e40af;}
+.df2-step-s{background:#f1f5f9;color:#334155;}
+.df2-step-g{background:#fff7ed;color:#92400e;}
+.df2-step-p{background:#f5f3ff;color:#5b21b6;}
+
+/* ═══════════════════════════
+   SLIDE 10 — POC APPROACH
+═══════════════════════════ */
+.poc-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;flex-shrink:0;}
+.poc-approach{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);}
+.poc-approach-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.poc-a .poc-approach-title{color:var(--m);}
+.poc-b .poc-approach-title{color:#94a3b8;}
+.poc-timeline{display:flex;flex-direction:column;gap:6px;}
+.poc-week{display:flex;gap:10px;align-items:flex-start;}
+.poc-wlabel{font-size:10px;font-weight:700;color:#fff;background:var(--m);border-radius:4px;padding:2px 7px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.poc-wlabel-grey{font-size:10px;font-weight:700;color:#fff;background:#94a3b8;border-radius:4px;padding:2px 7px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.poc-wtext{font-size:11px;color:var(--tx);line-height:1.5;}
+.poc-wtext b{color:var(--m);}
+.poc-wtext-grey{font-size:11px;color:#94a3b8;line-height:1.5;}
+.poc-keypoint{flex-shrink:0;background:var(--b);border-radius:9px;padding:11px 16px;display:flex;align-items:center;gap:12px;}
+.poc-keypoint-icon{font-size:22px;flex-shrink:0;}
+.poc-keypoint-text{font-size:12.5px;font-weight:700;color:var(--m);line-height:1.4;}
+.poc-keypoint-sub{font-size:11px;color:var(--ts);margin-top:3px;}
+
+/* ═══════════════════════════
+   SLIDE 11 — OPEN QUESTIONS
+═══════════════════════════ */
+.oq-intro{padding:10px 16px;background:#fff;border-radius:9px;box-shadow:0 1px 8px rgba(0,0,0,.05);margin-bottom:10px;flex-shrink:0;font-size:12px;color:var(--ts);line-height:1.5;}
+.oq-intro b{color:var(--tx);}
+.oq-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;flex:1;}
+.oq-card{background:#fff;border-radius:9px;padding:12px 14px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);display:flex;gap:11px;align-items:flex-start;}
+.oq-num{width:24px;height:24px;background:var(--m);color:#fff;border-radius:6px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.oq-text{font-size:11.5px;font-weight:700;color:var(--tx);line-height:1.4;margin-bottom:3px;}
+.oq-sub{font-size:10.5px;color:var(--ts);line-height:1.5;}
+.oq-card-last{grid-column:span 2;}
+
+/* ═══════════════════════════
+   SLIDE 12 — ENGAGEMENT / NEXT STEPS
+═══════════════════════════ */
+.eng-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;flex:1;}
+.eng-card{border-radius:10px;overflow:hidden;box-shadow:0 1px 12px rgba(0,0,0,.07),0 0 0 1px rgba(0,0,0,.05);display:flex;flex-direction:column;}
+.eng-head{padding:15px 18px 12px;}
+.eng-head-0{background:var(--m);}
+.eng-head-1{background:#1d4ed8;}
+.eng-head-2{background:#475569;}
+.eng-phase{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px;}
+.eng-title{font-size:16px;font-weight:800;color:#fff;line-height:1.2;}
+.eng-duration{font-size:11px;color:rgba(255,255,255,.65);margin-top:4px;}
+.eng-body{padding:13px 18px;flex:1;display:flex;flex-direction:column;gap:7px;background:#fff;}
+.eng-item{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--tx);line-height:1.5;}
+.eng-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.eng-dot-0{background:var(--m);}
+.eng-dot-1{background:#1d4ed8;}
+.eng-dot-2{background:#475569;}
+.eng-output{margin:0 18px 12px;padding:7px 10px;border-radius:6px;font-size:10.5px;font-weight:600;line-height:1.4;}
+.eng-output-0{background:var(--b);color:var(--m);}
+.eng-output-1{background:#eff6ff;color:#1e40af;}
+.eng-output-2{background:#f1f5f9;color:#334155;}
+.eng-note{padding:10px 16px;background:#fff;border-radius:9px;box-shadow:0 1px 8px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.04);font-size:11px;color:var(--ts);line-height:1.5;margin-top:10px;flex-shrink:0;}
+.eng-note b{color:var(--tx);}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 1 — TITLE
+═══════════════════════════════════════════ -->
+<div class="slide sl-title active">
+  <div class="t-logo"><b>Damco</b> Solutions</div>
+  <div class="t-tag">Data Intelligence · April 2026</div>
+  <div class="t-main">LensKart<br><b>Data Intelligence</b></div>
+  <div class="t-sub">From D365 F&amp;O to Actionable Procurement Insights</div>
+  <div class="t-chips">
+    <span class="t-chip">PR</span>
+    <span class="t-chip">PO</span>
+    <span class="t-chip">GRN</span>
+    <span class="t-chip">Invoice</span>
+    <span class="t-chip">Power BI</span>
+    <span class="t-chip">Microsoft Fabric</span>
+  </div>
+  <div class="t-date">Prepared by Damco Solutions &nbsp;|&nbsp; April 2026 &nbsp;|&nbsp; Confidential</div>
+  <div class="sf" style="background:rgba(255,255,255,.08);border-top:1px solid rgba(255,255,255,.1);">
+    <span class="sf-brand" style="color:rgba(255,255,255,.35);"><b style="color:rgba(255,148,8,.7);">Damco</b> Solutions</span>
+    <span class="sf-conf" style="color:rgba(255,255,255,.2);">Confidential</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 2 — AGENDA
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Agenda</span><span class="sh-title">What we will cover today</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="ag-intro">
+      This is a <b>knowledge-sharing and scope co-definition session</b>. We will walk through what D365 F&amp;O gives you today, where the gaps are, what it takes to fill them, and how we propose to validate the approach through a focused POC. The goal is to leave with a shared understanding of scope.
+    </div>
+    <div class="ag-grid">
+      <div class="ag-item">
+        <div class="ag-icon" style="background:#dbeafe;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div>
+          <div class="ag-num">Section 1</div>
+          <div class="ag-text">What D365 gives you for free (OOB)</div>
+          <div class="ag-sub">Purchase Spend Analysis content pack, Vendor Payments workspace, and what they actually cover</div>
+        </div>
+      </div>
+      <div class="ag-item">
+        <div class="ag-icon" style="background:#fef2f2;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="ag-num">Section 2</div>
+          <div class="ag-text">The gaps — what OOB does not cover</div>
+          <div class="ag-sub">GRN tracking, invoice aging, multi-entity view, contract compliance</div>
+        </div>
+      </div>
+      <div class="ag-item">
+        <div class="ag-icon" style="background:#f5f3ff;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <div class="ag-num">Section 3</div>
+          <div class="ag-text">What each custom build requires</div>
+          <div class="ag-sub">Source tables, transformation logic, effort estimates per dashboard</div>
+        </div>
+      </div>
+      <div class="ag-item">
+        <div class="ag-icon" style="background:#fff7ed;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="12" y2="15"/></svg>
+        </div>
+        <div>
+          <div class="ag-num">Section 4</div>
+          <div class="ag-text">OCR and document processing — when is it needed?</div>
+          <div class="ag-sub">The key question about your invoice workflow and what it determines</div>
+        </div>
+      </div>
+      <div class="ag-item">
+        <div class="ag-icon" style="background:#f0fdf4;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div>
+          <div class="ag-num">Section 5</div>
+          <div class="ag-text">Architecture — how it all connects</div>
+          <div class="ag-sub">Microsoft Fabric Link, Lakehouse layers, Power BI DirectLake mode</div>
+        </div>
+      </div>
+      <div class="ag-item">
+        <div class="ag-icon" style="background:var(--b);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94122C" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="ag-num">Section 6</div>
+          <div class="ag-text">POC approach and open questions</div>
+          <div class="ag-sub">Outside-in methodology: dashboard design first, data layer second</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 3 — THE PROCUREMENT DATA PROBLEM
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Context</span><span class="sh-title">The procurement data problem at LensKart</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="prob-split">
+      <div class="prob-hero">
+        <div>
+          <div class="ph-label">Today's reality</div>
+          <div class="ph-title">Procurement data lives in screens, not in dashboards</div>
+        </div>
+        <div class="ph-body">
+          LensKart runs procurement across multiple legal entities and countries on D365 F&amp;O. The data exists in the system. But procurement and finance leaders must navigate individual transaction screens to get answers. There is no consolidated view across entities, no aging visibility without a manual export, and no single number for how well invoices match against what was ordered and received.
+        </div>
+        <div class="ph-stat-row">
+          <div class="ph-stat">
+            <div class="ph-num">4+</div>
+            <div class="ph-slabel">Legal entities across markets</div>
+          </div>
+          <div class="ph-stat">
+            <div class="ph-num">0</div>
+            <div class="ph-slabel">Consolidated procurement dashboards today</div>
+          </div>
+        </div>
+      </div>
+      <div class="prob-right">
+        <div class="prob-card">
+          <div class="pc-icon pc-icon-m">&#128683;</div>
+          <div>
+            <div class="pc-title">No consolidated visibility across legal entities</div>
+            <div class="pc-text">Spend by vendor, PO aging, and approval status exist per entity only. There is no cross-entity view without manual aggregation.</div>
+          </div>
+        </div>
+        <div class="prob-card">
+          <div class="pc-icon pc-icon-b">&#9200;</div>
+          <div>
+            <div class="pc-title">No invoice aging or GRN reconciliation view</div>
+            <div class="pc-text">Finance cannot see invoices aging beyond 30/60/90 days at a glance, or how many invoices are unmatched against goods receipts.</div>
+          </div>
+        </div>
+        <div class="prob-card">
+          <div class="pc-icon pc-icon-o">&#128200;</div>
+          <div>
+            <div class="pc-title">No three-way match reporting</div>
+            <div class="pc-text">Whether a received quantity matches what was ordered and what was invoiced requires manual look-up per transaction, not a dashboard metric.</div>
+          </div>
+        </div>
+        <div class="prob-card">
+          <div class="pc-icon pc-icon-p">&#128196;</div>
+          <div>
+            <div class="pc-title">Contract compliance is invisible</div>
+            <div class="pc-text">Purchase against vendor agreements, utilisation rates, and over-commitment alerts are not surfaced anywhere without a custom build.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 4 — WHAT D365 GIVES YOU FOR FREE (OOB)
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">OOB Coverage</span><span class="sh-title">What D365 F&amp;O gives you for free</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="oob-intro">
+      D365 F&amp;O ships with two procurement-relevant Power BI solutions available through Lifecycle Services (LCS). These are embedded in analytical workspaces and require no additional licensing. <b>They are genuinely useful as a starting point</b> but were designed for single-entity, single-currency scenarios and do not cover GRN, aging, or three-way match.
+    </div>
+    <div class="oob-grid">
+      <div class="oob-card">
+        <div class="oob-head">
+          <div class="oob-name">Purchase Spend Analysis</div>
+          <span class="oob-badge oob-free">Included OOB</span>
+        </div>
+        <div class="oob-covers">
+          <span>Spend by vendor</span><span>Spend by category</span><span>YOY growth</span><span>Vendor location</span><span>Top 10 vendors</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--ts);line-height:1.5;margin-top:4px;">Covers purchase spend analytics based on posted invoice amounts (VendInvoiceTrans). Viewable inside D365 under Procurement and Sourcing.</div>
+        <div class="oob-gap">
+          <div class="oob-gap-label">Limitations</div>
+          <div class="oob-gap-text">No GRN data. No invoice aging. No 30/60/90 buckets. No PO-to-Invoice variance. Single legal entity only. No multi-currency consolidation. Cannot be customised without modifying the PBIX file manually.</div>
+        </div>
+      </div>
+      <div class="oob-card">
+        <div class="oob-head">
+          <div class="oob-name">Vendor Payments Workspace</div>
+          <span class="oob-badge oob-free">Included OOB</span>
+        </div>
+        <div class="oob-covers">
+          <span>Overdue invoices</span><span>Upcoming payments</span><span>Payment history</span><span>Cash flow forecast</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--ts);line-height:1.5;margin-top:4px;">An embedded Power BI workspace in the Accounts Payable module. Focuses on cash outflows and payment status, not procurement KPIs.</div>
+        <div class="oob-gap">
+          <div class="oob-gap-label">Limitations</div>
+          <div class="oob-gap-text">Finance-lens only. No spend analysis. No GRN. No PO-level visibility. Not designed for procurement managers. Does not surface vendor invoice price variance against PO.</div>
+        </div>
+      </div>
+      <div class="oob-card">
+        <div class="oob-head">
+          <div class="oob-name">Purchase Performance Analysis (embedded)</div>
+          <span class="oob-badge oob-free">Included OOB</span>
+        </div>
+        <div class="oob-covers">
+          <span>PO count by status</span><span>On-time delivery rate</span><span>Vendor lead times</span><span>Overdue POs</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--ts);line-height:1.5;margin-top:4px;">Surfaces PO fulfilment metrics. Useful for procurement managers monitoring open and overdue orders per vendor.</div>
+        <div class="oob-gap">
+          <div class="oob-gap-label">Limitations</div>
+          <div class="oob-gap-text">No multi-entity rollup. No invoice-side data. No GRN quantity variance. Cannot be filtered across legal entities without configuration changes. Limited interactivity for drill-through to line level.</div>
+        </div>
+      </div>
+      <div class="oob-card">
+        <div class="oob-head">
+          <div class="oob-name">Marketplace content packs (AppSource)</div>
+          <span class="oob-badge oob-deprecated">Deprecated by Microsoft</span>
+        </div>
+        <div class="oob-covers">
+          <span>Financial performance</span><span>Cost management</span><span>Retail channel</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--ts);line-height:1.5;margin-top:4px;">Microsoft has officially deprecated the AppSource content packs. Customers still using them are advised to migrate to the LCS-delivered workspace-embedded reports.</div>
+        <div class="oob-gap">
+          <div class="oob-gap-label">Status</div>
+          <div class="oob-gap-text">Do not use for new builds. Microsoft's recommended path for analytics going forward is Microsoft Fabric + Power BI on top of the D365 data lake, not AppSource content packs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 5 — THE GAPS: WHAT OOB DOESN'T COVER
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Gap Analysis</span><span class="sh-title">What OOB does not cover — four custom builds</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="gap-intro">
+      The four capabilities LensKart needs cannot be delivered by the OOB content described on the previous slide. Each requires custom data transformation and Power BI modelling on top of D365 entities. <b>These are not limitations of D365 — the data exists. The gap is in the analytics layer.</b>
+    </div>
+    <div class="gap-grid">
+      <div class="gap-card">
+        <div class="gap-head">
+          <div class="gap-num">1</div>
+          <div>
+            <div class="gap-title">GRN Dashboard</div>
+            <span class="gap-badge">Custom Build Required</span>
+          </div>
+        </div>
+        <div class="gap-desc">Goods receipt tracking across vendors and POs. Shows quantity received vs ordered, value variance, receipt-to-invoice linkage, and open GRNs pending invoicing.</div>
+        <div class="gap-why">
+          <div class="gap-why-label">Why OOB doesn't cover it</div>
+          Product receipt (GRN) data lives in PurchPackingSlipHeader/Line entities. The OOB Purchase Spend Analysis content is built entirely from the Invoice side (VendInvoiceTrans). There is no GRN-side report in the standard content.
+        </div>
+      </div>
+      <div class="gap-card">
+        <div class="gap-head">
+          <div class="gap-num">2</div>
+          <div>
+            <div class="gap-title">Invoice Aging and Variance</div>
+            <span class="gap-badge">Custom Build Required</span>
+          </div>
+        </div>
+        <div class="gap-desc">Invoice aging buckets (30 / 60 / 90 / 120+ days), PO line price vs invoice line price variance, payment term compliance, and overdue amount by vendor.</div>
+        <div class="gap-why">
+          <div class="gap-why-label">Why OOB doesn't cover it</div>
+          The Vendor Payments workspace shows payment status but does not compute aging buckets with DAX logic, does not compare PO price to invoice price, and has no variance alerting capability.
+        </div>
+      </div>
+      <div class="gap-card">
+        <div class="gap-head">
+          <div class="gap-num">3</div>
+          <div>
+            <div class="gap-title">Multi-entity Consolidated View</div>
+            <span class="gap-badge">Custom Build Required</span>
+          </div>
+        </div>
+        <div class="gap-desc">Cross-legal-entity spend analytics with currency consolidation, intercompany transaction elimination, financial dimension filtering, and Row-Level Security by region or business unit.</div>
+        <div class="gap-why">
+          <div class="gap-why-label">Why OOB doesn't cover it</div>
+          All OOB reports operate within a single legal entity. Multi-entity consolidation requires joining ExchangeRateEntity, applying dimension hierarchies, and implementing RLS — none of which exist in the standard content.
+        </div>
+      </div>
+      <div class="gap-card">
+        <div class="gap-head">
+          <div class="gap-num">4</div>
+          <div>
+            <div class="gap-title">Contract Compliance Dashboard</div>
+            <span class="gap-badge">Custom Build Required</span>
+          </div>
+        </div>
+        <div class="gap-desc">PO spend against vendor frame agreements, contract utilisation percentage, vendor adherence scoring, and over/under commitment alerts by contract and vendor.</div>
+        <div class="gap-why">
+          <div class="gap-why-label">Why OOB doesn't cover it</div>
+          Purchase Agreement entities (PurchAgreementHeader/Line) are not included in any OOB Power BI content. Linking agreements to actual PO spend and computing utilisation requires a custom data model.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 6 — WHAT EACH CUSTOM BUILD REQUIRES
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Build Requirements</span><span class="sh-title">What each custom build takes to deliver</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="req-grid">
+      <!-- GRN Dashboard -->
+      <div class="req-card">
+        <div class="req-head">
+          <div class="req-icon req-icon-m">&#128230;</div>
+          <div class="req-title">GRN Dashboard</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Sources</div>
+          <div class="req-val"><code>PurchPackingSlipHeaderEntity</code> <code>PurchPackingSlipLineEntity</code> <code>PurchOrderHeaderV2Entity</code></div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Logic</div>
+          <div class="req-val">GRN qty vs PO qty variance, receipt-to-invoice linkage, open GRNs by vendor, value delta on partial receipts</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">OCR / IDP</div>
+          <div class="req-val"><span class="req-ocr-no">&#10003; Not required</span> &nbsp;GRN data is entered in D365 at goods receipt</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Effort</div>
+          <div class="req-val"><span class="req-effort-m">Medium — 3 to 4 weeks (POC phase)</span></div>
+        </div>
+      </div>
+      <!-- Invoice Aging -->
+      <div class="req-card">
+        <div class="req-head">
+          <div class="req-icon req-icon-b">&#128203;</div>
+          <div class="req-title">Invoice Aging and Variance</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Sources</div>
+          <div class="req-val"><code>VendorInvoiceHeaderEntity</code> <code>VendorInvoiceLineEntity</code> <code>VendTransEntity</code></div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Logic</div>
+          <div class="req-val">DAX aging buckets (30/60/90/120+ days from due date), PO line price vs invoice line price variance, payment status flags</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">OCR / IDP</div>
+          <div class="req-val"><span class="req-ocr-no">&#10003; Not required</span> &nbsp;if invoices are in D365. <span class="req-ocr-yes">! Required</span> &nbsp;only for paper/PDF invoices outside D365</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Effort</div>
+          <div class="req-val"><span class="req-effort-h">Medium-High — 4 to 5 weeks</span></div>
+        </div>
+      </div>
+      <!-- Multi-entity -->
+      <div class="req-card">
+        <div class="req-head">
+          <div class="req-icon req-icon-g">&#127758;</div>
+          <div class="req-title">Multi-entity Consolidated View</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Sources</div>
+          <div class="req-val">All above, plus <code>DimensionAttributeValueCombinationEntity</code> <code>ExchangeRateEntity</code></div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Logic</div>
+          <div class="req-val">Legal entity filter slicer, currency conversion to base currency, intercompany elimination, Row-Level Security (RLS) by entity / user</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">OCR / IDP</div>
+          <div class="req-val"><span class="req-ocr-no">&#10003; Not required</span> &nbsp;Financial dimension data is structural, not document-based</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Effort</div>
+          <div class="req-val"><span class="req-effort-h">High — 6 to 8 weeks. Finance team input required for entity hierarchy.</span></div>
+        </div>
+      </div>
+      <!-- Contract Compliance -->
+      <div class="req-card">
+        <div class="req-head">
+          <div class="req-icon req-icon-p">&#128196;</div>
+          <div class="req-title">Contract Compliance Dashboard</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Sources</div>
+          <div class="req-val"><code>PurchAgreementHeaderEntity</code> <code>PurchAgreementLineEntity</code> linked to PO header and line data</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Logic</div>
+          <div class="req-val">Contract utilisation % (PO value / agreement value), vendor adherence scoring, over-commitment alerts, expiry countdown</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">OCR / IDP</div>
+          <div class="req-val"><span class="req-ocr-no">&#10003; Not required</span> &nbsp;if contracts are in D365 Purchase Agreements. <span class="req-ocr-yes">! Required</span> &nbsp;if contracts are PDFs outside D365</div>
+        </div>
+        <div class="req-row">
+          <div class="req-lbl">Effort</div>
+          <div class="req-val"><span class="req-effort-h">High — 5 to 6 weeks</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 7 — OCR AND IDP: WHEN IS IT NEEDED?
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">OCR / IDP</span><span class="sh-title">When is document processing actually needed?</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="ocr-top">
+      <div class="ocr-q">The key question: <span>Are all of LensKart's invoices entered in D365 F&amp;O before they reach the finance team?</span></div>
+    </div>
+    <div class="ocr-split">
+      <div class="ocr-panel ocr-a">
+        <div class="ocr-scenario">Scenario A — Invoices are in D365 (most common)</div>
+        <div class="ocr-panel-title">No external OCR required</div>
+        <div class="ocr-item"><div class="ocr-dot-g"></div><div>Invoices are entered directly into D365, or received electronically and imported via EDI or supplier portal</div></div>
+        <div class="ocr-item"><div class="ocr-dot-g"></div><div>Dashboard reads from VendorInvoiceHeader and VendorInvoiceLine entities in the data lake — structured, clean data</div></div>
+        <div class="ocr-item"><div class="ocr-dot-g"></div><div>D365 itself has Invoice Capture (built on AI Builder + Azure Form Recognizer) as a native option for PDF invoice intake</div></div>
+        <div class="ocr-item"><div class="ocr-dot-g"></div><div>No additional tooling. No incremental licensing for document intelligence.</div></div>
+      </div>
+      <div class="ocr-panel ocr-b">
+        <div class="ocr-scenario">Scenario B — Paper or PDF invoices outside D365</div>
+        <div class="ocr-panel-title">OCR / IDP layer is required</div>
+        <div class="ocr-item"><div class="ocr-dot-o"></div><div>Vendors send paper invoices or unstructured PDFs that are not yet in D365</div></div>
+        <div class="ocr-item"><div class="ocr-dot-o"></div><div>An extraction layer is needed before data reaches the lake: extract vendor name, invoice number, line items, amounts, dates</div></div>
+        <div class="ocr-item"><div class="ocr-dot-o"></div><div><b>D365 Invoice Capture:</b> Microsoft's native solution. Uses AI Builder (Azure Form Recognizer under the hood). Installs from AppSource. Priced at 100 free transactions/month per tenant; additional capacity at $300 per 1,000 transactions/month.</div></div>
+        <div class="ocr-item"><div class="ocr-dot-o"></div><div><b>Azure AI Document Intelligence</b> (standalone, formerly Form Recognizer): for high-volume or complex layouts requiring a custom extraction model outside D365's invoice capture pipeline</div></div>
+      </div>
+    </div>
+    <div class="ocr-tree">
+      <div class="ocr-tree-title">Decision tree</div>
+      <div class="ocr-tree-flow">
+        <div class="ocr-node ocr-node-q">Are all invoices entered in D365?</div>
+        <div class="ocr-arrow">&#9654;</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="ocr-arrow-label" style="font-weight:700;color:#16a34a;">Yes</span>
+            <div class="ocr-arrow">&#9654;</div>
+            <div class="ocr-node ocr-node-r">No OCR needed. Dashboard reads D365 data directly.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="ocr-arrow-label" style="font-weight:700;color:#c2410c;">No</span>
+            <div class="ocr-arrow">&#9654;</div>
+            <div class="ocr-node ocr-node-ri">OCR / IDP layer required before data reaches the lake</div>
+            <div class="ocr-arrow">&#9654;</div>
+            <div class="ocr-node" style="background:#fff3e0;color:#b45309;border:1px solid #fed7aa;padding:6px 13px;border-radius:6px;font-size:11px;font-weight:600;">D365 Invoice Capture (preferred for D365 customers) or Azure AI Document Intelligence (for high volume / complex layouts)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 8 — ARCHITECTURE: MICROSOFT FABRIC
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Architecture</span><span class="sh-title">Recommended architecture: Microsoft Fabric</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="arch-hero">
+      <!-- Top flow -->
+      <div class="arch-flow">
+        <div class="arch-box ab-d365">
+          <div class="arch-box-label">Source</div>
+          <div class="arch-box-name">D365 F&amp;O</div>
+          <div class="arch-box-sub">PR / PO / GRN / Invoice entities</div>
+        </div>
+        <div class="arch-arrow">&#9654;</div>
+        <div class="arch-box ab-link">
+          <div class="arch-box-label">Sync Layer</div>
+          <div class="arch-box-name">Fabric Link (Fast)</div>
+          <div class="arch-box-sub">CDC, &lt;15 min latency, no ETL tool needed</div>
+        </div>
+        <div class="arch-arrow">&#9654;</div>
+        <div class="arch-box ab-lake">
+          <div class="arch-box-label">Storage + Compute</div>
+          <div class="arch-box-name">Fabric Lakehouse</div>
+          <div class="arch-box-sub">Bronze / Silver / Gold layers</div>
+        </div>
+        <div class="arch-arrow">&#9654;</div>
+        <div class="arch-box ab-pbi">
+          <div class="arch-box-label">Analytics</div>
+          <div class="arch-box-name">Power BI</div>
+          <div class="arch-box-sub">DirectLake mode, no data copy</div>
+        </div>
+      </div>
+      <!-- Lakehouse layers -->
+      <div class="lake-layers">
+        <div class="lake-layer ll-bronze">
+          <div class="ll-label">Bronze layer</div>
+          <div class="ll-desc">Raw D365 tables, unchanged. PR, PO, GRN, Invoice entities land here exactly as they exist in D365. No transformation. Acts as the single source of truth.</div>
+          <span class="ll-tag">PurchReqTable / PurchOrderHeader / PurchPackingSlipHeader / VendorInvoiceHeader</span>
+        </div>
+        <div class="lake-layer ll-silver">
+          <div class="ll-label">Silver layer</div>
+          <div class="ll-desc">Cleaned, joined, and transformed. Three-way match built here: PO line linked to GRN line linked to Invoice line. Currency conversion applied. Legal entity hierarchy resolved.</div>
+          <span class="ll-tag">3-way match | Currency conversion | Entity rollup</span>
+        </div>
+        <div class="lake-layer ll-gold">
+          <div class="ll-label">Gold layer</div>
+          <div class="ll-desc">Business KPIs ready for Power BI. Spend by vendor and category, PO aging, GRN match rate, invoice aging buckets, contract compliance percentage. DirectLake queries this layer.</div>
+          <span class="ll-tag">Dashboard-ready KPIs | RLS applied | Aggregated</span>
+        </div>
+      </div>
+      <!-- Compare -->
+      <div class="arch-compare">
+        <div class="ac-card">
+          <div class="ac-title">Why Fabric for LensKart specifically</div>
+          <div class="ac-row"><div class="ac-dot ac-dot-g"></div><div>Azure AD SSO already in place — Fabric integrates natively with the same tenant, no additional identity setup</div></div>
+          <div class="ac-row"><div class="ac-dot ac-dot-g"></div><div>No separate ETL tool required — Spark notebooks and Dataflows Gen2 run inside the same Fabric workspace</div></div>
+          <div class="ac-row"><div class="ac-dot ac-dot-g"></div><div>Fast Fabric sync brings D365 operational data to the lake in under 15 minutes (public preview, Q1 2026 GA target)</div></div>
+        </div>
+        <div class="ac-card">
+          <div class="ac-title">Fabric vs Azure Synapse — when to use which</div>
+          <div class="ac-row"><div class="ac-dot ac-dot-g"></div><div><b>Fabric:</b> right choice when you are starting new and the primary use case is Power BI reporting. Unified platform, lower operational overhead.</div></div>
+          <div class="ac-row"><div class="ac-dot ac-dot-o"></div><div><b>Synapse:</b> better if LensKart already has a Synapse workspace in production with existing pipelines, or if ML workloads beyond Power BI are in scope.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 9 — ARCHITECTURE: DATA FLOW DETAIL
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Data Flow</span><span class="sh-title">Entity flow from D365 to Power BI</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="df2-layout">
+      <!-- LEFT: Source tables -->
+      <div class="df2-left">
+        <div class="df2-group">
+          <div class="df2-group-label df2-group-label-b">PR (Purchase Requisition)</div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-b"></div><code>PurchReqTable</code></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-b"></div><code>PurchReqLine</code></div>
+        </div>
+        <div class="df2-group">
+          <div class="df2-group-label df2-group-label-s">PO (Purchase Order)</div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-s"></div><code>PurchOrderHeaderV2Entity</code></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-s"></div><code>PurchLineEntity</code></div>
+        </div>
+        <div class="df2-group">
+          <div class="df2-group-label" style="color:#c2410c;">GRN (Product Receipt)</div>
+          <div class="df2-entity"><div class="df2-dot" style="background:#c2410c;"></div><code>PurchPackingSlipHeaderEntity</code></div>
+          <div class="df2-entity"><div class="df2-dot" style="background:#c2410c;"></div><code>PurchPackingSlipLineEntity</code></div>
+        </div>
+        <div class="df2-group">
+          <div class="df2-group-label df2-group-label-g">Invoice (AP)</div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-g"></div><code>VendorInvoiceHeaderEntity</code></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-g"></div><code>VendorInvoiceLineEntity</code></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-g"></div><code>VendTransEntity</code></div>
+        </div>
+        <div class="df2-group">
+          <div class="df2-group-label df2-group-label-p">Dimensions / Contracts</div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-p"></div><code>DimensionAttributeValueCombinationEntity</code></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-p"></div><code>ExchangeRateEntity</code></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-p"></div><code>PurchAgreementHeaderEntity</code></div>
+        </div>
+      </div>
+      <!-- CONNECTOR -->
+      <div class="df2-connector">
+        <div class="df2-arrow-v">
+          <div class="df2-arrow-line"></div>
+          <div style="writing-mode:vertical-rl;font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.07em;text-transform:uppercase;transform:rotate(180deg);padding:4px 0;">Fabric Link CDC</div>
+          <div class="df2-arrow-head">&#9660;</div>
+          <div class="df2-arrow-line"></div>
+          <div style="writing-mode:vertical-rl;font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.07em;text-transform:uppercase;transform:rotate(180deg);padding:4px 0;">Spark / Dataflows</div>
+          <div class="df2-arrow-head">&#9660;</div>
+          <div class="df2-arrow-line"></div>
+          <div style="writing-mode:vertical-rl;font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.07em;text-transform:uppercase;transform:rotate(180deg);padding:4px 0;">DirectLake</div>
+          <div class="df2-arrow-head">&#9660;</div>
+          <div class="df2-arrow-line"></div>
+        </div>
+      </div>
+      <!-- RIGHT: Transformed layers -->
+      <div class="df2-right">
+        <div class="df2-group" style="background:#fef3c7;border:1.5px solid #fcd34d;">
+          <div class="df2-step-lbl df2-step-b">Bronze — Raw tables</div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-b"></div><div>All source entities land here unchanged. Full history retained. No modification.</div></div>
+        </div>
+        <div class="df2-group" style="background:#f1f5f9;border:1.5px solid #cbd5e1;">
+          <div class="df2-step-lbl df2-step-s">Silver — Transformed</div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-s"></div><div>PO line &#8596; GRN line &#8596; Invoice line join (three-way match key)</div></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-s"></div><div>Currency conversion to USD / base currency using ExchangeRateEntity</div></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-s"></div><div>Legal entity hierarchy resolved, intercompany transactions flagged</div></div>
+          <div class="df2-entity"><div class="df2-dot df2-dot-s"></div><div>Invoice due date and aging day-count computed from VendTransEntity payment terms</div></div>
+        </div>
+        <div class="df2-group" style="background:#fff7ed;border:1.5px solid #fcd34d;">
+          <div class="df2-step-lbl df2-step-g">Gold — KPIs</div>
+          <div class="df2-kpi"><div class="df2-kpi-dot"></div><div>PR aging by requestor and department</div></div>
+          <div class="df2-kpi"><div class="df2-kpi-dot"></div><div>PO spend by vendor, category, legal entity</div></div>
+          <div class="df2-kpi"><div class="df2-kpi-dot"></div><div>GRN quantity variance (received vs ordered)</div></div>
+          <div class="df2-kpi"><div class="df2-kpi-dot"></div><div>Invoice aging buckets: 30 / 60 / 90 / 120+ days</div></div>
+          <div class="df2-kpi"><div class="df2-kpi-dot"></div><div>Three-way match rate by vendor</div></div>
+          <div class="df2-kpi"><div class="df2-kpi-dot"></div><div>Contract utilisation % vs purchase agreement value</div></div>
+        </div>
+        <div class="df2-group" style="background:#f0fdf4;border:1.5px solid #86efac;">
+          <div class="df2-step-lbl df2-step-p">Power BI — DirectLake</div>
+          <div class="df2-entity"><div class="df2-dot" style="background:#16a34a;"></div><div>DirectLake mode: Power BI reads the Gold layer directly from the Lakehouse. No import copy, no scheduled refresh. Queries are live against the delta parquet files.</div></div>
+          <div class="df2-mode-note">RLS enforced at the Power BI model layer. Users in Singapore see only Singapore entity data unless explicitly granted cross-entity access.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 10 — POC APPROACH: OUTSIDE-IN
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">POC Approach</span><span class="sh-title">Outside-in: you see a working dashboard in week 2</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="poc-compare">
+      <div class="poc-approach poc-a">
+        <div class="poc-approach-title">Damco outside-in approach</div>
+        <div class="poc-timeline">
+          <div class="poc-week">
+            <span class="poc-wlabel">Wk 1–2</span>
+            <div class="poc-wtext">Dashboard design sprint. Define what Hemang and Udit will see on screen. Mock up 3 to 4 Power BI tiles with representative sample data. <b>No live D365 connection yet — but you can react to the design immediately.</b></div>
+          </div>
+          <div class="poc-week">
+            <span class="poc-wlabel">Wk 3–4</span>
+            <div class="poc-wtext">Fabric Link setup against LensKart's D365 sandbox. Bronze layer populated with real procurement data. First real numbers appear in the dashboard.</div>
+          </div>
+          <div class="poc-week">
+            <span class="poc-wlabel">Wk 5–6</span>
+            <div class="poc-wtext">Silver transformation. Three-way match logic built. Basic KPIs — PO spend, GRN variance, invoice aging — connected to live data. Dashboard iterated with feedback from week 2.</div>
+          </div>
+          <div class="poc-week">
+            <span class="poc-wlabel">Wk 6</span>
+            <div class="poc-wtext">Demo to Hemang and Udit. <b>Working dashboard on real D365 procurement data.</b> Go / no-go decision for Phase 1 full build.</div>
+          </div>
+        </div>
+      </div>
+      <div class="poc-approach poc-b">
+        <div class="poc-approach-title">Traditional approach (for contrast)</div>
+        <div class="poc-timeline">
+          <div class="poc-week">
+            <span class="poc-wlabel-grey">Wk 1–2</span>
+            <div class="poc-wtext-grey">Requirements gathering. Technical design document. Architecture sign-off.</div>
+          </div>
+          <div class="poc-week">
+            <span class="poc-wlabel-grey">Wk 3–6</span>
+            <div class="poc-wtext-grey">Data lake setup, Fabric workspace provisioning, Bronze and Silver pipelines built and tested. No stakeholder visibility during this period.</div>
+          </div>
+          <div class="poc-week">
+            <span class="poc-wlabel-grey">Wk 7–8</span>
+            <div class="poc-wtext-grey">Dashboard design begins — for the first time — after the data layer is complete.</div>
+          </div>
+          <div class="poc-week">
+            <span class="poc-wlabel-grey">Wk 8</span>
+            <div class="poc-wtext-grey">Stakeholder sees the dashboard for the first time at week 8. Feedback comes late. Changes are expensive.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="poc-keypoint">
+      <div class="poc-keypoint-icon">&#128161;</div>
+      <div>
+        <div class="poc-keypoint-text">The outside-in approach separates "what you want to see" from "how we build the pipes." Stakeholder alignment happens in week 2, not week 8.</div>
+        <div class="poc-keypoint-sub">Dashboard design is the POC hypothesis. If the design is wrong, we discover it when it costs an afternoon — not when it costs a rebuild.</div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 11 — OPEN QUESTIONS
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Co-Design</span><span class="sh-title">7 questions to define your POC together</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="oq-intro">
+      These are the questions that determine scope, architecture, and OCR need. <b>There are no wrong answers — each answer shapes the POC design.</b> Our goal today is to work through as many of these as possible together.
+    </div>
+    <div class="oq-grid">
+      <div class="oq-card">
+        <div class="oq-num">1</div>
+        <div>
+          <div class="oq-text">Which markets and legal entities are in scope for Phase 1?</div>
+          <div class="oq-sub">Singapore is our suggested starting point. Understanding which entities to include defines the data volume and whether currency consolidation is needed from day one.</div>
+        </div>
+      </div>
+      <div class="oq-card">
+        <div class="oq-num">2</div>
+        <div>
+          <div class="oq-text">Are invoices fully entered in D365 — or do paper or PDF invoices arrive outside the system?</div>
+          <div class="oq-sub">This single answer determines whether OCR / IDP is in scope at all. It has a direct impact on architecture and budget.</div>
+        </div>
+      </div>
+      <div class="oq-card">
+        <div class="oq-num">3</div>
+        <div>
+          <div class="oq-text">What reporting cadence is needed — daily refresh, intra-day, or near real-time?</div>
+          <div class="oq-sub">Determines whether Fast Fabric (&lt;15 min) is required or whether a daily scheduled refresh is sufficient. This has a cost implication.</div>
+        </div>
+      </div>
+      <div class="oq-card">
+        <div class="oq-num">4</div>
+        <div>
+          <div class="oq-text">Who are the primary consumers of these dashboards?</div>
+          <div class="oq-sub">Procurement managers, finance team, founders, or all three? Audience determines KPI priority, level of aggregation, and how Row-Level Security should be structured.</div>
+        </div>
+      </div>
+      <div class="oq-card">
+        <div class="oq-num">5</div>
+        <div>
+          <div class="oq-text">Does LensKart have an existing analytics platform today?</div>
+          <div class="oq-sub">Synapse, Databricks, Tableau, or any other tool already in production? If yes, we integrate rather than replace — the Fabric recommendation may change.</div>
+        </div>
+      </div>
+      <div class="oq-card">
+        <div class="oq-num">6</div>
+        <div>
+          <div class="oq-text">What are your top 3 KPIs right now?</div>
+          <div class="oq-sub">From: spend analysis, invoice aging, GRN match rate, contract compliance, vendor performance, PO approval cycle time. These three KPIs define the POC scope.</div>
+        </div>
+      </div>
+      <div class="oq-card oq-card-last">
+        <div class="oq-num">7</div>
+        <div>
+          <div class="oq-text">Are purchase agreements and contracts managed inside D365, or do they exist as PDFs or in a separate contract management system?</div>
+          <div class="oq-sub">Determines whether the Contract Compliance dashboard is straightforward (D365 Purchase Agreements module) or requires an IDP extraction step first. Also indicates whether the Contract Compliance build is in scope for the POC or Phase 2.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 12 — PROPOSED ENGAGEMENT: WHAT NEXT
+═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="sh"><span class="sh-badge">Engagement</span><span class="sh-title">Proposed engagement structure</span><span class="sh-line"></span></div>
+  <div class="sb">
+    <div class="eng-grid">
+      <!-- Phase 0 -->
+      <div class="eng-card">
+        <div class="eng-head eng-head-0">
+          <div class="eng-phase">Phase 0</div>
+          <div class="eng-title">Discovery Sprint</div>
+          <div class="eng-duration">1 week</div>
+        </div>
+        <div class="eng-body">
+          <div class="eng-item"><div class="eng-dot eng-dot-0"></div><div>D365 entity mapping and data quality audit — confirm which tables are populated and what data quality issues exist</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-0"></div><div>KPI definition workshop — work through the 7 open questions and lock the POC scope in writing</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-0"></div><div>Access setup — D365 sandbox credentials, Fabric workspace provisioning, Azure AD tenant confirmation</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-0"></div><div>Confirm invoice workflow — establish OCR requirement (yes or no) based on actual LensKart process</div></div>
+        </div>
+        <div class="eng-output eng-output-0">Output: Confirmed POC scope document with agreed KPIs, entity list, and success criteria</div>
+      </div>
+      <!-- Phase 1 -->
+      <div class="eng-card">
+        <div class="eng-head eng-head-1">
+          <div class="eng-phase">Phase 1</div>
+          <div class="eng-title">Data Lake POC</div>
+          <div class="eng-duration">4 to 6 weeks</div>
+        </div>
+        <div class="eng-body">
+          <div class="eng-item"><div class="eng-dot eng-dot-1"></div><div>Scope: 1 entity (PO + Invoice), 1 market (Singapore, as discussed)</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-1"></div><div>Fabric Link setup — Bronze layer populated with real LensKart D365 data</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-1"></div><div>Silver transformation — three-way match join, basic currency handling</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-1"></div><div>2 to 3 Power BI dashboards — designed in week 2, connected to live data by week 5</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-1"></div><div>Outside-in approach: Hemang and Udit review the design in week 2, before any heavy data work begins</div></div>
+        </div>
+        <div class="eng-output eng-output-1">Output: Working dashboard on real D365 procurement data. Go / no-go for Phase 2.</div>
+      </div>
+      <!-- Phase 2 -->
+      <div class="eng-card">
+        <div class="eng-head eng-head-2">
+          <div class="eng-phase">Phase 2</div>
+          <div class="eng-title">Full Build</div>
+          <div class="eng-duration">12 to 24 weeks</div>
+        </div>
+        <div class="eng-body">
+          <div class="eng-item"><div class="eng-dot eng-dot-2"></div><div>All 4 entity types: PR, PO, GRN, Invoice</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-2"></div><div>All markets and legal entities with multi-currency consolidation</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-2"></div><div>Full RLS implementation by region, entity, and user role</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-2"></div><div>Contract Compliance dashboard (scope confirmed after POC)</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-2"></div><div>OCR / IDP integration if required (confirmed in Phase 0)</div></div>
+          <div class="eng-item"><div class="eng-dot eng-dot-2"></div><div>Scope, effort, and pricing defined after POC learnings — not before</div></div>
+        </div>
+        <div class="eng-output eng-output-2">Scope and pricing confirmed after POC. No Phase 2 commitment required now.</div>
+      </div>
+    </div>
+    <div class="eng-note">
+      <b>Note:</b> The Workflow POC (PR/PO approval workflows, document upload, status tracking) proceeds in parallel as a separate engagement on the same timeline. The two workstreams share the same D365 sandbox access and can be coordinated under a single project governance structure.
+    </div>
+  </div>
+  <div class="sf"><span class="sf-brand"><b>Damco</b> Solutions</span><span class="sf-conf">Confidential</span></div>
+</div>
+
+</div><!-- end #deck -->
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="prev" title="Previous">&#8592;</button>
+  <span id="counter">1 / 12</span>
+  <button id="next" title="Next">&#8594;</button>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function go(n){
+    slides[cur].classList.remove('active');
+    cur = (n + total) % total;
+    slides[cur].classList.add('active');
+    document.getElementById('counter').textContent = (cur+1) + ' / ' + total;
+  }
+
+  document.getElementById('prev').addEventListener('click', function(){ go(cur-1); });
+  document.getElementById('next').addEventListener('click', function(){ go(cur+1); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur+1);
+    if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(cur-1);
+  });
+})();
+</script>
+</body>
+</html>
