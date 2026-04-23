@@ -2240,7 +2240,7 @@ function updateNav() {
 function scaleDecks() {
   const deck = document.getElementById('deck');
   const scaleX = window.innerWidth / 1280;
-  const scaleY = (window.innerHeight - 160) / 720;
+  const scaleY = window.innerHeight / 720;
   const scale = Math.min(scaleX, scaleY);
   deck.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
