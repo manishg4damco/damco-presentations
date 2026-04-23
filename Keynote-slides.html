@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnosis First: Slides</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0f1f3d;
+    --gold: #c8b97a;
+    --white: #ffffff;
+    --dim: rgba(255,255,255,0.28);
+    --muted: rgba(255,255,255,0.10);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #070f1e;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  /* ── DECK WRAPPER ── */
+  #deck {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── SLIDE BASE ── */
+  .slide {
+    display: none;
+    position: relative;
+    background: var(--navy);
+    color: var(--white);
+    /* maintain 16:9 */
+    width: min(100vw, 177.78vh);
+    height: min(56.25vw, 100vh);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .slide.active { display: flex; }
+
+  /* ── NAV ── */
+  #nav {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.24); }
+  .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  #counter {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  /* ── SLIDE 1: TITLE ── */
+  #s1 {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 8%;
+  }
+  #s1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(200,185,122,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .s1-eyebrow {
+    font-size: clamp(9px, 1.1vw, 14px);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: clamp(12px, 2vh, 24px);
+  }
+  .s1-title {
+    font-size: clamp(36px, 7.5vw, 96px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold);
+    line-height: 1.05;
+    margin-bottom: clamp(16px, 3vh, 36px);
+  }
+  .s1-rule {
+    width: clamp(40px, 5vw, 72px);
+    height: 2px;
+    background: var(--gold);
+    margin-bottom: clamp(16px, 2.5vh, 28px);
+  }
+  .s1-speaker {
+    font-size: clamp(14px, 1.8vw, 22px);
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: clamp(4px, 0.6vh, 8px);
+  }
+  .s1-meta {
+    font-size: clamp(10px, 1.1vw, 14px);
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+
+  /* ── SLIDE 2: CONTRAST ── */
+  #s2 {
+    align-items: stretch;
+  }
+  .contrast-half {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 6%;
+  }
+  .contrast-half.old {
+    background: rgba(255,255,255,0.04);
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .contrast-half.new {
+    background: transparent;
+  }
+  .contrast-label {
+    font-size: clamp(8px, 0.9vw, 12px);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: clamp(16px, 3vh, 32px);
+  }
+  .contrast-half.old .contrast-label {
+    color: rgba(255,255,255,0.3);
+  }
+  .contrast-word {
+    font-size: clamp(22px, 4.2vw, 56px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.25);
+    line-height: 1.4;
+  }
+  .contrast-half.new .contrast-word {
+    color: var(--white);
+    font-weight: 600;
+  }
+  .contrast-half.new .contrast-word:first-of-type {
+    color: var(--gold);
+  }
+
+  /* ── SLIDE 3: 5 CHANGES ── */
+  #s3 {
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 8%;
+  }
+  .s3-heading {
+    font-size: clamp(8px, 0.9vw, 12px);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: clamp(20px, 4vh, 44px);
+  }
+  .change-line {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(12px, 1.8vw, 24px);
+    margin-bottom: clamp(8px, 1.4vh, 18px);
+  }
+  .change-num {
+    font-size: clamp(9px, 0.9vw, 12px);
+    color: var(--gold);
+    letter-spacing: 1px;
+    font-weight: 600;
+    min-width: clamp(18px, 2vw, 28px);
+  }
+  .change-text {
+    font-size: clamp(18px, 3vw, 40px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.25;
+  }
+  .change-text em {
+    font-style: normal;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── SLIDE 4: CLARITY ── */
+  #s4 {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .clarity-top {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .clarity-top img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    filter: brightness(0.88);
+  }
+  .clarity-top .no-img {
+    width: 100%; height: 100%;
+    background: #1a2a45;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    color: rgba(255,255,255,0.3);
+    font-size: clamp(11px, 1.2vw, 16px);
+    letter-spacing: 1px;
+  }
+  .clarity-top .no-img span {
+    font-size: clamp(8px, 0.9vw, 12px);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .clarity-bar {
+    background: #070f1e;
+    padding: clamp(10px, 1.6vh, 20px) clamp(20px, 4%, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .clarity-caption {
+    font-size: clamp(13px, 1.6vw, 22px);
+    font-weight: 600;
+    color: var(--white);
+  }
+  .clarity-sub {
+    font-size: clamp(9px, 0.9vw, 12px);
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ── SLIDE 5: UNLOCKS ── */
+  #s5 {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .unlock-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 4%;
+    border-right: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+  .unlock-col:last-child { border-right: none; }
+  .unlock-who {
+    font-size: clamp(22px, 3.6vw, 48px);
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: clamp(8px, 1.2vh, 16px);
+    line-height: 1;
+  }
+  .unlock-line {
+    font-size: clamp(11px, 1.2vw, 15px);
+    color: rgba(255,255,255,0.72);
+    font-weight: 300;
+    line-height: 1.55;
+    max-width: 280px;
+  }
+
+  /* ── PRINT MODE ── */
+  @media print {
+    html, body { overflow: visible; background: #000; }
+    #deck { display: block; }
+    #nav { display: none; }
+    .slide {
+      display: flex !important;
+      width: 100vw;
+      height: 56.25vw;
+      page-break-after: always;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- SLIDE 1: TITLE -->
+  <div class="slide active" id="s1">
+    <div class="s1-eyebrow">Damco Day &nbsp;·&nbsp; May 1, 2026</div>
+    <div class="s1-title">Diagnosis First</div>
+    <div class="s1-rule"></div>
+    <div class="s1-speaker">Manish Gupta</div>
+    <div class="s1-meta">Second speaker &nbsp;·&nbsp; 7–8 minutes</div>
+  </div>
+
+  <!-- SLIDE 2: THE CONTRAST -->
+  <div class="slide" id="s2">
+    <div class="contrast-half old">
+      <div class="contrast-label">The way it was</div>
+      <div class="contrast-word">Capability.</div>
+      <div class="contrast-word">Proposal.</div>
+      <div class="contrast-word">Price.</div>
+    </div>
+    <div class="contrast-half new">
+      <div class="contrast-label">Diagnosis First</div>
+      <div class="contrast-word">Diagnosis.</div>
+      <div class="contrast-word">Trust.</div>
+      <div class="contrast-word">Value.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: THE 5 CHANGES -->
+  <div class="slide" id="s3">
+    <div class="s3-heading">Five things that changed</div>
+    <div class="change-line">
+      <span class="change-num">01</span>
+      <span class="change-text"><em>Diagnosis</em> before proposal</span>
+    </div>
+    <div class="change-line">
+      <span class="change-num">02</span>
+      <span class="change-text">Trust from <em>day zero</em></span>
+    </div>
+    <div class="change-line">
+      <span class="change-num">03</span>
+      <span class="change-text">Budget as a <em>design constraint</em></span>
+    </div>
+    <div class="change-line">
+      <span class="change-num">04</span>
+      <span class="change-text"><em>Clarity</em> of fit</span>
+    </div>
+    <div class="change-line">
+      <span class="change-num">05</span>
+      <span class="change-text"><em>Business value,</em> not technical output</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: MICROSOFT CLARITY -->
+  <div class="slide" id="s4">
+    <div class="clarity-top">
+      <img src="clarity.png" alt="Microsoft Clarity heatmap" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="no-img" style="display:none;">
+        <span>Save screenshot as</span>
+        clarity.png in 04-Final/
+      </div>
+    </div>
+    <div class="clarity-bar">
+      <div class="clarity-caption">We listen in the room. And we listen after it.</div>
+      <div class="clarity-sub">Microsoft Clarity &nbsp;·&nbsp; Behavioural analytics</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: WHAT IT UNLOCKS -->
+  <div class="slide" id="s5">
+    <div class="unlock-col">
+      <div class="unlock-who">Clients</div>
+      <div class="unlock-line">A partner who understood the real problem before anything was signed.</div>
+    </div>
+    <div class="unlock-col">
+      <div class="unlock-who">Damco</div>
+      <div class="unlock-line">Work that fits. Scoped cleanly. Trust that holds through delivery.</div>
+    </div>
+    <div class="unlock-col">
+      <div class="unlock-who">You</div>
+      <div class="unlock-line">A professional skill, not a sales skill. Learnable. This is what we are building.</div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nav-btn" id="prev" disabled>&#8592;</button>
+  <span id="counter">1 / 5</span>
+  <button class="nav-btn" id="next">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function go(n) {
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === slides.length - 1;
+  }
+
+  document.getElementById('prev').addEventListener('click', () => { if (current > 0) go(current - 1); });
+  document.getElementById('next').addEventListener('click', () => { if (current < slides.length - 1) go(current + 1); });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { if (current < slides.length - 1) go(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { if (current > 0) go(current - 1); }
+  });
+</script>
+
+</body>
+</html>

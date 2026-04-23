@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnosis First: Damco Day Keynote</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #0f1f3d;
+    color: #fff;
+    padding: 48px 64px 40px;
+  }
+  .header-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c8b97a;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    font-size: 42px;
+    font-weight: normal;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header h1 em {
+    font-style: italic;
+    color: #c8b97a;
+  }
+  .header-meta {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    color: #9babc7;
+    margin-top: 20px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+  .header-meta strong { color: #e0e8f5; }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  /* ── SECTION HEADINGS ── */
+  .section-title {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c8b97a;
+    padding: 48px 0 16px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 28px;
+  }
+
+  /* ── STRATEGY OVERVIEW ── */
+  .core-message {
+    background: #fff;
+    border-left: 4px solid #0f1f3d;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    border-radius: 0 6px 6px 0;
+  }
+  .core-message p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: #1a1a1a;
+  }
+
+  .alignment-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .alignment-row {
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border: 1px solid #e8e4da;
+  }
+  .alignment-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .alignment-brief { color: #444; font-size: 14px; }
+  .alignment-how { color: #1a1a1a; font-size: 14px; }
+  .alignment-row .col-brief .alignment-label { color: #c8b97a; }
+  .alignment-row .col-how .alignment-label { color: #2a6496; }
+
+  /* ── 5 CHANGES ── */
+  .changes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .change-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 20px;
+    border: 1px solid #e8e4da;
+    border-top: 3px solid #0f1f3d;
+  }
+  .change-number {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #c8b97a;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .change-name {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f1f3d;
+    margin-bottom: 6px;
+  }
+  .change-desc {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* ── STORY MAP ── */
+  .story-map {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .story-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 20px;
+    border: 1px solid #e8e4da;
+  }
+  .story-tag {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: #0f1f3d;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  .story-tag.supporting { background: #2a6496; }
+  .story-tag.enterprise { background: #3d6b3e; }
+  .story-name {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .story-pattern {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .story-duration {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    color: #c8b97a;
+  }
+
+  /* ── SCRIPT ── */
+  .beat {
+    margin-bottom: 52px;
+  }
+  .beat-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #0f1f3d;
+  }
+  .beat-number {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: #0f1f3d;
+    padding: 3px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .beat-title {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f1f3d;
+  }
+  .beat-duration {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    color: #999;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .spoken {
+    font-size: 17px;
+    line-height: 1.75;
+    color: #111;
+    margin-bottom: 16px;
+    padding-left: 20px;
+    border-left: 3px solid #e8e4da;
+  }
+  .spoken:last-of-type { margin-bottom: 0; }
+
+  .change-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #c8b97a;
+    font-weight: 700;
+    margin: 22px 0 8px;
+  }
+
+  .stage-direction {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12.5px;
+    color: #777;
+    font-style: italic;
+    background: #faf8f3;
+    border: 1px dashed #d8d0b8;
+    border-radius: 4px;
+    padding: 10px 16px;
+    margin-top: 16px;
+  }
+  .stage-direction strong { color: #444; font-style: normal; }
+
+  .screenshot-placeholder {
+    background: #e8e8e8;
+    border: 2px dashed #bbb;
+    border-radius: 6px;
+    padding: 28px;
+    text-align: center;
+    margin: 16px 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    color: #888;
+  }
+
+  /* ── CLOSE LINE ── */
+  .final-line {
+    font-size: 20px;
+    font-style: italic;
+    color: #0f1f3d;
+    text-align: center;
+    padding: 28px 40px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #d8d0b8;
+    margin-top: 20px;
+  }
+
+  /* ── TIMING BAR ── */
+  .timing-bar {
+    background: #fff;
+    border: 1px solid #e8e4da;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-top: 48px;
+  }
+  .timing-bar h3 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 14px;
+  }
+  .timing-rows { display: flex; flex-direction: column; gap: 8px; }
+  .timing-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 60px;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .timing-beat-name {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #444;
+  }
+  .timing-bar-track {
+    background: #eee;
+    border-radius: 3px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .timing-bar-fill {
+    height: 100%;
+    background: #0f1f3d;
+    border-radius: 3px;
+  }
+  .timing-seconds {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+  }
+  .timing-total {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f1f3d;
+    text-align: right;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; }
+    .header { background: #0f1f3d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .beat { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 700px) {
+    .header { padding: 32px 24px; }
+    .container { padding: 0 20px 60px; }
+    .alignment-row { grid-template-columns: 1fr; }
+    .story-map { grid-template-columns: 1fr; }
+    .changes-grid { grid-template-columns: 1fr; }
+    .timing-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-label">Damco Day &nbsp;·&nbsp; Keynote Address</div>
+  <h1><em>Diagnosis First</em></h1>
+  <div class="header-meta">
+    <span><strong>Speaker</strong> Manish Gupta</span>
+    <span><strong>Date</strong> May 1, 2026</span>
+    <span><strong>Duration</strong> 7–8 minutes</span>
+    <span><strong>Position</strong> Second speaker, following Mohit</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- WHAT THIS TALK COVERS AND WHY -->
+  <div class="section-title">What This Talk Covers and Why</div>
+
+  <div class="core-message">
+    <p>Damco used to walk into client conversations leading with what we can build. We shifted to leading with understanding the real problem first. That one change, diagnosis before proposal, is how trust is built from day zero, how budget stops being an obstacle, and how Damco is maturing in how it engages the market.</p>
+  </div>
+
+  <div class="alignment-grid">
+    <div class="alignment-row">
+      <div class="col-brief">
+        <div class="alignment-label">Dimple's Brief</div>
+        <div class="alignment-brief">Show what changes when conversations carry technical depth and sharper diagnosis</div>
+      </div>
+      <div class="col-how">
+        <div class="alignment-label">How This Talk Delivers</div>
+        <div class="alignment-how">Beat 1 names the old way honestly. Beat 2 shows the shift with a specific story. The contrast is explicit and personal.</div>
+      </div>
+    </div>
+    <div class="alignment-row">
+      <div class="col-brief">
+        <div class="alignment-label">Dimple's Brief</div>
+        <div class="alignment-brief">Not just a sales change. Damco maturing as a firm.</div>
+      </div>
+      <div class="col-how">
+        <div class="alignment-label">How This Talk Delivers</div>
+        <div class="alignment-how">Named directly in Beat 6: "A firm that leads with diagnosis is a different kind of firm." The maturity framing is the close.</div>
+      </div>
+    </div>
+    <div class="alignment-row">
+      <div class="col-brief">
+        <div class="alignment-label">Dimple's Brief</div>
+        <div class="alignment-brief">End with what this unlocks for Damco, clients, and the people in the room</div>
+      </div>
+      <div class="col-how">
+        <div class="alignment-label">How This Talk Delivers</div>
+        <div class="alignment-how">Beat 6 closes in three layers: CLIENTS / DAMCO / YOU, each with one direct statement.</div>
+      </div>
+    </div>
+    <div class="alignment-row">
+      <div class="col-brief">
+        <div class="alignment-label">Dimple's Brief</div>
+        <div class="alignment-brief">Candid, practitioner-led, real client scenarios</div>
+      </div>
+      <div class="col-how">
+        <div class="alignment-label">How This Talk Delivers</div>
+        <div class="alignment-how">Three real client stories (RJ-Legal, Hoop Messenger, ABNAH) plus two reference names. First person throughout. No process language.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 CHANGES -->
+  <div class="section-title">The 5 Changes, Manish's Framework</div>
+  <p style="font-size:14px; color:#666; margin-bottom:18px; font-family:'Helvetica Neue',Arial,sans-serif;">These are the specific changes Manish introduced to the Damco pre-sales approach. Named explicitly in Beat 4.</p>
+
+  <div class="changes-grid">
+    <div class="change-card">
+      <div class="change-number">Change 1</div>
+      <div class="change-name">Diagnosis First</div>
+      <div class="change-desc">Every conversation starts with the real problem, before capability, solution, or price.</div>
+    </div>
+    <div class="change-card">
+      <div class="change-number">Change 2</div>
+      <div class="change-name">Trust from Day Zero</div>
+      <div class="change-desc">Trust is built in the first conversation, not after the contract. The client should feel understood before they feel sold to.</div>
+    </div>
+    <div class="change-card">
+      <div class="change-number">Change 3</div>
+      <div class="change-name">Budget as Design Constraint</div>
+      <div class="change-desc">If the pain is real, a tailored solution always exists. Budget tells us how to sequence, not whether to engage.</div>
+    </div>
+    <div class="change-card">
+      <div class="change-number">Change 4</div>
+      <div class="change-name">Clarity of Fit</div>
+      <div class="change-desc">The client should leave every conversation knowing why Damco is the right partner, because the conversation showed it.</div>
+    </div>
+    <div class="change-card">
+      <div class="change-number">Change 5</div>
+      <div class="change-name">Business Value Orientation</div>
+      <div class="change-desc">Every solution is framed in terms of what changes for the business. The output is a capability. The outcome is the point.</div>
+    </div>
+  </div>
+
+  <!-- STORY MAP -->
+  <div class="section-title">Story Architecture</div>
+
+  <div class="story-map">
+    <div class="story-card">
+      <div class="story-tag">Primary</div>
+      <div class="story-name">RJ-Legal</div>
+      <div class="story-pattern">Made the solution real before any proposal</div>
+      <div class="story-duration">90 sec &nbsp;·&nbsp; Beat 2</div>
+    </div>
+    <div class="story-card">
+      <div class="story-tag supporting">Supporting</div>
+      <div class="story-name">Hoop Messenger</div>
+      <div class="story-pattern">Made the problem real, then took full ownership</div>
+      <div class="story-duration">65 sec &nbsp;·&nbsp; Beat 3</div>
+    </div>
+    <div class="story-card">
+      <div class="story-tag enterprise">Enterprise</div>
+      <div class="story-name">ABNAH (Aditya Birla)</div>
+      <div class="story-pattern">Made the vision real before the contract existed</div>
+      <div class="story-duration">35 sec &nbsp;·&nbsp; Beat 3</div>
+    </div>
+  </div>
+  <p style="font-size:13px; color:#888; font-family:'Helvetica Neue',Arial,sans-serif; margin-top:10px; margin-bottom:0;">Plus reference mentions: Tamarind, Visaka: same pattern, different industries.</p>
+
+
+  <!-- COMPLETE SCRIPT -->
+  <div class="section-title">The Complete Script</div>
+
+
+  <!-- BEAT 1 -->
+  <div class="beat">
+    <div class="beat-header">
+      <span class="beat-number">Beat 1</span>
+      <span class="beat-title">Name the Old Way</span>
+      <span class="beat-duration">50 sec</span>
+    </div>
+
+    <p class="spoken">"I want to start by being honest about something."</p>
+
+    <p class="spoken">"For most of our history, and this is true of most IT services firms, the first thing we did when a client came to us was tell them what we could build. We led with capability. We showed the portfolio. We put together a proposal. Sometimes we won the work. Sometimes we didn't. And when we didn't, we usually told ourselves it was about price."</p>
+
+    <p class="spoken">"It wasn't always about price."</p>
+
+    <div class="stage-direction"><strong>Note:</strong> I will open with "I want to start by being honest." The final line, "It wasn't always about price," is a full stop. I will pause and let it land.</div>
+  </div>
+
+
+  <!-- BEAT 2 -->
+  <div class="beat">
+    <div class="beat-header">
+      <span class="beat-number">Beat 2</span>
+      <span class="beat-title">RJ-Legal: Making the Solution Real</span>
+      <span class="beat-duration">90 sec</span>
+    </div>
+
+    <p class="spoken">"About two months ago I was on a call with a lawyer in Australia. He had a product idea, his exact words: 'It's just in my head.' He described his workflow, his clients' pain, his vision for a SaaS platform. No written brief, no formal budget, no other vendors in the conversation. And the old instinct would have been: take notes, come back with a proposal, show him what we can do."</p>
+
+    <p class="spoken">"I did something different. Before the second call, I built a prototype. Not a polished product, a working visual of what he had described. His portal. The compliance workflow. The way lawyers and clients would move through the system. His business model on a screen."</p>
+
+    <p class="spoken">"When he saw it on the second call, something changed. He stopped explaining his idea. He started validating it. He added requirements we hadn't discussed. By the end of the call, he said: 'Let's start. Send me what I need to sign.'"</p>
+
+    <p class="spoken">"He didn't say yes because our price was right. He said yes because his vision existed outside his head for the first time. Trust was built in two conversations, before a single line of contract. That is diagnosis first."</p>
+
+    <div class="stage-direction"><strong>Note:</strong> I will pause on "That is diagnosis first." This is the pivot of the talk.</div>
+  </div>
+
+
+  <!-- BEAT 3 -->
+  <div class="beat">
+    <div class="beat-header">
+      <span class="beat-number">Beat 3</span>
+      <span class="beat-title">Hoop Messenger + ABNAH: Two More Expressions</span>
+      <span class="beat-duration">115 sec</span>
+    </div>
+
+    <p class="spoken">"That approach doesn't always mean building a prototype. Sometimes it means something different, a diagnosis so clear that the client finally understands their own situation, and a commitment so complete that they stop wondering if it can be done."</p>
+
+    <p class="spoken">"Sahand Adilipour had a secure messaging application, ten years old, completely shut down. No users. No one maintaining it. Other developers had looked at it. Nobody had committed to fixing it. When Damco came back to him, we came with a full assessment. Every layer of that codebase. Every reason it was broken. Exactly what it would take to bring it back to life, in what sequence, at what cost."</p>
+
+    <p class="spoken">"And then we did something the others hadn't. We took complete ownership. Not 'here is what we found.' We will see this through."</p>
+
+    <p class="spoken">"Sahand had not seen that combination before. The depth of the diagnosis. The confidence behind the commitment. The application went live."</p>
+
+    <p class="spoken">"The same pattern shows up at enterprise scale too. Aditya Birla New Age Hospitality, ABNAH, needed a digital platform for their café business across India. Before any contract, before a formal brief, Damco built out the complete picture. The user experience. The architecture. Every integration, laid out in full. Not a proposal, a vision of exactly what their platform could look like. They had not seen another vendor go that deep before the conversation was even formal. Damco became their sole technology partner."</p>
+
+    <p class="spoken">"Three different clients. Three different situations. The same question at the centre of each one: do we understand this problem deeply enough to make it real for the client before we ask them to sign anything?"</p>
+
+    <p class="spoken">"And these are not isolated stories, Tamarind, Visaka, the same pattern, different industries, the same outcome: clients who trusted us with the work before we had finished explaining the price."</p>
+
+    <div class="stage-direction"><strong>Note:</strong> I will keep the ABNAH story short: three sentences of setup, one line of outcome. I will not expand it in the room. The Tamarind/Visaka line I will deliver in one breath and move on.</div>
+  </div>
+
+
+  <!-- BEAT 4 -->
+  <div class="beat">
+    <div class="beat-header">
+      <span class="beat-number">Beat 4</span>
+      <span class="beat-title">The 5 Changes</span>
+      <span class="beat-duration">110 sec</span>
+    </div>
+
+    <p class="spoken">"So what actually changed? Let me be specific, because this is not a mindset shift that is difficult to describe. These are five concrete things."</p>
+
+    <div class="change-label">Change 1: Diagnosis First</div>
+    <p class="spoken">"First: diagnosis before proposal. The first conversation is not a pitch. It is a diagnostic. Before we talk about what we can build, we need to understand what the client is actually trying to solve. Not what they've described, what they are trying to solve. Those are often different things."</p>
+
+    <div class="change-label">Change 2: Trust from Day Zero</div>
+    <p class="spoken">"Second: trust from day zero. Trust is not earned after the contract is signed. It is built, or lost, in the first conversation. When a client feels genuinely understood, when they sense that we are thinking about their problem and not our pipeline, that is when trust starts. The first call is already delivery."</p>
+
+    <div class="change-label">Change 3: Budget as Design Constraint</div>
+    <p class="spoken">"Third: budget is a design constraint, not a barrier. If the pain is real, genuinely real, there is always a tailored solution. Budget tells us what to build first and how to sequence it. It does not tell us whether to engage. Every client, wherever they sit, deserves a solution shaped around where they are."</p>
+
+    <div class="change-label">Change 4: Clarity of Fit</div>
+    <p class="spoken">"Fourth: clarity of fit. At the end of every conversation, the client should feel that Damco is the right partner. Not because we said so, because the quality of the conversation showed it. When you go deep on someone's problem before they have asked you to, that demonstrates capability more than any portfolio ever will."</p>
+
+    <div class="change-label">Change 5: Business Value, Not Technical Output</div>
+    <p class="spoken">"And fifth: business value, not technical output. We are not selling code. We are selling what changes for the business when the right solution is in place. Every proposal, every scoping conversation, framed in terms of outcomes. What does this unlock? What does this stop hurting? That is the conversation clients remember."</p>
+
+    <div class="stage-direction"><strong>Note:</strong> I will not say "change number one, change number two." The rhythm carries the sequence. I will deliver each change as a personal observation, not a list item.</div>
+  </div>
+
+
+  <!-- BEAT 5 -->
+  <div class="beat">
+    <div class="beat-header">
+      <span class="beat-number">Beat 5</span>
+      <span class="beat-title">Microsoft Clarity: Listening After the Meeting</span>
+      <span class="beat-duration">40 sec</span>
+    </div>
+
+    <p class="spoken">"And this does not stop when the call ends. After we share a proposal or a deck with a client, we can see, through behavioral analytics, how they moved through it. Which sections they spent time on. What they came back to on the second read. What they skipped in three seconds."</p>
+
+    <p class="spoken">"We use Microsoft Clarity for this. It tells us what matters to the client even when they don't say it. So the next conversation starts exactly where their attention is, not where we assumed it would be."</p>
+
+    <div class="screenshot-placeholder">[ Screenshot: Microsoft Clarity: scroll depth or session replay, anonymised ]<br><span style="font-size:11px; margin-top:6px; display:block;">20 seconds on screen</span></div>
+
+    <p class="spoken">"We listen in the room. And we listen after it."</p>
+  </div>
+
+
+  <!-- BEAT 6 -->
+  <div class="beat">
+    <div class="beat-header">
+      <span class="beat-number">Beat 6</span>
+      <span class="beat-title">What It Unlocks: The Maturity Story</span>
+      <span class="beat-duration">75 sec</span>
+    </div>
+
+    <p class="spoken">"A firm that leads with capability is telling clients: trust us because of what we can do. A firm that leads with diagnosis is telling clients: trust us because of how well we understand you. That is a different kind of firm. That is what Dimple is pointing at when she says this is not just a sales change."</p>
+
+    <div class="change-label">For Clients</div>
+    <p class="spoken">"For clients, they get a partner who understood their problem before they signed anything. Not a vendor who bid on the version of the problem they described."</p>
+
+    <div class="change-label">For Damco</div>
+    <p class="spoken">"For Damco, we win work that fits. We scope it cleanly. We build trust before the contract is signed, and that trust holds through delivery because what was promised was grounded in reality from the start."</p>
+
+    <div class="change-label">For You</div>
+    <p class="spoken">"For the people in this room, the skill being built here is not a sales skill. It is a professional skill. The ability to sit across from someone, understand their real problem, and make it tangible, before you propose anything, is what separates good practitioners from exceptional ones. It is learnable. It is what we are building."</p>
+
+    <div class="final-line">"The best work we have won at Damco was won before we wrote a single line of proposal."</div>
+
+    <div class="stage-direction"><strong>Note:</strong> I will slow down across the three-layer section. For the final line, no slide. I will look at the room and stop.</div>
+  </div>
+
+
+  <!-- TIMING REFERENCE -->
+  <div class="timing-bar">
+    <h3>Talk Timing Reference</h3>
+    <div class="timing-rows">
+      <div class="timing-row">
+        <span class="timing-beat-name">Beat 1: Old Way</span>
+        <div class="timing-bar-track"><div class="timing-bar-fill" style="width:8%"></div></div>
+        <span class="timing-seconds">50 sec</span>
+      </div>
+      <div class="timing-row">
+        <span class="timing-beat-name">Beat 2: RJ-Legal</span>
+        <div class="timing-bar-track"><div class="timing-bar-fill" style="width:19%"></div></div>
+        <span class="timing-seconds">90 sec</span>
+      </div>
+      <div class="timing-row">
+        <span class="timing-beat-name">Beat 3: Hoop + ABNAH</span>
+        <div class="timing-bar-track"><div class="timing-bar-fill" style="width:24%"></div></div>
+        <span class="timing-seconds">115 sec</span>
+      </div>
+      <div class="timing-row">
+        <span class="timing-beat-name">Beat 4: 5 Changes</span>
+        <div class="timing-bar-track"><div class="timing-bar-fill" style="width:23%"></div></div>
+        <span class="timing-seconds">110 sec</span>
+      </div>
+      <div class="timing-row">
+        <span class="timing-beat-name">Beat 5: MS Clarity</span>
+        <div class="timing-bar-track"><div class="timing-bar-fill" style="width:8%"></div></div>
+        <span class="timing-seconds">40 sec</span>
+      </div>
+      <div class="timing-row">
+        <span class="timing-beat-name">Beat 6: What It Unlocks</span>
+        <div class="timing-bar-track"><div class="timing-bar-fill" style="width:16%"></div></div>
+        <span class="timing-seconds">75 sec</span>
+      </div>
+    </div>
+    <div class="timing-total">Total: ~8 minutes at natural pace with pauses</div>
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>
