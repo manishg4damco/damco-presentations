@@ -1203,6 +1203,49 @@ html, body {
 }
 
 /* ============================================================
+   PORTRAIT / ROTATE PROMPT
+   ============================================================ */
+@keyframes rotatePhone {
+  0%   { transform: rotate(0deg); }
+  35%  { transform: rotate(0deg); }
+  65%  { transform: rotate(-90deg); }
+  90%  { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+#rotate-prompt {
+  display: none;
+  position: fixed; inset: 0;
+  background: #100D08;
+  z-index: 9999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  text-align: center;
+  padding: 48px;
+}
+#rotate-prompt.show { display: flex; }
+.rotate-icon {
+  font-size: 54px;
+  color: #E32200;
+  animation: rotatePhone 2.4s ease-in-out infinite;
+  display: inline-block;
+}
+.rotate-title {
+  font-family: var(--fh);
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+}
+.rotate-sub {
+  font-family: var(--fb);
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.8;
+  max-width: 280px;
+}
+
+/* ============================================================
    NAVIGATION BAR
    ============================================================ */
 .nav-bar {
@@ -2179,6 +2222,12 @@ html, body {
 <!-- ============================================================
      NAVIGATION BAR
      ============================================================ -->
+<div id="rotate-prompt">
+  <i class="fas fa-mobile-screen-button rotate-icon"></i>
+  <div class="rotate-title">Rotate your device</div>
+  <div class="rotate-sub">This presentation is designed for landscape viewing. Please rotate for the best experience.</div>
+</div>
+
 <div class="nav-bar" id="navBar">
   <button class="nb-btn" id="btnPrev" onclick="go(-1)">&#8592;</button>
   <span class="nb-counter" id="counter">1 / 14</span>
@@ -2210,12 +2259,18 @@ function updateNav() {
   document.getElementById('btnNext').disabled = current === TOTAL;
 }
 
+function checkOrientation() {
+  const isPortraitPhone = window.innerWidth < 600 && window.innerWidth < window.innerHeight;
+  document.getElementById('rotate-prompt').classList.toggle('show', isPortraitPhone);
+}
+
 function scaleDecks() {
   const deck = document.getElementById('deck');
   const scaleX = window.innerWidth / 1280;
   const scaleY = window.innerHeight / 720;
   const scale = Math.min(scaleX, scaleY);
   deck.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  checkOrientation();
 }
 
 document.addEventListener('keydown', e => {
@@ -2223,7 +2278,16 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
 });
 
+// Touch swipe support
+let _tx = 0;
+document.addEventListener('touchstart', e => { _tx = e.changedTouches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - _tx;
+  if (Math.abs(dx) > 48) go(dx < 0 ? 1 : -1);
+}, { passive: true });
+
 window.addEventListener('resize', scaleDecks);
+window.addEventListener('orientationchange', scaleDecks);
 
 updateNav();
 scaleDecks();
