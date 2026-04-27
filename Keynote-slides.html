@@ -3,530 +3,525 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<title>Diagnosis First: Slides</title>
+<title>Diagnosis First — Manish Gupta</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --navy: #0f1f3d;
-    --gold: #c8b97a;
-    --white: #ffffff;
-    --dim: rgba(255,255,255,0.28);
-  }
+:root {
+  --bg:      #0D1117;
+  --bg-alt:  #080B0F;
+  --text:    #F0F6FC;
+  --muted:   #8B949E;
+  --soft:    #4B5563;
+  --accent:  #4F9EF8;
+  --dim:     rgba(255,255,255,0.04);
+  --border:  rgba(255,255,255,0.07);
+}
 
-  html, body {
-    width: 100%; height: 100%;
-    background: #070f1e;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    overflow: hidden;
-  }
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-  #deck {
-    width: 100%; height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+/* ── DECK & SLIDES ─────────────────────────────────────────── */
+.deck { width: 100vw; height: 100vh; position: relative; }
 
-  /* ── SLIDE BASE ── */
-  .slide {
-    display: none;
-    position: relative;
-    background: var(--navy);
-    color: var(--white);
-    width: min(100vw, 177.78vh);
-    height: min(56.25vw, 100vh);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .slide.active { display: flex; }
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.slide.active { opacity: 1; pointer-events: auto; }
 
-  /* ── NAV ── */
-  #nav {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    z-index: 100;
-  }
-  .nav-btn {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
-  .nav-btn:hover { background: rgba(255,255,255,0.24); }
-  .nav-btn:disabled { opacity: 0.25; cursor: default; }
-  #counter {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    letter-spacing: 2px;
-    min-width: 52px;
-    text-align: center;
-  }
+/* ── SLIDE 1 — TITLE ───────────────────────────────────────── */
+.s1 .event-tag {
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+.s1 .main-title {
+  font-size: clamp(64px, 9vw, 120px);
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 0.95;
+  color: var(--text);
+  margin-bottom: 44px;
+}
+.s1 .accent-bar {
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  margin: 0 auto 44px;
+}
+.s1 .speaker-name {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
 
-  /* ════════════════════════════════════
-     SLIDE 1 — TITLE
-  ════════════════════════════════════ */
-  #s1 {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 0 8%;
-  }
-  #s1::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 80% 50%, rgba(200,185,122,0.07) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .s1-eyebrow {
-    font-size: clamp(9px, 1.1vw, 14px);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: clamp(12px, 2vh, 24px);
-  }
-  .s1-title {
-    font-size: clamp(36px, 7.5vw, 96px);
-    font-weight: 300;
-    font-style: italic;
-    color: var(--gold);
-    line-height: 1.05;
-    margin-bottom: clamp(16px, 3vh, 36px);
-  }
-  .s1-rule {
-    width: clamp(40px, 5vw, 72px);
-    height: 2px;
-    background: var(--gold);
-    margin-bottom: clamp(16px, 2.5vh, 28px);
-  }
-  .s1-speaker {
-    font-size: clamp(14px, 1.8vw, 22px);
-    font-weight: 600;
-    color: var(--white);
-    margin-bottom: clamp(4px, 0.6vh, 8px);
-  }
-  .s1-meta {
-    font-size: clamp(10px, 1.1vw, 14px);
-    color: var(--dim);
-    letter-spacing: 1px;
-  }
+/* ── SLIDE 2 — THE CONTRAST ────────────────────────────────── */
+.s2 {
+  flex-direction: row;
+  padding: 0;
+  gap: 0;
+}
+.s2 .half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 80px 60px;
+}
+.s2 .half.left  { background: var(--bg-alt); border-right: 1px solid var(--border); }
+.s2 .half.right { background: var(--bg); }
 
-  /* ════════════════════════════════════
-     SLIDE 2 — THE CONTRAST (HOW vs WHAT+WHY)
-  ════════════════════════════════════ */
-  #s2 { align-items: stretch; }
-  .contrast-half {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 6%;
-  }
-  .contrast-half.old {
-    background: rgba(255,255,255,0.04);
-    border-right: 1px solid rgba(255,255,255,0.08);
-  }
-  .contrast-label {
-    font-size: clamp(8px, 0.9vw, 12px);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: clamp(16px, 3vh, 32px);
-  }
-  .contrast-half.old .contrast-label { color: rgba(255,255,255,0.3); }
-  .contrast-half.new .contrast-label { color: var(--gold); }
-  .contrast-word {
-    font-size: clamp(22px, 4.2vw, 56px);
-    font-weight: 300;
-    color: rgba(255,255,255,0.25);
-    line-height: 1.4;
-  }
-  .contrast-half.new .contrast-word { color: var(--white); font-weight: 400; }
-  .contrast-highlight {
-    font-size: clamp(22px, 4.2vw, 56px);
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1.4;
-  }
+.s2 .col-label {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.s2 .half.left  .col-label { color: var(--soft); }
+.s2 .half.right .col-label { color: var(--accent); }
 
-  /* ════════════════════════════════════
-     SLIDE 3 — SALES ENGINEERING
-  ════════════════════════════════════ */
-  #s3 {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 0 8%;
-  }
-  .s3-evolution {
-    font-size: clamp(9px, 1vw, 13px);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: clamp(20px, 4vh, 40px);
-  }
-  .s3-from {
-    font-size: clamp(24px, 4.8vw, 64px);
-    font-weight: 300;
-    color: rgba(255,255,255,0.3);
-    line-height: 1.2;
-    margin-bottom: clamp(4px, 0.8vh, 10px);
-  }
-  .s3-to {
-    font-size: clamp(24px, 4.8vw, 64px);
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.2;
-    margin-bottom: clamp(16px, 3vh, 32px);
-  }
-  .s3-sub {
-    font-size: clamp(11px, 1.3vw, 18px);
-    font-weight: 300;
-    color: rgba(255,255,255,0.5);
-    max-width: 60%;
-  }
+.s2 .big-keyword {
+  font-size: clamp(44px, 6.5vw, 88px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 40px;
+}
+.s2 .half.left  .big-keyword { color: #1E2530; }
+.s2 .half.right .big-keyword { color: var(--text); }
 
-  /* ════════════════════════════════════
-     SLIDES 4, 5, 6 — STORY SLIDES
-  ════════════════════════════════════ */
-  .story-slide {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 0 8%;
-  }
-  .story-slide::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--gold);
-    opacity: 0.4;
-  }
-  .story-tag {
-    font-size: clamp(8px, 0.9vw, 11px);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: clamp(12px, 2vh, 22px);
-  }
-  .story-client {
-    font-size: clamp(28px, 5.5vw, 72px);
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.1;
-    margin-bottom: clamp(10px, 1.6vh, 20px);
-  }
-  .story-pattern {
-    font-size: clamp(12px, 1.5vw, 20px);
-    font-weight: 300;
-    color: rgba(255,255,255,0.55);
-    font-style: italic;
-  }
-  /* Slide 4 — RJ-Legal */
-  #s4 { background: var(--navy); }
-  /* Slide 5 — Hoop Messenger */
-  #s5 { background: #0d1c38; }
-  /* Slide 6 — ABNAH enterprise feel */
-  #s6 { background: #0a1a2e; }
-  #s6 .story-client { font-size: clamp(16px, 3vw, 42px); }
-  .story-sub {
-    font-size: clamp(10px, 1.1vw, 14px);
-    color: var(--gold);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: clamp(8px, 1.2vh, 14px);
-  }
+.s2 .attrs { display: flex; flex-direction: column; gap: 14px; }
+.s2 .attr  { font-size: 18px; font-weight: 300; }
+.s2 .half.left  .attr { color: #222A36; }
+.s2 .half.right .attr { color: var(--muted); }
 
-  /* ════════════════════════════════════
-     SLIDE 7 — MICROSOFT CLARITY
-  ════════════════════════════════════ */
-  #s7 { flex-direction: column; align-items: stretch; }
-  .clarity-top {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
-  .clarity-top img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    display: block;
-    filter: brightness(0.88);
-  }
-  .clarity-top .no-img {
-    width: 100%; height: 100%;
-    background: #1a2a45;
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 10px;
-    color: rgba(255,255,255,0.3);
-    font-size: clamp(11px, 1.2vw, 16px);
-    letter-spacing: 1px;
-  }
-  .clarity-bar {
-    background: #070f1e;
-    padding: clamp(10px, 1.6vh, 20px) clamp(20px, 4%, 48px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-shrink: 0;
-  }
-  .clarity-caption {
-    font-size: clamp(13px, 1.6vw, 22px);
-    font-weight: 600;
-    color: var(--white);
-  }
-  .clarity-sub {
-    font-size: clamp(9px, 0.9vw, 12px);
-    color: var(--gold);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-align: right;
-    white-space: nowrap;
-  }
+/* ── SLIDE 3 — SALES ENGINEERING ──────────────────────────── */
+.s3 .eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 36px;
+}
+.s3 .statement {
+  font-size: clamp(28px, 4.2vw, 56px);
+  font-weight: 300;
+  line-height: 1.25;
+  color: var(--text);
+  max-width: 860px;
+}
+.s3 .statement strong { font-weight: 700; }
+.s3 .sub {
+  margin-top: 48px;
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.75;
+  font-weight: 300;
+}
 
-  /* ════════════════════════════════════
-     SLIDE 8 — THE 5 CHANGES
-  ════════════════════════════════════ */
-  #s8 {
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 8%;
-  }
-  .s8-heading {
-    font-size: clamp(8px, 0.9vw, 12px);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: clamp(20px, 4vh, 44px);
-  }
-  .change-line {
-    display: flex;
-    align-items: baseline;
-    gap: clamp(12px, 1.8vw, 24px);
-    margin-bottom: clamp(8px, 1.4vh, 18px);
-  }
-  .change-num {
-    font-size: clamp(9px, 0.9vw, 12px);
-    color: var(--gold);
-    letter-spacing: 1px;
-    font-weight: 600;
-    min-width: clamp(18px, 2vw, 28px);
-  }
-  .change-text {
-    font-size: clamp(18px, 3vw, 40px);
-    font-weight: 300;
-    color: var(--white);
-    line-height: 1.25;
-  }
-  .change-text em {
-    font-style: normal;
-    color: var(--gold);
-    font-weight: 600;
-  }
+/* ── SLIDES 4, 5, 6 — STORY SLIDES ────────────────────────── */
+.story-slide .beat {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+}
+.story-slide .client-name {
+  font-size: clamp(38px, 5.5vw, 72px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+.story-slide .tagline {
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 660px;
+  margin-bottom: 48px;
+}
+.story-slide .detail {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--soft);
+  text-transform: uppercase;
+}
 
-  /* ════════════════════════════════════
-     SLIDE 9 — WHAT IT UNLOCKS
-  ════════════════════════════════════ */
-  #s9 { flex-direction: row; align-items: stretch; }
-  .unlock-col {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 4%;
-    border-right: 1px solid rgba(255,255,255,0.07);
-  }
-  .unlock-col:last-child { border-right: none; }
-  .unlock-who {
-    font-size: clamp(22px, 3.6vw, 48px);
-    font-weight: 800;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: clamp(8px, 1.2vh, 16px);
-    line-height: 1;
-  }
-  .unlock-line {
-    font-size: clamp(11px, 1.2vw, 15px);
-    color: rgba(255,255,255,0.72);
-    font-weight: 300;
-    line-height: 1.55;
-    max-width: 280px;
-  }
+/* ── SLIDE 7 — MICROSOFT CLARITY ──────────────────────────── */
+.s7 .eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 36px;
+}
+.s7 .clarity-img-wrap {
+  width: 680px;
+  max-width: 78vw;
+  height: 300px;
+  background: var(--dim);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--soft);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.s7 .clarity-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.s7 .caption {
+  margin-top: 44px;
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--text);
+}
+.s7 .caption strong { font-weight: 600; color: var(--accent); }
 
-  /* ── PRINT ── */
-  @media print {
-    html, body { overflow: visible; background: #000; }
-    #deck { display: block; }
-    #nav { display: none; }
-    .slide {
-      display: flex !important;
-      width: 100vw; height: 56.25vw;
-      page-break-after: always;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-  }
+/* ── SLIDE 8 — THE 5 CHANGES ──────────────────────────────── */
+.s8 .slide-title {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 48px;
+}
+.s8 .changes {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 680px;
+  text-align: left;
+  width: 100%;
+}
+.s8 .change-row {
+  display: flex;
+  gap: 28px;
+  align-items: baseline;
+}
+.s8 .num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 22px;
+  letter-spacing: 1px;
+  padding-top: 3px;
+}
+.s8 .change-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.s8 .change-desc {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+/* ── SLIDE 9 — WHAT IT UNLOCKS ────────────────────────────── */
+.s9 .eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 56px;
+}
+.s9 .layers {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 800px;
+  width: 100%;
+}
+.s9 .layer {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 32px;
+  align-items: start;
+  text-align: left;
+}
+.s9 .layer-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-top: 4px;
+}
+.s9 .layer-text {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.5;
+}
+.s9 .final-line {
+  margin-top: 56px;
+  font-size: 15px;
+  color: var(--soft);
+  font-style: italic;
+  max-width: 680px;
+  line-height: 1.7;
+}
+
+/* ── NAVIGATION ────────────────────────────────────────────── */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.45s ease;
+  z-index: 9999;
+}
+.counter {
+  position: fixed;
+  bottom: 30px; left: 36px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--soft);
+  z-index: 9999;
+}
+.nav-btns {
+  position: fixed;
+  bottom: 24px; right: 36px;
+  display: flex;
+  gap: 8px;
+  z-index: 9999;
+}
+.nav-btns button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted);
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.nav-btns button:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
 </style>
 </head>
 <body>
 
-<div id="deck">
+<div class="progress-bar" id="progress"></div>
 
-  <!-- SLIDE 1: TITLE -->
-  <div class="slide active" id="s1">
-    <div class="s1-eyebrow">Damco Day &nbsp;·&nbsp; May 1, 2026</div>
-    <div class="s1-title">Diagnosis First</div>
-    <div class="s1-rule"></div>
-    <div class="s1-speaker">Manish Gupta</div>
-    <div class="s1-meta">Second speaker &nbsp;·&nbsp; 7-8 minutes</div>
+<div class="deck" id="deck">
+
+  <!-- ── 01 · TITLE ─────────────────────────────────────── -->
+  <div class="slide s1 active">
+    <div class="event-tag">Damco Day &nbsp;·&nbsp; May 1, 2026</div>
+    <div class="main-title">Diagnosis<br>First</div>
+    <div class="accent-bar"></div>
+    <div class="speaker-name">Manish Gupta</div>
   </div>
 
-  <!-- SLIDE 2: THE CONTRAST — HOW vs WHAT+WHY -->
-  <div class="slide" id="s2">
-    <div class="contrast-half old">
-      <div class="contrast-label">The way it was</div>
-      <div class="contrast-word">Capability.</div>
-      <div class="contrast-word">Estimation.</div>
-      <div class="contrast-word">HOW.</div>
+  <!-- ── 02 · THE CONTRAST ──────────────────────────────── -->
+  <div class="slide s2">
+    <div class="half left">
+      <div class="col-label">The old way</div>
+      <div class="big-keyword">HOW</div>
+      <div class="attrs">
+        <div class="attr">Capability</div>
+        <div class="attr">Estimation</div>
+        <div class="attr">Proposal</div>
+      </div>
     </div>
-    <div class="contrast-half new">
-      <div class="contrast-label">Diagnosis First</div>
-      <div class="contrast-word">What is the real problem?</div>
-      <div class="contrast-word">Why does it matter?</div>
-      <div class="contrast-highlight">WHAT. WHY.</div>
-    </div>
-  </div>
-
-  <!-- SLIDE 3: SALES ENGINEERING -->
-  <div class="slide" id="s3">
-    <div class="s3-evolution">The evolution</div>
-    <div class="s3-from">From pre-sales</div>
-    <div class="s3-to">to sales engineering.</div>
-    <div class="s3-sub">Technical and commercial depth in the first conversation.</div>
-  </div>
-
-  <!-- SLIDE 4: RJ-LEGAL -->
-  <div class="slide story-slide" id="s4">
-    <div class="story-tag">Story 1 &nbsp;·&nbsp; Australia</div>
-    <div class="story-client">RJ-Legal</div>
-    <div class="story-pattern">Sales engineering in action.</div>
-    <div class="story-sub">Two conversations. Trust before contract.</div>
-  </div>
-
-  <!-- SLIDE 5: HOOP MESSENGER -->
-  <div class="slide story-slide" id="s5">
-    <div class="story-tag">Story 2 &nbsp;·&nbsp; Australia</div>
-    <div class="story-client">Hoop Messenger</div>
-    <div class="story-pattern">Diagnosis. Ownership. Delivered.</div>
-    <div class="story-sub">Ten years of code. Back online.</div>
-  </div>
-
-  <!-- SLIDE 6: ABNAH -->
-  <div class="slide story-slide" id="s6">
-    <div class="story-tag">Story 3 &nbsp;·&nbsp; India</div>
-    <div class="story-client">Aditya Birla New Age Hospitality</div>
-    <div class="story-pattern">A complete vision before the contract existed.</div>
-    <div class="story-sub">Sole technology partner.</div>
-  </div>
-
-  <!-- SLIDE 7: MICROSOFT CLARITY -->
-  <div class="slide" id="s7">
-    <div class="clarity-top">
-      <img src="clarity.png" alt="Microsoft Clarity heatmap" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-      <div class="no-img" style="display:none;">clarity.png not found in same folder</div>
-    </div>
-    <div class="clarity-bar">
-      <div class="clarity-caption">We listen in the room. And we listen after it.</div>
-      <div class="clarity-sub">Microsoft Clarity &nbsp;·&nbsp; Behavioural analytics</div>
+    <div class="half right">
+      <div class="col-label">The shift</div>
+      <div class="big-keyword">WHAT<br>&amp; WHY</div>
+      <div class="attrs">
+        <div class="attr">Outcome</div>
+        <div class="attr">Partnership</div>
+        <div class="attr">Trust</div>
+      </div>
     </div>
   </div>
 
-  <!-- SLIDE 8: THE 5 CHANGES -->
-  <div class="slide" id="s8">
-    <div class="s8-heading">Five things that changed</div>
-    <div class="change-line">
-      <span class="change-num">01</span>
-      <span class="change-text"><em>Diagnosis</em> before proposal</span>
+  <!-- ── 03 · SALES ENGINEERING ────────────────────────── -->
+  <div class="slide s3">
+    <div class="eyebrow">The Evolution</div>
+    <div class="statement">
+      From <strong>pre-sales</strong><br>to <strong>sales engineering.</strong>
     </div>
-    <div class="change-line">
-      <span class="change-num">02</span>
-      <span class="change-text">Trust from <em>day zero</em></span>
-    </div>
-    <div class="change-line">
-      <span class="change-num">03</span>
-      <span class="change-text">Budget as a <em>design constraint</em></span>
-    </div>
-    <div class="change-line">
-      <span class="change-num">04</span>
-      <span class="change-text"><em>Clarity</em> of fit</span>
-    </div>
-    <div class="change-line">
-      <span class="change-num">05</span>
-      <span class="change-text"><em>Business value,</em> not technical output</span>
+    <div class="sub">
+      Lead with technical and commercial depth.<br>
+      Make the real problem visible — before you propose anything.
     </div>
   </div>
 
-  <!-- SLIDE 9: WHAT IT UNLOCKS -->
-  <div class="slide" id="s9">
-    <div class="unlock-col">
-      <div class="unlock-who">Clients</div>
-      <div class="unlock-line">A partner who understood the real problem before anything was signed.</div>
+  <!-- ── 04 · RJ-LEGAL ──────────────────────────────────── -->
+  <div class="slide story-slide">
+    <div class="beat">Sales engineering in action</div>
+    <div class="client-name">RJ-Legal</div>
+    <div class="tagline">"Let's start. Send me what I need to sign."</div>
+    <div class="detail">Australia &nbsp;·&nbsp; Two conversations &nbsp;·&nbsp; Trust before contract</div>
+  </div>
+
+  <!-- ── 05 · HOOP MESSENGER ────────────────────────────── -->
+  <div class="slide story-slide">
+    <div class="beat">Diagnosis. Ownership. Delivered.</div>
+    <div class="client-name">Hoop Messenger</div>
+    <div class="tagline">Ten years old. Completely shut down.<br>We named every reason it was broken — and brought it back to life.</div>
+    <div class="detail">Full codebase assessment &nbsp;·&nbsp; Complete ownership</div>
+  </div>
+
+  <!-- ── 06 · ABNAH ──────────────────────────────────────── -->
+  <div class="slide story-slide">
+    <div class="beat">Vision before contract</div>
+    <div class="client-name">Aditya Birla<br>New Age Hospitality</div>
+    <div class="tagline">Sole technology partner.</div>
+    <div class="detail">UX &nbsp;·&nbsp; Architecture &nbsp;·&nbsp; Every integration &nbsp;·&nbsp; Before any contract</div>
+  </div>
+
+  <!-- ── 07 · MICROSOFT CLARITY ─────────────────────────── -->
+  <div class="slide s7">
+    <div class="eyebrow">After the meeting</div>
+    <div class="clarity-img-wrap" id="clarityBox">
+      <img src="clarity.png" alt="Microsoft Clarity — client behaviour analytics" />
     </div>
-    <div class="unlock-col">
-      <div class="unlock-who">Damco</div>
-      <div class="unlock-line">Work that fits. Scoped cleanly. Trust that holds through delivery.</div>
+    <div class="caption">
+      We listen in the room.<br>And we listen <strong>after it.</strong>
     </div>
-    <div class="unlock-col">
-      <div class="unlock-who">You</div>
-      <div class="unlock-line">A professional skill, not a sales skill. Learnable. This is what we are building.</div>
+  </div>
+
+  <!-- ── 08 · THE 5 CHANGES ─────────────────────────────── -->
+  <div class="slide s8">
+    <div class="slide-title">What changed</div>
+    <div class="changes">
+      <div class="change-row">
+        <div class="num">01</div>
+        <div>
+          <div class="change-title">Diagnosis before proposal</div>
+          <div class="change-desc">The first conversation is a diagnostic, not a pitch.</div>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="num">02</div>
+        <div>
+          <div class="change-title">Trust from day zero</div>
+          <div class="change-desc">The first call is already delivery.</div>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="num">03</div>
+        <div>
+          <div class="change-title">Budget is a design constraint</div>
+          <div class="change-desc">Not a barrier. It tells us how to sequence — not whether to engage.</div>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="num">04</div>
+        <div>
+          <div class="change-title">Clarity of fit</div>
+          <div class="change-desc">The conversation shows why Damco is the right partner.</div>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="num">05</div>
+        <div>
+          <div class="change-title">Business value, not technical output</div>
+          <div class="change-desc">We are selling what changes for the business. Outcomes. Not outputs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 09 · WHAT IT UNLOCKS ───────────────────────────── -->
+  <div class="slide s9">
+    <div class="eyebrow">What this unlocks</div>
+    <div class="layers">
+      <div class="layer">
+        <div class="layer-label">Clients</div>
+        <div class="layer-text">A partner who understood the real problem before they signed anything.</div>
+      </div>
+      <div class="layer">
+        <div class="layer-label">Damco</div>
+        <div class="layer-text">Work that fits. Scoped cleanly. Trust that holds through delivery.</div>
+      </div>
+      <div class="layer">
+        <div class="layer-label">You</div>
+        <div class="layer-text">A professional skill. The ability to understand the real problem — and make it tangible before you propose anything.</div>
+      </div>
+    </div>
+    <div class="final-line">
+      "The best work we have won at Damco was won before we wrote a single line of proposal."
     </div>
   </div>
 
 </div>
 
-<!-- NAV -->
-<div id="nav">
-  <button class="nav-btn" id="prev" disabled>&#8592;</button>
-  <span id="counter">1 / 9</span>
-  <button class="nav-btn" id="next">&#8594;</button>
+<!-- ── UI CHROME ─────────────────────────────────────────── -->
+<div class="counter" id="counter">1 / 9</div>
+<div class="nav-btns">
+  <button onclick="prev()" title="Previous (← or ↑)">&#8592;</button>
+  <button onclick="next()" title="Next (→, ↓ or Space)">&#8594;</button>
 </div>
 
 <script>
-  const slides = document.querySelectorAll('.slide');
-  let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+let cur = 0;
 
-  function go(n) {
-    slides[current].classList.remove('active');
-    current = n;
-    slides[current].classList.add('active');
-    document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
-    document.getElementById('prev').disabled = current === 0;
-    document.getElementById('next').disabled = current === slides.length - 1;
-  }
+function go(n) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(n, total - 1));
+  slides[cur].classList.add('active');
+  document.getElementById('counter').textContent = `${cur + 1} / ${total}`;
+  document.getElementById('progress').style.width = `${((cur + 1) / total) * 100}%`;
+}
 
-  document.getElementById('prev').addEventListener('click', () => { if (current > 0) go(current - 1); });
-  document.getElementById('next').addEventListener('click', () => { if (current < slides.length - 1) go(current + 1); });
+function next() { go(cur + 1); }
+function prev() { go(cur - 1); }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { if (current < slides.length - 1) go(current + 1); }
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { if (current > 0) go(current - 1); }
-  });
+document.addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+  if (['ArrowLeft',  'ArrowUp'       ].includes(e.key)) { e.preventDefault(); prev(); }
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (!e.target.closest('.nav-btns')) next();
+});
+
+// init
+go(0);
 </script>
 
 </body>
