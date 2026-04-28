@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnosis First v2 — Manish Gupta</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:      #0D1117;
+  --bg-alt:  #080B0F;
+  --text:    #F0F6FC;
+  --muted:   #8B949E;
+  --soft:    #4B5563;
+  --accent:  #4F9EF8;
+  --dim:     rgba(255,255,255,0.04);
+  --border:  rgba(255,255,255,0.07);
+  --notes-h: 220px;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ─────────────────────────────────────────────────── */
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+.deck {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── SLIDES ─────────────────────────────────────────────────── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.slide.active { opacity: 1; pointer-events: auto; }
+
+/* ── SLIDE 1 — TITLE ────────────────────────────────────────── */
+.s1 .event-tag {
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+.s1 .main-title {
+  font-size: clamp(64px, 9vw, 120px);
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 0.95;
+  color: var(--text);
+  margin-bottom: 44px;
+}
+.s1 .accent-bar {
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  margin: 0 auto 44px;
+}
+.s1 .speaker-name {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.s1 .story-cue {
+  margin-top: 52px;
+  font-size: 13px;
+  color: var(--soft);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── SLIDE 2 — THE CONTRAST ─────────────────────────────────── */
+.s2 {
+  flex-direction: row;
+  padding: 0;
+  gap: 0;
+}
+.s2 .half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 80px 60px;
+}
+.s2 .half.left  { background: var(--bg-alt); border-right: 1px solid var(--border); }
+.s2 .half.right { background: var(--bg); }
+
+.s2 .col-label {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.s2 .half.left  .col-label { color: #6B7280; }
+.s2 .half.right .col-label { color: var(--accent); }
+
+.s2 .big-keyword {
+  font-size: clamp(44px, 6.5vw, 88px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 40px;
+}
+.s2 .half.left  .big-keyword { color: #4A5568; }
+.s2 .half.right .big-keyword { color: var(--text); }
+
+.s2 .attrs { display: flex; flex-direction: column; gap: 14px; }
+.s2 .attr  { font-size: 18px; font-weight: 300; }
+.s2 .half.left  .attr { color: #374151; }
+.s2 .half.right .attr { color: var(--muted); }
+
+/* ── SLIDE 3 — SALES ENGINEERING ────────────────────────────── */
+.s3 .eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 36px;
+}
+.s3 .statement {
+  font-size: clamp(28px, 4.2vw, 56px);
+  font-weight: 300;
+  line-height: 1.25;
+  color: var(--text);
+  max-width: 860px;
+}
+.s3 .statement strong { font-weight: 700; }
+.s3 .sub {
+  margin-top: 48px;
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* ── SLIDES 4, 5 — STORY SLIDES ─────────────────────────────── */
+.story-slide .beat {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+}
+.story-slide .client-name {
+  font-size: clamp(38px, 5.5vw, 72px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+.story-slide .tagline {
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 660px;
+  margin-bottom: 48px;
+}
+.story-slide .detail {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--soft);
+  text-transform: uppercase;
+}
+
+/* ── SLIDE 6 — MICROSOFT CLARITY ────────────────────────────── */
+.s6 .eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 36px;
+}
+.s6 .clarity-img-wrap {
+  width: 680px;
+  max-width: 78vw;
+  height: 300px;
+  background: var(--dim);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--soft);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.s6 .clarity-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.s6 .caption {
+  margin-top: 44px;
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--text);
+}
+.s6 .caption strong { font-weight: 600; color: var(--accent); }
+
+/* ── SLIDE 7 — THE 5 CHANGES ─────────────────────────────────── */
+.s7 .slide-title {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 48px;
+}
+.s7 .changes {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 680px;
+  text-align: left;
+  width: 100%;
+}
+.s7 .change-row {
+  display: flex;
+  gap: 28px;
+  align-items: baseline;
+}
+.s7 .num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 22px;
+  letter-spacing: 1px;
+  padding-top: 3px;
+}
+.s7 .change-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.s7 .change-desc {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+/* ── SLIDE 8 — CLOSE ─────────────────────────────────────────── */
+.s8 .eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 56px;
+}
+.s8 .layers {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 800px;
+  width: 100%;
+}
+.s8 .layer {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 32px;
+  align-items: start;
+  text-align: left;
+}
+.s8 .layer-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-top: 4px;
+}
+.s8 .layer-text {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.5;
+}
+.s8 .final-line {
+  margin-top: 56px;
+  font-size: 15px;
+  color: var(--soft);
+  font-style: italic;
+  max-width: 680px;
+  line-height: 1.7;
+}
+
+/* ── SPEAKER NOTES ───────────────────────────────────────────── */
+.notes-panel {
+  height: var(--notes-h);
+  background: #070A0E;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.notes-panel.visible { display: flex; }
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+.notes-header span {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.notes-header .beat-tag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.7;
+}
+.notes-body {
+  padding: 16px 24px 16px;
+  overflow-y: auto;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #9CA3AF;
+  font-weight: 300;
+}
+.notes-body em {
+  color: var(--soft);
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* ── NAVIGATION ──────────────────────────────────────────────── */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.45s ease;
+  z-index: 9999;
+}
+.counter {
+  position: fixed;
+  bottom: 30px; left: 36px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--soft);
+  z-index: 9999;
+}
+.nav-btns {
+  position: fixed;
+  bottom: 24px; right: 36px;
+  display: flex;
+  gap: 8px;
+  z-index: 9999;
+}
+.nav-btns button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted);
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.nav-btns button:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+.notes-toggle {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--soft);
+  padding: 7px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: inherit;
+  transition: all 0.2s;
+  z-index: 9999;
+}
+.notes-toggle:hover { color: var(--muted); background: rgba(255,255,255,0.08); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="layout">
+
+  <div class="deck" id="deck">
+
+    <!-- ── 01 · TITLE ── story told here, no slide change ──── -->
+    <div class="slide s1 active">
+      <div class="event-tag">Damco Day &nbsp;·&nbsp; May 1, 2026</div>
+      <div class="main-title">Diagnosis<br>First</div>
+      <div class="accent-bar"></div>
+      <div class="speaker-name">Manish Gupta</div>
+      <div class="story-cue">Open with the RJ-Legal story</div>
+    </div>
+
+    <!-- ── 02 · THE CONTRAST ─────────────────────────────── -->
+    <div class="slide s2">
+      <div class="half left">
+        <div class="col-label">The old way</div>
+        <div class="big-keyword">HOW</div>
+        <div class="attrs">
+          <div class="attr">Capability</div>
+          <div class="attr">Estimation</div>
+          <div class="attr">Proposal</div>
+        </div>
+      </div>
+      <div class="half right">
+        <div class="col-label">The shift</div>
+        <div class="big-keyword">WHAT<br>&amp; WHY</div>
+        <div class="attrs">
+          <div class="attr">Outcome</div>
+          <div class="attr">Partnership</div>
+          <div class="attr">Trust</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 03 · SALES ENGINEERING ────────────────────────── -->
+    <div class="slide s3">
+      <div class="eyebrow">The Evolution</div>
+      <div class="statement">
+        From <strong>pre-sales</strong><br>to <strong>sales engineering.</strong>
+      </div>
+      <div class="sub">
+        Lead with technical and commercial depth.<br>
+        Make the real problem visible — before you propose anything.
+      </div>
+    </div>
+
+    <!-- ── 04 · HOOP MESSENGER ───────────────────────────── -->
+    <div class="slide story-slide">
+      <div class="beat">Diagnosis. Ownership. Delivered.</div>
+      <div class="client-name">Hoop Messenger</div>
+      <div class="tagline">Ten years old. Completely shut down.<br>We named every reason it was broken — and brought it back to life.</div>
+      <div class="detail">Full codebase assessment &nbsp;·&nbsp; Complete ownership</div>
+    </div>
+
+    <!-- ── 05 · ABNAH ─────────────────────────────────────── -->
+    <div class="slide story-slide">
+      <div class="beat">Vision before contract</div>
+      <div class="client-name">Aditya Birla<br>New Age Hospitality</div>
+      <div class="tagline">Sole technology partner.</div>
+      <div class="detail">UX &nbsp;·&nbsp; Architecture &nbsp;·&nbsp; Every integration &nbsp;·&nbsp; Before any contract</div>
+    </div>
+
+    <!-- ── 06 · MICROSOFT CLARITY ────────────────────────── -->
+    <div class="slide s6">
+      <div class="eyebrow">After the meeting</div>
+      <div class="clarity-img-wrap" id="clarityBox">
+        <img src="clarity.png" alt="Microsoft Clarity — client behaviour analytics" />
+      </div>
+      <div class="caption">
+        We listen in the room.<br>And we listen <strong>after it.</strong>
+      </div>
+    </div>
+
+    <!-- ── 07 · THE 5 CHANGES ────────────────────────────── -->
+    <div class="slide s7">
+      <div class="slide-title">What changed</div>
+      <div class="changes">
+        <div class="change-row">
+          <div class="num">01</div>
+          <div>
+            <div class="change-title">Diagnosis before proposal</div>
+            <div class="change-desc">The first conversation is a diagnostic, not a pitch.</div>
+          </div>
+        </div>
+        <div class="change-row">
+          <div class="num">02</div>
+          <div>
+            <div class="change-title">Trust from day zero</div>
+            <div class="change-desc">The first call is already delivery.</div>
+          </div>
+        </div>
+        <div class="change-row">
+          <div class="num">03</div>
+          <div>
+            <div class="change-title">Budget is a design constraint</div>
+            <div class="change-desc">Not a barrier. It tells us how to sequence — not whether to engage.</div>
+          </div>
+        </div>
+        <div class="change-row">
+          <div class="num">04</div>
+          <div>
+            <div class="change-title">Clarity of fit</div>
+            <div class="change-desc">The conversation shows why Damco is the right partner.</div>
+          </div>
+        </div>
+        <div class="change-row">
+          <div class="num">05</div>
+          <div>
+            <div class="change-title">Business value, not technical output</div>
+            <div class="change-desc">We are selling what changes for the business. Outcomes. Not outputs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 08 · CLOSE ─────────────────────────────────────── -->
+    <div class="slide s8">
+      <div class="eyebrow">What this unlocks</div>
+      <div class="layers">
+        <div class="layer">
+          <div class="layer-label">Clients</div>
+          <div class="layer-text">A partner who understood the real problem before they signed anything.</div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Damco</div>
+          <div class="layer-text">Work that fits. Scoped cleanly. Trust that holds through delivery.</div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">You</div>
+          <div class="layer-text">A skill that will define your career far beyond this company and this role.</div>
+        </div>
+      </div>
+      <div class="final-line">
+        "The best work we have won at Damco was won before we wrote a single line of proposal."
+      </div>
+    </div>
+
+  </div><!-- /deck -->
+
+  <!-- ── SPEAKER NOTES PANEL ──────────────────────────────── -->
+  <div class="notes-panel" id="notesPanel">
+    <div class="notes-header">
+      <span>Speaker Notes</span>
+      <span class="beat-tag" id="beatTag"></span>
+    </div>
+    <div class="notes-body" id="notesBody"></div>
+  </div>
+
+</div><!-- /layout -->
+
+<!-- ── UI CHROME ──────────────────────────────────────────── -->
+<div class="counter" id="counter">1 / 8</div>
+<div class="nav-btns">
+  <button onclick="prev()" title="Previous (← or ↑)">&#8592;</button>
+  <button onclick="next()" title="Next (→, ↓ or Space)">&#8594;</button>
+</div>
+<button class="notes-toggle" onclick="toggleNotes()" title="Toggle speaker notes (N)">Notes</button>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+let cur = 0;
+let notesVisible = false;
+
+const NOTES = [
+  {
+    beat: 'Beat 1 — The Story',
+    text: `Thanks Mohit. [Pause. Let the room settle.]
+
+About two months ago, I was on a call with a lawyer in Australia. He had a product idea. His exact words: "It's just in my head."
+
+He described his workflow. His clients' pain. His vision for a SaaS platform. No written brief. No formal budget. No other vendors in the conversation.
+
+I did something different. Before the second call, I built a prototype. Not a polished product. A working visual of what he had described. His portal. The compliance workflow. The way lawyers and clients would move through the system. His complete business model on a screen.
+
+When he saw it on the second call, something changed. He stopped explaining his idea. He started validating it. He added requirements we had not discussed. And by the end of the call, he said: "Let's start. Send me what I need to sign."
+
+He did not say yes because our price was right. He said yes because his vision existed outside his head for the first time. Two conversations. Trust before contract.
+
+[Pause fully. Then advance slide.]`
+  },
+  {
+    beat: 'Beat 2 — The Pattern',
+    text: `That moment does not happen when you lead with HOW.
+
+For most of our history, and this is true of most IT services firms, when a client came to us we led with HOW. How we would build it. How many people. How long. How much. We showed capability. We sent estimates. And when we lost work, we told ourselves it was about price.
+
+It was not always about price. [Pause.] Sometimes the client already knew HOW it could be built. That was not the question. The question was: does this firm understand WHAT I am actually trying to solve, and WHY it matters?
+
+HOW has become a commodity. Every competent firm can build, estimate, and deliver. What differentiates us is the depth with which we understand the WHAT and the WHY. That is the shift. From pre-sales to sales engineering.`
+  },
+  {
+    beat: 'Beat 2 cont. — Sales Engineering',
+    text: `[Sales engineering slide — hold briefly, let the words land, then move to stories.]
+
+Pre-sales says: here is what we can do for you.
+Sales engineering says: let me first understand your problem, with full technical and commercial depth, and make it real for you before you sign anything.
+
+When you bring that depth into the first conversation, the client stops thinking about price. They stop asking about timelines. They start asking: how do we start?`
+  },
+  {
+    beat: 'Beat 3 — Hoop Messenger',
+    text: `That approach does not always mean building a prototype.
+
+Sahand had a secure messaging application. Ten years old. Completely shut down. No vendor would touch it. Damco came back with a full assessment. Every layer of the codebase. Every reason it was broken. Exactly what it would take to bring it back. Then we took complete ownership. The application went live.`
+  },
+  {
+    beat: 'Beat 3 cont. — ABNAH',
+    text: `Aditya Birla New Age Hospitality needed a digital platform for their cafe business across India. Before any contract, Damco built the complete picture. UX, architecture, every integration. Not a proposal. A vision. Damco became their sole technology partner.
+
+Tamarind, Visaka, others. Same pattern. Different industries. Same outcome: clients who trusted us before we had finished explaining the price.
+
+[Fast — one breath on the last line, then move.]`
+  },
+  {
+    beat: 'Beat 4 — Tools + Clarity',
+    text: `This approach is supported by how we use technology. We use AI to sharpen our diagnosis, map pain, identify gaps, model solutions faster than before.
+
+And once we have shared a proposal with a client, we do not just wait for their response. We use Microsoft Clarity to see how they moved through it. Which sections they came back to. What they skipped. The next conversation starts exactly where their attention is.
+
+We listen in the room. [Pause.] And we listen after it. [One breath between the two sentences.]`
+  },
+  {
+    beat: 'Beat 5 — The 5 Changes',
+    text: `So what specifically changed? Five things.
+
+First: diagnosis before proposal. The first conversation is not a pitch. It is a diagnostic. We understand the real problem before we ever talk about what we can build.
+
+Second: trust from day zero. Trust is not earned after the contract is signed. It is built, or lost, in the first conversation. The first call is already delivery.
+
+Third: budget is a design constraint, not a barrier. If the pain is real, there is always a tailored solution. Budget tells us how to sequence. It does not tell us whether to engage.
+
+Fourth: clarity of fit. At the end of every conversation, the client should feel that Damco is the right partner. Not because we said so. Because the quality of the conversation showed it.
+
+Fifth: business value, not technical output. We are not selling code. We are selling what changes for the business when the right solution is in place. Outcomes. Not outputs.
+
+[Each point as a personal observation — no numbering out loud. Rhythm carries the sequence.]`
+  },
+  {
+    beat: 'Beat 6 — Close',
+    text: `What we are building here is not a sales skill. It is a professional skill. The ability to sit across from someone, understand their real problem with technical and commercial depth, and make it tangible before you propose anything. That is what separates good practitioners from exceptional ones. It is learnable. And it is what we are building.
+
+For clients: a partner who understood the real problem before they signed anything.
+
+For Damco: work that fits. Scoped cleanly. Trust built before the contract that holds through delivery.
+
+For the people in this room: a skill that will define your career far beyond this company and this role.
+
+[Slow down across the three layers. Final line below — no slide advance. Look at the room and stop.]
+
+"The best work we have won at Damco was won before we wrote a single line of proposal."`
+  }
+];
+
+function go(n) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(n, total - 1));
+  slides[cur].classList.add('active');
+  document.getElementById('counter').textContent = `${cur + 1} / ${total}`;
+  document.getElementById('progress').style.width = `${((cur + 1) / total) * 100}%`;
+  updateNotes();
+}
+
+function next() { go(cur + 1); }
+function prev() { go(cur - 1); }
+
+function toggleNotes() {
+  notesVisible = !notesVisible;
+  document.getElementById('notesPanel').classList.toggle('visible', notesVisible);
+}
+
+function updateNotes() {
+  const n = NOTES[cur];
+  if (!n) return;
+  document.getElementById('beatTag').textContent  = n.beat;
+  document.getElementById('notesBody').textContent = n.text;
+}
+
+document.addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+  if (['ArrowLeft',  'ArrowUp'       ].includes(e.key)) { e.preventDefault(); prev(); }
+  if (e.key === 'n' || e.key === 'N')                   { toggleNotes(); }
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (!e.target.closest('.nav-btns') && !e.target.closest('.notes-toggle')) next();
+});
+
+// init
+go(0);
+</script>
+
+</body>
+</html>
