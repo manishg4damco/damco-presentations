@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ciel Group | AMS Presentation | 26 May 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+
+    /* ============================================================
+       CIEL AMS — DARK EXECUTIVE PRESENTATION
+       Damco Enterprise Technology Solutions | 26 May 2026
+       ============================================================ */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #0D1117;
+      overflow: hidden;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+
+    /* ============================================================
+       DESIGN TOKENS
+       ============================================================ */
+    :root {
+      --bg:      #0D1117;
+      --card:    #161B22;
+      --card2:   #1C2733;
+      --maroon:  #94122C;
+      --orange:  #FF9408;
+      --text:    #E6EDF3;
+      --body:    rgba(230,237,243,0.80);
+      --muted:   rgba(230,237,243,0.48);
+      --dim:     rgba(230,237,243,0.26);
+      --border:  rgba(255,255,255,0.08);
+      --ok:      #34D399;
+      --warn:    #FBBF24;
+      --err:     #F87171;
+      --blue:    #60A5FA;
+    }
+
+    /* ============================================================
+       SLIDE ENGINE
+       ============================================================ */
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .deck section {
+      display: none;
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 52px 80px 52px 80px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .deck section.present { display: flex; }
+
+    /* Subtle architectural grid texture */
+    .deck section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%23ffffff' stroke-width='0.4'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .deck section > * { position: relative; z-index: 1; }
+
+    /* ============================================================
+       PROGRESS + NAV
+       ============================================================ */
+    #progress {
+      position: fixed; bottom: 0; left: 0;
+      height: 3px;
+      background: var(--orange);
+      transition: width 0.3s ease;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .nav-btn {
+      position: fixed; bottom: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.35);
+      font-size: 15px;
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      background: rgba(255,148,8,0.12);
+      border-color: rgba(255,148,8,0.4);
+      color: var(--orange);
+    }
+    #btn-prev { right: 60px; }
+    #btn-next { right: 20px; }
+
+    /* ============================================================
+       NOTES PANEL
+       ============================================================ */
+    #notes-panel {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(9,11,16,0.97);
+      border-top: 2px solid var(--orange);
+      padding: 14px 80px 18px;
+      z-index: 1000;
+      max-height: 28vh;
+      overflow-y: auto;
+    }
+    #notes-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+    #notes-text {
+      font-size: 13px;
+      color: rgba(230,237,243,0.75);
+      line-height: 1.65;
+    }
+    #notes-close {
+      position: absolute;
+      top: 14px; right: 24px;
+      font-size: 16px;
+      color: var(--muted);
+      cursor: pointer;
+      background: none; border: none;
+      line-height: 1;
+    }
+    #notes-close:hover { color: var(--orange); }
+
+    .notes { display: none !important; }
+
+    /* ============================================================
+       SLIDE BADGES
+       ============================================================ */
+    .slide-num {
+      position: absolute !important;
+      top: 22px; right: 32px;
+      font-size: 10px; font-weight: 600;
+      color: rgba(255,255,255,0.18);
+      letter-spacing: 0.12em;
+      z-index: 10;
+    }
+    .act-label {
+      position: absolute !important;
+      top: 22px; left: 80px;
+      font-size: 10px; font-weight: 600;
+      color: rgba(255,255,255,0.18);
+      letter-spacing: 0.12em;
+      z-index: 10;
+    }
+
+    /* ============================================================
+       TYPOGRAPHY
+       ============================================================ */
+    .eyebrow {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--muted); margin-bottom: 12px;
+    }
+
+    .title-xl {
+      font-size: clamp(38px, 4.2vw, 60px);
+      font-weight: 700; color: var(--text); line-height: 1.08;
+    }
+    .title-lg {
+      font-size: clamp(28px, 3vw, 44px);
+      font-weight: 700; color: var(--text); line-height: 1.12;
+    }
+    .title-md {
+      font-size: clamp(20px, 2.2vw, 32px);
+      font-weight: 700; color: var(--text); line-height: 1.2;
+    }
+    .title-sm {
+      font-size: clamp(16px, 1.6vw, 22px);
+      font-weight: 700; color: var(--text); line-height: 1.3;
+    }
+    .sub-lg {
+      font-size: clamp(15px, 1.6vw, 21px);
+      font-weight: 500; color: var(--muted); line-height: 1.5;
+    }
+    .sub-md {
+      font-size: clamp(13px, 1.3vw, 17px);
+      font-weight: 400; color: var(--body); line-height: 1.6;
+    }
+    .body-sm {
+      font-size: clamp(11px, 1.1vw, 14px);
+      color: var(--body); line-height: 1.65;
+    }
+    .stat-xl {
+      font-size: clamp(56px, 7vw, 96px);
+      font-weight: 800; color: var(--orange); line-height: 1;
+    }
+    .stat-lg {
+      font-size: clamp(36px, 4.5vw, 64px);
+      font-weight: 800; color: var(--orange); line-height: 1;
+    }
+
+    .accent       { color: var(--orange) !important; }
+    .maroon-hi    { color: #E07090 !important; }
+    .ok-hi        { color: var(--ok) !important; }
+    .warn-hi      { color: var(--warn) !important; }
+    .err-hi       { color: var(--err) !important; }
+    .muted-hi     { color: var(--muted) !important; }
+
+    /* ============================================================
+       CHIPS / PILLS
+       ============================================================ */
+    .chip {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block; white-space: nowrap;
+    }
+    .chip-accent {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--orange);
+      background: rgba(255,148,8,0.1);
+      border: 1px solid rgba(255,148,8,0.3);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block;
+    }
+    .chip-maroon {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: #E07090;
+      background: rgba(148,18,44,0.15);
+      border: 1px solid rgba(148,18,44,0.3);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block;
+    }
+    .chip-ok {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--ok);
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.3);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block;
+    }
+    .chip-warn {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--warn);
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.3);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block;
+    }
+    .chip-err {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--err);
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block;
+    }
+    .chip-blue {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--blue);
+      background: rgba(96,165,250,0.1);
+      border: 1px solid rgba(96,165,250,0.3);
+      padding: 4px 11px; border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* ============================================================
+       CARD SYSTEM
+       ============================================================ */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .card-hi {
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .card-accent {
+      background: rgba(255,148,8,0.08);
+      border: 1px solid rgba(255,148,8,0.22);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .card-maroon {
+      background: rgba(148,18,44,0.14);
+      border: 1px solid rgba(148,18,44,0.28);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .card-ok {
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.22);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+
+    /* Left-border accent variants */
+    .card-lb-orange { border-left: 3px solid var(--orange) !important; border-radius: 0 10px 10px 0 !important; }
+    .card-lb-maroon { border-left: 3px solid var(--maroon) !important; border-radius: 0 10px 10px 0 !important; }
+    .card-lb-ok     { border-left: 3px solid var(--ok)     !important; border-radius: 0 10px 10px 0 !important; }
+    .card-lb-warn   { border-left: 3px solid var(--warn)   !important; border-radius: 0 10px 10px 0 !important; }
+    .card-lb-err    { border-left: 3px solid var(--err)    !important; border-radius: 0 10px 10px 0 !important; }
+
+    /* ============================================================
+       LAYOUT UTILITIES
+       ============================================================ */
+    .row    { display: flex; }
+    .col    { display: flex; flex-direction: column; }
+    .f1     { flex: 1; }
+    .f2     { flex: 2; }
+    .f3     { flex: 3; }
+    .center { align-items: center; justify-content: center; }
+    .vcenter { align-items: center; }
+    .gap-4  { gap: 4px; }
+    .gap-6  { gap: 6px; }
+    .gap-8  { gap: 8px; }
+    .gap-9  { gap: 9px; }
+    .gap-10 { gap: 10px; }
+    .gap-12 { gap: 12px; }
+    .gap-14 { gap: 14px; }
+    .gap-16 { gap: 16px; }
+    .gap-20 { gap: 20px; }
+    .gap-24 { gap: 24px; }
+    .gap-32 { gap: 32px; }
+    .divider-v { width: 1px; background: var(--border); flex-shrink: 0; }
+    .divider-h { height: 1px; background: var(--border); width: 100%; }
+
+    /* ============================================================
+       COVER SLIDE (Slide 1)
+       ============================================================ */
+    .cover-slide {
+      flex-direction: row !important;
+      padding: 0 !important;
+      justify-content: flex-start !important;
+      align-items: stretch !important;
+    }
+
+    .cover-left {
+      width: 38%;
+      flex-shrink: 0;
+      background: linear-gradient(155deg, #94122C 0%, #3D0A15 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 0 60px 60px;
+    }
+    .cover-left::before { display: none; } /* suppress section grid on maroon panel */
+
+    .cover-dot-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
+      background-size: 22px 22px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .cover-wordmark {
+      position: relative; z-index: 1;
+      font-size: 26px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 3.5px;
+      line-height: 1;
+    }
+
+    .cover-wordmark-sub {
+      display: block;
+      position: relative; z-index: 1;
+      font-size: 10px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 1.8px;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    .cover-right {
+      flex: 1;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 80px 0 60px;
+      position: relative;
+    }
+
+    .cover-right::before { display: none; } /* grid already on section */
+
+    .cover-title {
+      font-size: clamp(28px, 3.2vw, 46px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.12;
+      margin: 16px 0 10px;
+    }
+
+    .cover-subtitle {
+      font-size: clamp(14px, 1.5vw, 18px);
+      font-weight: 600;
+      color: var(--orange);
+      margin-bottom: 24px;
+    }
+
+    .cover-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .cover-date {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--dim);
+      position: absolute;
+      bottom: 40px;
+      letter-spacing: 0.04em;
+    }
+
+    .cover-orange-strip {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 5px;
+      background: var(--orange);
+      z-index: 10;
+    }
+
+    /* ============================================================
+       AGENDA SLIDE (Slide 2)
+       ============================================================ */
+    .agenda-num {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 800;
+      line-height: 1;
+      opacity: 0.85;
+    }
+    .agenda-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 26px 24px 22px;
+    }
+    .agenda-card .chip { margin-top: auto; align-self: flex-start; }
+    .agenda-card .chip-maroon { margin-top: auto; align-self: flex-start; }
+    .agenda-card .chip-accent { margin-top: auto; align-self: flex-start; }
+    .agenda-card .chip-blue   { margin-top: auto; align-self: flex-start; }
+
+    /* ============================================================
+       Q-TILE (Slide 3)
+       ============================================================ */
+    .q-tile {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--maroon);
+      border-radius: 12px;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Engine UI -->
+<div id="progress"></div>
+<button class="nav-btn" id="btn-prev" onclick="navigate(-1)">&#8592;</button>
+<button class="nav-btn" id="btn-next" onclick="navigate(1)">&#8594;</button>
+
+<!-- Notes panel -->
+<div id="notes-panel">
+  <button id="notes-close" onclick="toggleNotes()">&#10005;</button>
+  <div id="notes-label">Presenter Notes &nbsp;&#183;&nbsp; Press N to close</div>
+  <div id="notes-text"></div>
+</div>
+
+<!-- ================================================================
+     SLIDES
+     ================================================================ -->
+<div class="deck">
+
+  <!-- ==============================================================
+       SLIDE 01 — COVER
+       ============================================================== -->
+  <section class="cover-slide">
+
+    <!-- Left: maroon brand panel -->
+    <div class="cover-left">
+      <div class="cover-dot-grid"></div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAGQCAYAAAA9TUphAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmYzNTRlZmM3MCwgMjAyMy8xMS8wOS0xMjowNTo1MyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjU0MzU0MEIxQ0ZCQjExRUVBMDY1Q0Y1RjQ1NjA2QkY3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjU0MzU0MEIyQ0ZCQjExRUVBMDY1Q0Y1RjQ1NjA2QkY3Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NTQzNTQwQUZDRkJCMTFFRUEwNjVDRjVGNDU2MDZCRjciIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NTQzNTQwQjBDRkJCMTFFRUEwNjVDRjVGNDU2MDZCRjciLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5AKziPAABcrklEQVR42uzd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" alt="Damco" style="max-width:50%;height:auto;position:relative;z-index:1;opacity:0.95;">
+    </div>
+
+    <!-- Right: content panel -->
+    <div class="cover-right">
+      <span class="slide-num">01 / 18</span>
+
+      <span class="chip-accent">Proposal Walkthrough Presentation</span>
+
+      <h1 class="cover-title">
+        Legal Front Door and<br>Matter Management Platform
+      </h1>
+
+      <div class="cover-subtitle">Application Management Services</div>
+
+      <div class="cover-chips">
+        <span class="chip">Queries and Clarifications</span>
+        <span class="chip">Handover Approach</span>
+        <span class="chip">Open Discussion</span>
+      </div>
+
+      <div class="cover-date">
+        26 May 2026 &nbsp;&nbsp;&#183;&nbsp;&nbsp; Microsoft Teams &nbsp;&nbsp;&#183;&nbsp;&nbsp; Vishav Bhatia
+      </div>
+    </div>
+
+    <!-- Orange bottom strip -->
+    <div class="cover-orange-strip"></div>
+
+    <!-- Presenter notes (hidden) -->
+    <div class="notes">Good morning, Madani, and thank you for the time. We have Manish Gupta with us today. He leads our presales and strategy for this engagement. We have structured today to cover your five questions directly first, then walk you through our approach to the handover and support model, and leave time for any further discussion. We will aim to keep it tight but we are happy to go deeper on anything that needs it.</div>
+
+  </section>
+  <!-- END SLIDE 01 -->
+
+
+  <!-- ==============================================================
+       SLIDE 02 — AGENDA
+       ============================================================== -->
+  <section>
+    <span class="slide-num">02 / 18</span>
+    <span class="act-label">AGENDA</span>
+
+    <div class="eyebrow" style="margin-top: 12px;">Today&#8217;s Session</div>
+    <h2 class="title-lg" style="margin-bottom: 6px;">Three Parts. Thirty Minutes.</h2>
+    <div class="sub-md" style="margin-bottom: 32px;">We start with your questions, walk you through our approach, then open the floor.</div>
+
+    <!-- 3 agenda cards -->
+    <div class="row gap-20" style="width: 100%;">
+
+      <!-- Part 1: Your Questions -->
+      <div class="agenda-card" style="border-top: 3px solid #E07090;">
+        <div class="agenda-num" style="color: #E07090;">01</div>
+        <div class="title-sm">Your Questions</div>
+        <div class="body-sm" style="color: var(--muted);">We received five questions from you following the proposal submission. We will address each one directly.</div>
+        <span class="chip-maroon">15 min</span>
+      </div>
+
+      <!-- Part 2: Our Approach -->
+      <div class="agenda-card" style="border-top: 3px solid var(--orange);">
+        <div class="agenda-num" style="color: var(--orange);">02</div>
+        <div class="title-sm">Our Approach</div>
+        <div class="body-sm" style="color: var(--muted);">We will walk you through our methodology and overall approach for this engagement.</div>
+        <span class="chip-accent">10 min</span>
+      </div>
+
+      <!-- Part 3: Open Q&A -->
+      <div class="agenda-card" style="border-top: 3px solid var(--blue);">
+        <div class="agenda-num" style="color: var(--blue);">03</div>
+        <div class="title-sm">Open Q&amp;A</div>
+        <div class="body-sm" style="color: var(--muted);">An open floor for any further questions, clarifications, or discussion.</div>
+        <span class="chip-blue">5 min</span>
+      </div>
+
+    </div>
+
+    <!-- Centered footer rule -->
+    <div class="row gap-16 vcenter" style="margin-top: 28px; width: 100%;">
+      <div class="divider-h f1"></div>
+      <div class="body-sm" style="color: var(--dim); white-space: nowrap; padding: 0 16px;">
+        30 to 45 minutes &nbsp;&#183;&nbsp; Microsoft Teams
+      </div>
+      <div class="divider-h f1"></div>
+    </div>
+
+    <div class="notes">We have structured today into three parts. First, your questions — you sent five ahead of this call and we want to address those directly, because that is what you need answered before you can move forward. Second, we walk you through our approach — the transition, how we handle the existing bugs, what the support model looks like, and how governance works day to day. Third, open time for anything that comes up. Thirty minutes is the plan; we are comfortable extending to forty-five if useful.</div>
+  </section>
+  <!-- END SLIDE 02 -->
+
+  <!-- ==============================================================
+       SLIDE 03 — SECTION BREAK: PART 1
+       ============================================================== -->
+  <section style="justify-content:center; gap:36px; padding-top:44px; padding-bottom:44px;">
+    <span class="slide-num">03 / 18</span>
+    <span class="act-label">PART 1 OF 3</span>
+
+    <!-- Ghost watermark -->
+    <div style="position:absolute; right:-10px; top:50%; transform:translateY(-50%); font-size:clamp(200px,22vw,320px); font-weight:800; color:var(--maroon); opacity:0.07; line-height:1; user-select:none; z-index:0; pointer-events:none;">01</div>
+
+    <!-- Header -->
+    <div class="col gap-8" style="position:relative; z-index:1;">
+      <h2 class="title-xl">Addressing Your Questions</h2>
+      <div class="sub-md" style="margin-top:6px; color:var(--muted);">Five questions submitted following the proposal. Answered in sequence.</div>
+    </div>
+
+    <!-- 5 Q tiles -->
+    <div class="row gap-16" style="width:100%; position:relative; z-index:1;">
+
+      <div class="q-tile">
+        <span class="chip-maroon" style="align-self:flex-start; margin-bottom:14px;">Q1</span>
+        <div class="title-sm">Microsoft Updates</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">How will Power Platform updates and Microsoft releases be managed without disrupting live functionality?</div>
+      </div>
+
+      <div class="q-tile">
+        <span class="chip-maroon" style="align-self:flex-start; margin-bottom:14px;">Q2</span>
+        <div class="title-sm">Hour Rollover</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Can unused hours from one quarter carry forward into the next without being forfeited?</div>
+      </div>
+
+      <div class="q-tile">
+        <span class="chip-maroon" style="align-self:flex-start; margin-bottom:14px;">Q3</span>
+        <div class="title-sm">Mid-quarter Additions</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Is it possible to add more hours mid-quarter if the initial allocation runs out ahead of schedule?</div>
+      </div>
+
+      <div class="q-tile">
+        <span class="chip-maroon" style="align-self:flex-start; margin-bottom:14px;">Q4</span>
+        <div class="title-sm">Q2 Allocation</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Given the handover happens mid-quarter, how are the remaining Q2 hours structured and applied?</div>
+      </div>
+
+      <div class="q-tile">
+        <span class="chip-maroon" style="align-self:flex-start; margin-bottom:14px;">Q5</span>
+        <div class="title-sm">Rate Lock</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Can the agreed hourly rate be locked and guaranteed across multiple contract years?</div>
+      </div>
+
+    </div>
+
+    <div class="notes">Walk through the five tiles briefly, one sentence each. Signal to Ciel that you have read and understood every question. This sets up credibility before the detail slides.</div>
+  </section>
+  <!-- END SLIDE 03 -->
+
+  <!-- ==============================================================
+       SLIDE 04 — Q1 PART A: DESIGN PRINCIPLE + UPDATE PROCESS
+       ============================================================== -->
+  <section style="gap:22px; justify-content:center;">
+    <span class="slide-num">04 / 18</span>
+    <span class="act-label">Q1 · PART 1 OF 2</span>
+
+    <div class="col gap-10">
+      <span class="chip-maroon" style="align-self:flex-start;">Q1 · How We Manage Microsoft Updates</span>
+      <h2 class="title-lg">A governed process so updates never reach production untested.</h2>
+    </div>
+
+    <div class="row gap-24" style="width:100%;">
+
+      <!-- LEFT: Design Principle -->
+      <div class="col gap-16 f2">
+        <div class="eyebrow">Our Design Principle</div>
+        <div class="card-maroon col gap-16" style="padding:24px; flex:1;">
+          <div class="title-md" style="color:var(--text); line-height:1.4;">No Microsoft update reaches production until staging validation confirms zero regression.</div>
+          <div class="divider-h"></div>
+          <div class="body-sm" style="color:rgba(230,237,243,0.7);">This applies to every release — major platform updates, connector version changes, and minor behavioral patches. No exceptions.</div>
+          <div class="divider-h"></div>
+          <div class="col gap-10">
+            <span class="chip-ok" style="align-self:flex-start;">Staging env mirrors production</span>
+            <span class="chip-ok" style="align-self:flex-start;">Regression suite runs on every update</span>
+            <span class="chip-ok" style="align-self:flex-start;">Written sign-off before production deploy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: 5-stage process -->
+      <div class="col gap-0 f3">
+        <div class="eyebrow" style="margin-bottom:18px;">5-Stage Update Process</div>
+        <div style="position:relative;">
+          <div style="position:absolute; left:15px; top:16px; bottom:16px; width:1px; background:var(--border); z-index:0;"></div>
+
+          <div class="row gap-16 vcenter" style="padding:12px 0;">
+            <div style="width:30px;height:30px;border-radius:50%;background:var(--maroon);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;z-index:1;">01</div>
+            <div class="col" style="gap:3px;"><div class="title-sm">Monitor</div><div class="body-sm" style="color:var(--muted);">Track Microsoft release notes and Power Platform roadmap every month.</div></div>
+          </div>
+
+          <div class="row gap-16 vcenter" style="padding:12px 0;">
+            <div style="width:30px;height:30px;border-radius:50%;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;z-index:1;">02</div>
+            <div class="col" style="gap:3px;"><div class="title-sm">Assess</div><div class="body-sm" style="color:var(--muted);">Evaluate impact on your specific apps, flows, connectors, and custom pages.</div></div>
+          </div>
+
+          <div class="row gap-16 vcenter" style="padding:12px 0;">
+            <div style="width:30px;height:30px;border-radius:50%;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;z-index:1;">03</div>
+            <div class="col" style="gap:3px;"><div class="title-sm">Stage</div><div class="body-sm" style="color:var(--muted);">Deploy to a staging environment that mirrors your production configuration exactly.</div></div>
+          </div>
+
+          <div class="row gap-16 vcenter" style="padding:12px 0;">
+            <div style="width:30px;height:30px;border-radius:50%;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;z-index:1;">04</div>
+            <div class="col" style="gap:3px;"><div class="title-sm">Validate</div><div class="body-sm" style="color:var(--muted);">Regression tests across Legal Front Door, Matter Management, flows, and Dataverse.</div></div>
+          </div>
+
+          <div class="row gap-16 vcenter" style="padding:12px 0;">
+            <div style="width:30px;height:30px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0D1117;flex-shrink:0;z-index:1;">05</div>
+            <div class="col" style="gap:3px;"><div class="title-sm">Deploy</div><div class="body-sm" style="color:var(--muted);">Promote to production after written sign-off from Ciel. Zero unplanned downtime.</div></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="notes">Part 1 of Q1. Lead with the principle: nothing goes to production without staging clearance, no exceptions. Then walk the five stages. Keep it brief here — Part 2 goes deeper into what we watch for and how we build defensively.</div>
+  </section>
+  <!-- END SLIDE 04 -->
+
+
+  <!-- ==============================================================
+       SLIDE 05 — Q1 PART B: DEPRECATION WATCH + CUSTOMIZATION
+       ============================================================== -->
+  <section style="gap:22px; justify-content:center;">
+    <span class="slide-num">05 / 18</span>
+    <span class="act-label">Q1 · PART 2 OF 2</span>
+
+    <div class="col gap-10">
+      <span class="chip-maroon" style="align-self:flex-start;">Q1 · Platform Longevity — What We Watch and How We Build</span>
+      <h2 class="title-lg">We build Microsoft-friendly. So updates have nothing to break.</h2>
+    </div>
+
+    <div class="row gap-0" style="width:100%; gap:0;">
+
+      <!-- LEFT: Deprecation watch -->
+      <div class="col gap-14 f1" style="gap:14px; padding-right:24px;">
+        <div class="eyebrow">Ciel Platform Risks — Confirmed from RFP Documentation</div>
+
+        <div class="card card-lb-err" style="padding:15px 18px;">
+          <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px;">
+            <div class="col" style="gap:4px; flex:1;">
+              <div class="title-sm">D365 Outlook Add-In — Legacy Contact Tracking</div>
+              <div class="body-sm" style="margin-top:5px; color:var(--muted);">Legacy feature deprecated October 2025. If the legal team uses this for matter email association, that route is already gone. Week 1 confirms — Power Automate + shared mailbox replaces it.</div>
+            </div>
+            <span class="chip-err" style="flex-shrink:0;">NOW</span>
+          </div>
+        </div>
+
+        <div class="card card-lb-warn" style="padding:15px 18px;">
+          <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px;">
+            <div class="col" style="gap:4px; flex:1;">
+              <div class="title-sm">Custom JavaScript — “Updated JS Files” Layer</div>
+              <div class="body-sm" style="margin-top:5px; color:var(--muted);">Microsoft Entra ID is enforcing a new Content Security Policy from October 2026 that blocks externally injected scripts at the sign-in page. Power Pages portals using script-based auth flows during Entra sign-in will be affected. Week 1 audit maps all JS functions against the auth flow — any affected scripts migrated before enforcement.</div>
+            </div>
+            <span class="chip-warn" style="flex-shrink:0;">OCT 2026</span>
+          </div>
+        </div>
+
+        <div class="card card-lb-blue" style="padding:15px 18px;">
+          <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px;">
+            <div class="col" style="gap:4px; flex:1;">
+              <div class="title-sm">PCF Controls — dataset.refresh() Refresh Storm</div>
+              <div class="body-sm" style="margin-top:5px; color:var(--muted);">Known PCF architectural behaviour: a dataset.refresh() call triggers updateView() on all PCF controls sharing the same React tree. This directly affects the Document List Component (Bugs 4 + 5). All PCF remediation is written to guard against this pattern. Fix is permanent, not a patch.</div>
+            </div>
+            <span class="chip-blue" style="flex-shrink:0;">KNOWN RISK</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="divider-v"></div>
+
+      <!-- RIGHT: Microsoft-friendly build principles -->
+      <div class="col gap-14 f1" style="gap:14px; padding-left:24px;">
+        <div class="eyebrow">How We Customize — Microsoft-Friendly by Design</div>
+
+        <div class="card card-lb-ok" style="padding:15px 18px;">
+          <div class="title-sm">Standard Connectors Only</div>
+          <div class="body-sm" style="margin-top:5px; color:var(--muted);">No unsupported or preview connectors in production. Every integration uses GA-released connectors with documented support lifecycles.</div>
+        </div>
+
+        <div class="card card-lb-ok" style="padding:15px 18px;">
+          <div class="title-sm">Extension Points, Not Modifications</div>
+          <div class="body-sm" style="margin-top:5px; color:var(--muted);">We extend via supported plug-ins, PCF components, and custom APIs — never by modifying platform internals that Microsoft can overwrite on the next release.</div>
+        </div>
+
+        <div class="card card-lb-ok" style="padding:15px 18px;">
+          <div class="title-sm">Managed Solution Architecture</div>
+          <div class="body-sm" style="margin-top:5px; color:var(--muted);">All customizations live in layered managed solutions. Updates and rollbacks are clean, predictable, and never touch the base platform layer.</div>
+        </div>
+
+        <div class="card card-lb-ok" style="padding:15px 18px;">
+          <div class="title-sm">Environment Variables Throughout</div>
+          <div class="body-sm" style="margin-top:5px; color:var(--muted);">No hardcoded values anywhere in the solution. Platform updates never break configuration — values are managed, not embedded.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="notes">Part 2 of Q1. Left: three deprecation scenarios specific to their stack — canvas control retirement, connector version drops, Dataverse API changes. Right: four build principles that make updates safe — standard connectors, extension points, managed solutions, environment variables. Close with: we do not just manage updates reactively, we build so updates have less to break.</div>
+  </section>
+  <!-- END SLIDE 05 -->
+
+
+  <!-- ==============================================================
+       SLIDE 06 - Q2 + Q3 + Q4: BUCKET MODEL, OVERFLOW AND ALLOCATION
+       ============================================================== -->
+  <section style="gap:10px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">06 / 18</span>
+    <span class="act-label">Q2 · Q3 · Q4 OF 5</span>
+
+    <div class="col gap-6">
+      <span class="chip-maroon" style="align-self:flex-start;">Q2 · Q3 · Q4 · How the Hour Buckets Work</span>
+      <h2 class="title-lg">Quarterly buckets absorb variation. We size analytically and recalibrate together every quarter.</h2>
+    </div>
+
+    <div class="row gap-16" style="width:100%; align-items:flex-start;">
+
+      <!-- COL 1: Q2 Model -->
+      <div class="col gap-10" style="flex:1.2;">
+        <div class="eyebrow">Q2 · Quarterly Model and Hour Reset</div>
+
+        <div class="card-maroon" style="padding:13px 17px;">
+          <div class="eyebrow" style="color:#E07090; margin-bottom:8px;">Why Quarterly, Not Monthly</div>
+          <div class="body-sm" style="color:var(--text);">Monthly buckets create artificial pressure on timing. Quarterly pools let you concentrate effort where it matters. A heavy sprint in week 2 does not leave you short in week 6.</div>
+        </div>
+
+        <div class="card card-lb-orange" style="padding:11px 14px;">
+          <div class="title-sm">Hours Reset Each Quarter</div>
+          <div class="body-sm" style="margin-top:4px; color:var(--muted);">Each quarter opens fresh. No accrual, no year-end complexity. Billing stays clean and predictable.</div>
+        </div>
+
+        <div class="card card-lb-ok" style="padding:11px 14px;">
+          <div class="title-sm">We Recalibrate Together — Every Quarter</div>
+          <div class="body-sm" style="margin-top:5px; color:var(--muted);">At each steering session we review utilisation patterns together. If consistent under- or overuse emerges, we recalibrate before the next bucket opens. Section 9.7 of the SOW commits to this formally.</div>
+        </div>
+      </div>
+
+      <!-- COL 2: 150hr Coverage + Q3 -->
+      <div class="col gap-10" style="flex:1;">
+        <div class="eyebrow">What the 150 Hours Covers</div>
+
+        <div class="card col gap-8" style="padding:11px 14px; background:var(--card2);">
+          <div class="body-sm" style="color:var(--muted);">The 150 hours is sized across four categories, planned from comparable AMS engagements at this scope:</div>
+          <div class="col gap-6" style="margin-top:2px;">
+            <div class="row gap-8 vcenter"><span class="chip" style="font-size:10px; align-self:flex-start; flex-shrink:0;">Proactive Monitoring</span><span style="font-size:10px; color:var(--dim);">50–60 hrs baseline per quarter</span></div>
+            <span class="chip" style="font-size:10px; align-self:flex-start;">Incident Response</span>
+            <span class="chip" style="font-size:10px; align-self:flex-start;">Preventive Maintenance</span>
+            <span class="chip" style="font-size:10px; align-self:flex-start;">Governance and Reporting</span>
+          </div>
+          <div class="body-sm" style="color:var(--dim); margin-top:2px;">Every activity is accounted for. Monitoring allocation is the first charge on the bucket each quarter.</div>
+        </div>
+
+        <div class="eyebrow">Q3 · Will 150 Hours Be Enough?</div>
+        <div class="card col gap-8" style="padding:11px 14px; border-top:2px solid var(--ok);">
+          <div class="sub-md" style="color:var(--text);">Yes. Grounded in how we have sized each category.</div>
+          <div class="body-sm" style="color:var(--muted);">We review actuals at every steering session before the next bucket opens. If a pattern shifts, we flag it early and recalibrate jointly.</div>
+          <div class="body-sm" style="color:var(--muted);">Overflow is always available at the same <span style="color:var(--orange); font-weight:600;">$40/hr</span> — no premium, no renegotiation.</div>
+        </div>
+      </div>
+
+      <!-- COL 3: Q4 -->
+      <div class="col gap-10" style="flex:1.3;">
+        <div class="eyebrow">Q4 · Why Q2 Is 180 Hours, Not 150</div>
+        <div class="card col gap-10" style="padding:11px 14px; border-top:2px solid var(--blue);">
+          <div class="body-sm" style="color:var(--text); font-weight:600;">Q2 is where we shift from fixing to owning. Four activities Q1 does not carry:</div>
+          <div class="col gap-10">
+            <div class="body-sm" style="color:var(--muted); padding-left:12px; border-left:2px solid var(--blue);">Full platform ownership audit. Code patterns, connector dependencies, configuration decisions, data flows. From Q3 we support the platform as if we built it ourselves.</div>
+            <div class="body-sm" style="color:var(--muted); padding-left:12px; border-left:2px solid var(--border);">Documentation validation against live usage. Pre-launch docs and live operational reality rarely match exactly. Q2 closes that gap.</div>
+            <div class="body-sm" style="color:var(--muted); padding-left:12px; border-left:2px solid var(--border);">Post-fix confirmation monitoring after Sprint 2 closure. Bugs resolved in Q1 are watched under real usage before confirmed clean.</div>
+            <div class="body-sm" style="color:var(--muted); padding-left:12px; border-left:2px solid var(--border);">First peak-load exposure: 12 to 15 active matters flowing through the system for the first time.</div>
+          </div>
+          <div class="divider-h"></div>
+          <div class="body-sm" style="color:var(--muted);">Flex: if Q1 closes with all bugs resolved and Q2 tracks below 150 hrs at mid-quarter review, the 30-hr differential carries forward. <span style="color:var(--blue); font-weight:600;">+15 hrs to Q3 and +15 hrs to Q4</span> at no additional cost. Additional capacity, not a billing credit.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="notes">Three questions, one slide. Q2: quarterly pools absorb variation better than monthly. Reset each quarter for predictability. Never locked in wrong size because Section 9.7 commits to joint recalibration at every steering session. Col 2: monitoring is SOW baseline, bucket covers incidents, maintenance, governance. All three planned from comparable engagements. Q3: yes with confidence, review actuals, overflow at same rate. Q4: Q2 is the ownership quarter. Four activities: full platform audit to take complete ownership, documentation validation against live ops, post-fix monitoring after Sprint 2, first peak-load exposure. Flex mechanism: all bugs resolved plus Q2 below 150 at mid-quarter = plus-15 to Q3 and plus-15 to Q4 at no cost. Additional capacity, not a billing credit.</div>
+  </section>
+  <!-- END SLIDE 06 -->
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- ==============================================================
+       SLIDE 07 - Q5: MULTI-YEAR RATE COMMITMENT
+       ============================================================== -->
+  <section style="gap:10px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">07 / 18</span>
+    <span class="act-label">Q5 OF 5</span>
+
+    <div class="col gap-6">
+      <span class="chip-maroon" style="align-self:flex-start;">Q5 · Multi-Year Rate Commitment</span>
+      <h2 style="font-size:clamp(20px,2.2vw,28px); font-weight:800; line-height:1.15; color:var(--text);">Lock $40/hr for three years — or pay 10-12% more every year.</h2>
+    </div>
+
+    <div class="row gap-20" style="width:100%; align-items:flex-start;">
+
+      <!-- LEFT: Rate progression table -->
+      <div class="col gap-10" style="flex:2.2;">
+        <div class="eyebrow">Submitted proposal locks Year 2. Three-year SOW extends that lock to Year 3.</div>
+
+        <div style="display:grid; grid-template-columns:0.65fr 1fr 1fr; border-radius:10px; overflow:hidden; border:1px solid var(--border);">
+
+          <!-- Header -->
+          <div style="background:var(--card2); padding:8px 12px;"></div>
+          <div style="background:var(--card2); padding:8px 12px; border-left:1px solid var(--border);">
+            <div class="eyebrow" style="font-size:9px; color:var(--warn);">Annual Renewal</div>
+            <div class="body-sm" style="color:var(--muted); margin-top:2px;">Year-by-year, no commitment</div>
+          </div>
+          <div style="background:var(--card2); padding:8px 12px; border-left:1px solid var(--border); border-top:3px solid var(--ok);">
+            <div class="eyebrow" style="font-size:9px; color:var(--ok);">Three-Year SOW</div>
+            <div class="body-sm" style="color:var(--muted); margin-top:2px;">Offered today</div>
+          </div>
+
+          <!-- Year 1 -->
+          <div style="background:var(--card); padding:8px 12px; border-top:1px solid var(--border);">
+            <div class="eyebrow" style="font-size:9px; color:var(--muted); padding:8px 12px; margin:-8px -12px;">Year 1</div>
+          </div>
+          <div style="background:var(--card); padding:8px 12px; border-left:1px solid var(--border); border-top:1px solid var(--border);">
+            <div class="body-sm" style="color:var(--text);">$40/hr · 780 hrs · $31,200</div>
+          </div>
+          <div style="background:var(--card); padding:8px 12px; border-left:1px solid var(--border); border-top:1px solid var(--border);">
+            <div class="body-sm" style="color:var(--text);">$40/hr · 780 hrs · $31,200</div>
+          </div>
+
+          <!-- Year 2 -->
+          <div style="background:var(--card2); padding:8px 12px; border-top:1px solid var(--border);">
+            <div class="eyebrow" style="font-size:9px; color:var(--muted);">Year 2</div>
+          </div>
+          <div style="background:var(--card2); padding:8px 12px; border-left:1px solid var(--border); border-top:1px solid var(--border);">
+            <div class="body-sm" style="color:var(--warn); font-weight:600;">~$44-45/hr · ~$26,400+</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px; line-height:1.5;">10-12% uplift applied. No multi-year commitment in place.</div>
+          </div>
+          <div style="background:var(--card2); padding:8px 12px; border-left:1px solid var(--border); border-top:1px solid var(--border);">
+            <div class="body-sm" style="color:var(--text);">$40/hr · 600 hrs · $24,000</div>
+            <div style="font-size:10px; font-weight:600; color:var(--ok); margin-top:4px;">Locked — two-year SOW extended to three</div>
+          </div>
+
+          <!-- Year 3 — the key row -->
+          <div style="background:var(--card); padding:8px 12px; border-top:1px solid var(--border); border-left:3px solid var(--blue); padding:8px 12px;">
+            <div class="eyebrow" style="font-size:9px; color:var(--blue);">Year 3</div>
+          </div>
+          <div style="background:var(--card); padding:8px 12px; border-left:1px solid var(--border); border-top:1px solid var(--border);">
+            <div class="body-sm" style="color:var(--warn); font-weight:600;">~$48-50/hr · ~$29,000+</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px; line-height:1.5;">Second consecutive annual uplift. Rate compounds year-on-year.</div>
+          </div>
+          <div style="background:rgba(96,165,250,0.07); padding:8px 12px; border-left:1px solid var(--border); border-top:1px solid var(--border);">
+            <div class="body-sm" style="color:var(--blue); font-weight:600;">$40/hr · 600 hrs · $24,000</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px; line-height:1.5;">Zero uplift. Rate locked in SOW. No annual review, no negotiation.</div>
+          </div>
+
+          <!-- Total -->
+          <div style="background:var(--card2); padding:8px 12px; border-top:2px solid var(--border); padding:8px 12px;">
+            <div class="eyebrow" style="font-size:9px; color:var(--muted);">3-Yr Total</div>
+          </div>
+          <div style="background:var(--card2); padding:8px 12px; border-left:1px solid var(--border); border-top:2px solid var(--border); padding:8px 12px;">
+            <div class="body-sm" style="color:var(--warn);">~$86,600+ (compounding uplift Y2+Y3)</div>
+          </div>
+          <div style="background:var(--card2); padding:8px 12px; border-left:1px solid var(--border); border-top:2px solid var(--border); padding:8px 12px;">
+            <div class="sub-md" style="color:var(--ok); font-weight:700;">$79,200 · Confirmed and locked</div>
+          </div>
+
+        </div>
+
+        <div class="body-sm" style="color:var(--dim); margin-top:4px; padding:0 2px; line-height:1.6;">
+          <span style="color:var(--ok); font-weight:600;">Note:</span> Year 2 at $40/hr is already committed in the submitted proposal — this holds only when signing the two-year contract. The three-year SOW extends that same commitment to Year 3 at no additional cost.
+        </div>
+      </div>
+
+      <!-- RIGHT: SOW commitment + exit clause -->
+      <div class="col gap-8" style="flex:1;">
+        <div class="eyebrow">What You Get With the Three-Year SOW</div>
+
+        <div class="card-maroon" style="padding:11px 16px;">
+          <div class="eyebrow" style="color:#E07090; margin-bottom:6px;">How the Commitment Works</div>
+          <div class="body-sm" style="color:var(--text);">Year 2 is locked at $40/hr if you sign the two-year contract with Damco — already committed in the submitted proposal. The three-year SOW extends that same rate lock to Year 3 on identical terms. All three years: $40/hr fixed, no annual review, no uplift of any kind.</div>
+        </div>
+
+        <div class="card col gap-5" style="padding:10px 14px;">
+          <div class="title-sm">Annual Milestone Reviews — Retained</div>
+          <div class="body-sm" style="margin-top:2px; color:var(--muted);">Quarterly steering sessions and annual reviews continue under both structures. They govern scope and service quality — the rate is not on the table at any of these sessions.</div>
+        </div>
+
+        <div class="card col gap-5" style="padding:10px 14px; border-left:3px solid var(--warn);">
+          <div class="title-sm" style="color:var(--warn);">If You Exit During the Committed Period</div>
+          <div class="body-sm" style="margin-top:2px; color:var(--muted);">The termination fee equals the rate-lock benefit for the period served — the uplift you received at the locked rate, applied only to hours already delivered.</div>
+          <div class="col gap-6" style="margin-top:8px;">
+            <div class="row gap-8 vcenter">
+              <span class="chip" style="font-size:10px; flex-shrink:0;">Year 2 exit</span>
+              <span class="body-sm" style="color:var(--muted);">~$4/hr x Y2 hours served · max <span style="color:var(--warn); font-weight:600;">~$2,400</span></span>
+            </div>
+            <div class="row gap-8 vcenter">
+              <span class="chip" style="font-size:10px; flex-shrink:0;">Year 3 exit</span>
+              <span class="body-sm" style="color:var(--muted);">~$9/hr x Y3 hours served · max <span style="color:var(--warn); font-weight:600;">~$5,400</span></span>
+            </div>
+          </div>
+          <div style="font-size:10px; color:var(--dim); margin-top:10px; padding-top:8px; border-top:1px solid var(--border);">60 days written notice required. If annual renewal structure is retained: no termination fee.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="notes">Q5 — multi-year rate. Open with the standard: Damco AMS contracts carry 10-12% annual uplift from Year 2. Year 1 and Year 2 are already committed flat in the submitted proposal — that is already a concession. What is open is Year 3. Without the three-year SOW, Year 3 sees the standard uplift: ~$44-45/hr, total crosses $81,600. With the three-year SOW, Year 3 stays at $40/hr, total is $79,200 confirmed. The rate goes into the contract — no discussion, no review, no risk. Walk the exit clause carefully: if Ciel exits during Year 3 of the committed SOW, the fee equals the uplift gap for hours served. Maximum is $2,400 for a full Year 3 exit — the discount they received at no cost. Very fair. If they keep annual renewal instead, no fee at all. Close: the choice is between rate certainty at a known downside of $2,400 maximum, or rate uncertainty with no ceiling. Madani slides — he reads at system level. Give him the number and the logic. Let him decide.</div>
+  </section>
+  <!-- END SLIDE 07 -->
+
+  <!-- ==============================================================
+       SLIDE 08 - ABOUT DAMCO
+       ============================================================== -->
+  <section style="gap:16px; justify-content:center; padding:32px 60px;">
+    <span class="slide-num">08 / 18</span>
+
+    <!-- Headline -->
+    <div class="col gap-4">
+      <span class="eyebrow">Microsoft Practice &nbsp;&middot;&nbsp; Damco Solutions</span>
+      <h2 class="title-lg">The depth of a practice. Not the capacity of one developer.</h2>
+    </div>
+
+    <!-- Stats ticker — full-width connected cells -->
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1px; background:var(--border); border-radius:10px; overflow:hidden; width:100%;">
+      <div style="background:var(--card); padding:18px 24px; text-align:center;">
+        <div style="font-size:46px; font-weight:800; color:var(--orange); line-height:1; letter-spacing:-1px;">10+</div>
+        <div style="font-size:10px; font-weight:600; color:var(--muted); margin-top:6px; letter-spacing:.04em;">Years on Microsoft stack</div>
+      </div>
+      <div style="background:var(--card); padding:18px 24px; text-align:center;">
+        <div style="font-size:46px; font-weight:800; color:var(--text); line-height:1; letter-spacing:-1px;">100+</div>
+        <div style="font-size:10px; font-weight:600; color:var(--muted); margin-top:6px; letter-spacing:.04em;">Certified professionals</div>
+      </div>
+      <div style="background:var(--card); padding:18px 24px; text-align:center;">
+        <div style="font-size:46px; font-weight:800; color:var(--blue); line-height:1; letter-spacing:-1px;">4</div>
+        <div style="font-size:10px; font-weight:600; color:var(--muted); margin-top:6px; letter-spacing:.04em;">Microsoft Most Valuable Professionals</div>
+      </div>
+      <div style="background:var(--card); padding:18px 24px; text-align:center; position:relative;">
+        <!-- Solutions Partner badge inset -->
+        <div style="font-size:9px; font-weight:700; color:var(--orange); letter-spacing:.1em; margin-bottom:4px;">SOLUTIONS PARTNER</div>
+        <div style="font-size:13px; font-weight:800; color:var(--text); line-height:1.2;">Business Applications</div>
+        <div style="font-size:9px; color:var(--dim); margin-top:4px;">ID: 3626592</div>
+      </div>
+    </div>
+
+    <!-- Content: asymmetric two-column -->
+    <div class="row gap-14" style="width:100%; align-items:flex-start;">
+
+      <!-- LEFT: Certification depth with visual bars -->
+      <div class="card col gap-12" style="flex:1.4; padding:16px 20px;">
+        <div class="eyebrow">Certification Depth &nbsp;&middot;&nbsp; Power Platform</div>
+        <div class="col gap-10">
+
+          <!-- PL-600 -->
+          <div class="col gap-5">
+            <div class="row" style="justify-content:space-between; align-items:baseline;">
+              <div>
+                <span style="font-size:11px; font-weight:700; color:var(--text);">PL-600</span>
+                <span style="font-size:10px; color:var(--muted); margin-left:6px;">Solution Architect &middot; Architecture &amp; governance</span>
+              </div>
+              <span style="font-size:18px; font-weight:800; color:var(--orange);">8</span>
+            </div>
+            <div style="height:5px; background:var(--border); border-radius:3px;">
+              <div style="height:100%; width:33%; background:linear-gradient(90deg,var(--orange),rgba(255,148,8,.5)); border-radius:3px;"></div>
+            </div>
+          </div>
+
+          <!-- PL-400 -->
+          <div class="col gap-5">
+            <div class="row" style="justify-content:space-between; align-items:baseline;">
+              <div>
+                <span style="font-size:11px; font-weight:700; color:var(--text);">PL-400</span>
+                <span style="font-size:10px; color:var(--muted); margin-left:6px;">Developer &middot; PCF controls, integrations, ALM</span>
+              </div>
+              <span style="font-size:18px; font-weight:800; color:var(--orange);">24</span>
+            </div>
+            <div style="height:5px; background:var(--border); border-radius:3px;">
+              <div style="height:100%; width:100%; background:linear-gradient(90deg,var(--orange),rgba(255,148,8,.5)); border-radius:3px;"></div>
+            </div>
+          </div>
+
+          <!-- PL-200 -->
+          <div class="col gap-5">
+            <div class="row" style="justify-content:space-between; align-items:baseline;">
+              <div>
+                <span style="font-size:11px; font-weight:700; color:var(--text);">PL-200</span>
+                <span style="font-size:10px; color:var(--muted); margin-left:6px;">Functional Consultant &middot; Power Pages, model-driven apps</span>
+              </div>
+              <span style="font-size:18px; font-weight:800; color:var(--orange);">14</span>
+            </div>
+            <div style="height:5px; background:var(--border); border-radius:3px;">
+              <div style="height:100%; width:58%; background:linear-gradient(90deg,var(--orange),rgba(255,148,8,.5)); border-radius:3px;"></div>
+            </div>
+          </div>
+
+        </div>
+        <div style="font-size:10px; color:var(--dim); padding-top:8px; border-top:1px solid var(--border);">Additional: FastTrack RSA &middot; AZ-104 &middot; Developer Licensing Specialist &middot; PL-900 &middot; MS-900</div>
+      </div>
+
+      <!-- RIGHT: Advisory + Power Pages -->
+      <div class="col gap-10" style="flex:1;">
+
+        <div class="card col gap-6" style="padding:14px 16px; border-top:3px solid var(--blue);">
+          <div style="font-size:10px; font-weight:700; color:var(--blue); letter-spacing:.06em;">MICROSOFT MVP ADVISORY BOARD</div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.55;">Four MVPs, including Cloud Lighthouse specialists. The board maintains direct alignment with Microsoft product direction &mdash; pre-release visibility into roadmap changes before they are announced publicly.</div>
+          <div class="row gap-8" style="flex-wrap:wrap; margin-top:2px;">
+            <span style="font-size:9px; color:var(--dim); padding:3px 8px; border:1px solid var(--border); border-radius:4px;">Pre-release visibility</span>
+            <span style="font-size:9px; color:var(--dim); padding:3px 8px; border:1px solid var(--border); border-radius:4px;">Defect advisory</span>
+            <span style="font-size:9px; color:var(--dim); padding:3px 8px; border:1px solid var(--border); border-radius:4px;">Cloud Lighthouse</span>
+          </div>
+        </div>
+
+        <div style="padding:14px 16px; background:rgba(255,148,8,0.06); border:1px solid rgba(255,148,8,0.2); border-left:3px solid var(--orange); border-radius:8px;">
+          <div style="font-size:10px; font-weight:700; color:var(--orange); margin-bottom:6px;">Power Pages &middot; Standard Data Model</div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.55;">The engagement lead's Power Pages experience is specifically in the Standard data model. That is the model Ciel's platform runs on. This is not a general credential. It is a direct match.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="notes">Anchor Damco's credentials before the approach begins. The headline sets up the COE contrast: what Ciel had was one developer. What Damco brings is a practice. Solutions Partner for Business Applications is Microsoft's top tier for this category. 100+ certified professionals means Ciel is never dependent on one person. Four MVPs from Cloud Lighthouse give pre-release visibility no standard partner has. On Power Pages: many Power Platform firms have general experience but limited portal depth. The Standard data model match is specific and directly relevant. Make this point explicitly before moving to the approach.</div>
+  </section>
+  <!-- END SLIDE 08-DAMCO -->
+
+
+
+
+
+  <!-- ==============================================================
+       SLIDE 08 - SECTION BREAK: PART 2 — OUR APPROACH
+       ============================================================== -->
+  <section style="justify-content:center; gap:36px; padding-top:44px; padding-bottom:44px;">
+    <span class="slide-num">09 / 18</span>
+    <span class="act-label">PART 2 OF 3</span>
+
+    <!-- Ghost watermark -->
+    <div style="position:absolute; right:-10px; top:50%; transform:translateY(-50%); font-size:clamp(200px,22vw,320px); font-weight:800; color:var(--orange); opacity:0.06; line-height:1; user-select:none; z-index:0; pointer-events:none;">02</div>
+
+    <!-- Header -->
+    <div class="col gap-8" style="position:relative; z-index:1;">
+      <h2 class="title-xl">Our Approach</h2>
+      <div class="sub-md" style="margin-top:6px; color:var(--muted);">Handover, bug remediation, support model, and two references. Focused on what is new and specific to this engagement.</div>
+    </div>
+
+    <!-- 5 topic tiles -->
+    <div class="row gap-16" style="width:100%; position:relative; z-index:1;">
+
+      <div class="q-tile" style="border-top:3px solid var(--orange);">
+        <span class="chip-accent" style="align-self:flex-start; margin-bottom:14px;">01</span>
+        <div class="title-sm">Platform Knowledge</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">What we already know about your platform before Day 1 — and what the 8-day onboarding confirms.</div>
+      </div>
+
+      <div class="q-tile" style="border-top:3px solid var(--orange);">
+        <span class="chip-accent" style="align-self:flex-start; margin-bottom:14px;">02</span>
+        <div class="title-sm">8-Day Transition</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Eight working days from contract sign to SLA active. Structured handover, zero support hours consumed.</div>
+      </div>
+
+      <div class="q-tile" style="border-top:3px solid var(--orange);">
+        <span class="chip-accent" style="align-self:flex-start; margin-bottom:14px;">03</span>
+        <div class="title-sm">Bug Remediation</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Nine bugs across four root-cause families. Two focused sprints in Q1. Every fix permanent, not a patch.</div>
+      </div>
+
+      <div class="q-tile" style="border-top:3px solid var(--orange);">
+        <span class="chip-accent" style="align-self:flex-start; margin-bottom:14px;">04</span>
+        <div class="title-sm">Support Model + SLA</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">COE-based delivery, P1–P4 response tiers, governance cadence, and service credits that apply as-of-right.</div>
+      </div>
+
+      <div class="q-tile" style="border-top:3px solid var(--orange);">
+        <span class="chip-accent" style="align-self:flex-start; margin-bottom:14px;">05</span>
+        <div class="title-sm">Client References</div>
+        <div class="body-sm" style="margin-top:8px; color:var(--muted);">Two references directly comparable to this engagement. Available for direct conversation.</div>
+      </div>
+
+    </div>
+
+    <div class="notes">Transition slide into Part 2. Say: we are going to cover the approach over the next fifteen minutes — handover process, bug remediation plan, support model, and two references that are directly relevant to this engagement. We have deliberately kept this section focused on what is new and specific. We are not going to walk through what is already in the proposal.</div>
+  </section>
+  <!-- END SLIDE 08 -->
+
+  <!-- ==============================================================
+       SLIDE 09 - PLATFORM KNOWLEDGE
+       ============================================================== -->
+  <section style="gap:14px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">10 / 18</span>
+    <span class="act-label">APPROACH · 01 OF 5</span>
+
+    <div class="col gap-6">
+      <span class="chip-accent" style="align-self:flex-start;">Platform Knowledge · Pre-Mapped From the RFP</span>
+      <h2 class="title-lg">We arrived at this session having already mapped your platform.</h2>
+    </div>
+
+    <div class="row gap-20" style="width:100%; align-items:flex-start;">
+
+      <!-- LEFT: Pre-mapped inventory -->
+      <div class="col gap-10" style="flex:1.4;">
+        <div class="eyebrow">What We Traced From RFP Documents — Before Any Environment Access</div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+          <div class="card col gap-3" style="padding:11px 14px;">
+            <div style="font-size:clamp(22px,2vw,28px); font-weight:800; color:var(--orange); line-height:1;">17</div>
+            <div class="title-sm">Power Automate Flows</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">Named · trigger conditions · dependencies mapped</div>
+          </div>
+
+          <div class="card col gap-3" style="padding:11px 14px;">
+            <div style="font-size:clamp(22px,2vw,28px); font-weight:800; color:var(--orange); line-height:1;">23</div>
+            <div class="title-sm">Dataverse Tables</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">Field names · status values · security role definitions</div>
+          </div>
+
+          <div class="card col gap-3" style="padding:11px 14px;">
+            <div style="font-size:clamp(22px,2vw,28px); font-weight:800; color:var(--orange); line-height:1;">5</div>
+            <div class="title-sm">Managed Solution Layers</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">Incl. non-standard "Updated JS Files" layer</div>
+          </div>
+
+          <div class="card col gap-3" style="padding:11px 14px;">
+            <div style="font-size:clamp(22px,2vw,28px); font-weight:800; color:var(--orange); line-height:1;">20</div>
+            <div class="title-sm">Web Resources</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">HTML · JavaScript · CSS — fully inventoried</div>
+          </div>
+
+          <div class="card col gap-3" style="padding:11px 14px;">
+            <div style="font-size:clamp(22px,2vw,28px); font-weight:800; color:var(--orange); line-height:1;">9</div>
+            <div class="title-sm">Known Bugs</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">Root cause hypothesis per bug · grouped into 4 families</div>
+          </div>
+
+          <div class="card col gap-3" style="padding:11px 14px;">
+            <div style="font-size:clamp(22px,2vw,28px); font-weight:800; color:var(--orange); line-height:1;">8+4</div>
+            <div class="title-sm">Variables + Connections</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">8 environment variables · 4 connection references</div>
+          </div>
+
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; background:var(--card2);">
+          <div style="font-size:10px; font-weight:600; color:var(--ok);">Security Model Mapped</div>
+          <div style="font-size:11px; color:var(--muted);">2 Dataverse roles · Azure AD portal auth · No active DLP policies flagged for Week 1 audit</div>
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; border-left:3px solid var(--warn);">
+          <div style="font-size:10px; font-weight:600; color:var(--warn);">Documentation Gap — Bounded, Not Total</div>
+          <div style="font-size:11px; color:var(--muted);">Design docs and user guides exist. Missing: admin runbook, change history, permissions logic, test evidence. Five onboarding deliverables fill exactly this layer.</div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: 3 depth signals -->
+      <div class="col gap-12" style="flex:1;">
+        <div class="eyebrow">Three Depth Signals</div>
+
+        <div class="card col gap-8" style="padding:14px 16px; border-left:3px solid var(--err);">
+          <div class="title-sm" style="color:var(--err);">Bugs 8 and 7 Share a Root Cause</div>
+          <div class="body-sm" style="color:var(--muted); margin-top:4px;">Custom JavaScript in the "Updated JS Files" layer is conflicting with form command bar initialisation. Fixing the JavaScript conflict resolves the Save button issue AND the blank Description field in a single sprint. The legal team gets relief from both highest-severity bugs within Sprint 1.</div>
+        </div>
+
+        <div class="card col gap-8" style="padding:14px 16px; border-left:3px solid var(--orange);">
+          <div class="title-sm">The Documentation Gap is Bounded</div>
+          <div class="body-sm" style="color:var(--muted); margin-top:4px;">What SYKE left exists. What does not exist is specific: the operational layer. Our five onboarding deliverables are built to fill exactly this gap — not to produce a generic documentation set.</div>
+        </div>
+
+        <div class="card col gap-8" style="padding:14px 16px; border-left:3px solid var(--blue);">
+          <div class="title-sm" style="color:var(--blue);">JS Source Control — Known Risk, Known Plan</div>
+          <div class="body-sm" style="color:var(--muted); margin-top:4px;">Whether the "Updated JS Files" exist in external source control or only within the managed solution export is unconfirmed. If source control is absent, we establish it as a formal onboarding deliverable. We do not touch those files until that is in place.</div>
+          <div style="font-size:10px; color:var(--blue); margin-top:6px; font-weight:600;">Status confirmed Day 2 of onboarding audit</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="notes">Credibility slide. Open with: Day 1 for us is not an investigation — it is validation of a pre-formed picture. Walk the left grid: 17 flows, 23 tables, 5 solution layers, 20 web resources, 9 bugs already grouped into 4 families. Three depth signals: Bugs 8 and 7 — say we identified the Updated JS Files layer as the likely root cause before any environment access. Documentation gap — bounded, specific, five deliverables fill exactly that layer. JS source control — deliver this directly to the IT/cybersecurity lead. This is the open technical question from the RFP Q&A. We confirm Day 2. If source control is absent, we establish it before touching those files. Close with: other vendors arrive and start learning. We arrive and start confirming.</div>
+  </section>
+  <!-- END SLIDE 09 -->
+
+  <!-- ==============================================================
+       SLIDE 10 - 8-DAY TRANSITION
+       ============================================================== -->
+  <section style="gap:12px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">11 / 18</span>
+    <span class="act-label">APPROACH · 02 OF 5</span>
+
+    <div class="col gap-5">
+      <span class="chip-accent" style="align-self:flex-start;">8-Day Transition · Self-Directed by Design</span>
+      <h2 class="title-lg">SLA active within two calendar weeks of contract signing.</h2>
+    </div>
+
+    <!-- Timeline: 6 phases -->
+    <div style="display:grid; grid-template-columns:1fr 1.4fr 1fr 0.9fr 0.9fr 1fr; gap:8px; width:100%;">
+
+      <!-- Day 1 -->
+      <div class="card col gap-5" style="padding:10px 12px; border-top:3px solid var(--orange);">
+        <div style="font-size:10px; font-weight:700; color:var(--orange); letter-spacing:.05em;">DAY 1</div>
+        <div style="font-size:11px; color:var(--text); line-height:1.5;">NDA signed<br>Dev / Test / Prod access<br>Teams workspace live<br>Service Desk activated<br>Sessions scheduled</div>
+        <div class="chip" style="font-size:9px; align-self:flex-start; margin-top:auto;">All channels active</div>
+      </div>
+
+      <!-- Days 2–3 -->
+      <div class="card col gap-5" style="padding:10px 12px; border-top:3px solid var(--orange);">
+        <div style="font-size:10px; font-weight:700; color:var(--orange); letter-spacing:.05em;">DAYS 2–3</div>
+        <div style="font-size:11px; color:var(--text); line-height:1.5;">Six-layer platform audit<br>17 flows traced · Dataverse validated<br>JS files inventoried · 9 bugs reproduced<br>JS source control confirmed<br>DLP gap documented</div>
+        <div class="col gap-3" style="margin-top:auto;">
+          <div class="chip" style="font-size:9px; align-self:flex-start;">Audit findings log</div>
+          <div class="chip" style="font-size:9px; align-self:flex-start;">Validated bug register</div>
+          <div class="chip" style="font-size:9px; align-self:flex-start;">Open risk register</div>
+        </div>
+      </div>
+
+      <!-- Day 4 -->
+      <div class="card col gap-5" style="padding:10px 12px; border-top:3px solid var(--orange);">
+        <div style="font-size:10px; font-weight:700; color:var(--orange); letter-spacing:.05em;">DAY 4</div>
+        <div style="font-size:11px; color:var(--text); line-height:1.5;">IT Contact session<br><span style="color:var(--muted);">90 min · architecture, Azure AD, connections, deploy history</span><br><br>Legal Lead session<br><span style="color:var(--muted);">90 min · matter lifecycle, usage, pain points</span></div>
+        <div class="chip" style="font-size:9px; align-self:flex-start; margin-top:auto;">Session notes</div>
+      </div>
+
+      <!-- Day 5 -->
+      <div class="card col gap-5" style="padding:10px 12px; border-top:3px solid var(--orange);">
+        <div style="font-size:10px; font-weight:700; color:var(--orange); letter-spacing:.05em;">DAY 5</div>
+        <div style="font-size:11px; color:var(--text); line-height:1.5;">Five baseline documents drafted and quality-checked</div>
+        <div class="chip" style="font-size:9px; align-self:flex-start; margin-top:auto;">Draft package ready</div>
+      </div>
+
+      <!-- Day 6 -->
+      <div class="card col gap-5" style="padding:10px 12px; border-top:3px solid var(--ok);">
+        <div style="font-size:10px; font-weight:700; color:var(--ok); letter-spacing:.05em;">DAY 6</div>
+        <div style="font-size:11px; color:var(--text); line-height:1.5;">Documentation package formally delivered to Ciel<br><br>Review window opens</div>
+        <div class="chip" style="font-size:9px; align-self:flex-start; margin-top:auto; color:var(--ok); border-color:var(--ok);">Handoff complete</div>
+      </div>
+
+      <!-- Days 7–8 -->
+      <div class="card col gap-5" style="padding:10px 12px; border-top:3px solid var(--blue);">
+        <div style="font-size:10px; font-weight:700; color:var(--blue); letter-spacing:.05em;">DAYS 7–8</div>
+        <div style="font-size:11px; color:var(--text); line-height:1.5;">Ciel reviews<br>Damco incorporates feedback<br>Formal written sign-off<br>SLA go-live confirmed</div>
+        <div class="chip" style="font-size:9px; align-self:flex-start; margin-top:auto; color:var(--blue); border-color:var(--blue);">SLA activated</div>
+      </div>
+
+    </div>
+
+    <!-- 5 Contractual Deliverables -->
+    <div class="col gap-6" style="width:100%;">
+      <div class="eyebrow">Five Contractual Deliverables — SLA Clock Starts on Accepted Receipt of All Five</div>
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px;">
+
+        <div class="card col gap-3" style="padding:9px 12px; border-left:3px solid var(--orange);">
+          <div style="font-size:10px; font-weight:700; color:var(--orange);">01</div>
+          <div style="font-size:11px; color:var(--text); line-height:1.4;">Admin and Support Runbook</div>
+        </div>
+
+        <div class="card col gap-3" style="padding:9px 12px; border-left:3px solid var(--orange);">
+          <div style="font-size:10px; font-weight:700; color:var(--orange);">02</div>
+          <div style="font-size:11px; color:var(--text); line-height:1.4;">Environment and Solution Architecture Overview</div>
+        </div>
+
+        <div class="card col gap-3" style="padding:9px 12px; border-left:3px solid var(--orange);">
+          <div style="font-size:10px; font-weight:700; color:var(--orange);">03</div>
+          <div style="font-size:11px; color:var(--text); line-height:1.4;">Power Automate Flow Inventory — all 17 flows</div>
+        </div>
+
+        <div class="card col gap-3" style="padding:9px 12px; border-left:3px solid var(--orange);">
+          <div style="font-size:10px; font-weight:700; color:var(--orange);">04</div>
+          <div style="font-size:11px; color:var(--text); line-height:1.4;">Known Bugs and Issues Register — validated against live platform</div>
+        </div>
+
+        <div class="card col gap-3" style="padding:9px 12px; border-left:3px solid var(--orange);">
+          <div style="font-size:10px; font-weight:700; color:var(--orange);">05</div>
+          <div style="font-size:11px; color:var(--text); line-height:1.4;">Access and Permissions Matrix</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer notes: 2-column -->
+    <div class="row gap-8" style="width:100%;">
+
+      <div class="card col gap-4" style="padding:9px 16px; border-left:3px solid var(--blue); flex:1;">
+        <div style="font-size:10px; font-weight:600; color:var(--blue);">No Dependency on the Outgoing Vendor</div>
+        <div style="font-size:11px; color:var(--muted);">Self-directed by design. No handover session, no documentation to wait for, no KT to coordinate. Built for the zero-KT scenario confirmed in Q&A. Every deliverable vests with Ciel on acceptance.</div>
+      </div>
+
+      <div class="card col gap-4" style="padding:9px 16px; border-left:3px solid var(--orange); flex:1;">
+        <div style="font-size:10px; font-weight:600; color:var(--orange);">AI-Augmented Discovery</div>
+        <div style="font-size:11px; color:var(--muted);">The Days 2-3 audit uses Damco's AI-assisted platform analysis methods to produce entity dependency maps, flow inventory, security role matrix, and component register faster and with greater depth than manual review alone. Subject to Ciel's data governance policy — no client data leaves your environment without written approval.</div>
+      </div>
+
+    </div>
+
+    <div class="notes">Walk the timeline top to bottom. Days 1–5 are Damco's production work — environment access, full platform audit, stakeholder sessions, five documents drafted. Day 6 is the formal handoff. Days 7–8 are Ciel's review. SLA clock starts on written sign-off of all five deliverables — that's our quality gate and it protects you as much as it disciplines us. Emphasise the footer: the outgoing vendor is not part of this plan. This was designed for the zero-KT scenario confirmed in Q&A. Every document vests with Ciel on acceptance — they are your asset permanently.</div>
+  </section>
+  <!-- END SLIDE 10 -->
+
+  <!-- ==============================================================
+       SLIDE 11 - BUG REMEDIATION
+       ============================================================== -->
+  <section style="gap:11px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">12 / 18</span>
+    <span class="act-label">APPROACH · 03 OF 5</span>
+
+    <div class="col gap-5">
+      <span class="chip-accent" style="align-self:flex-start;">Bug Remediation · 4 Root Cause Families, 2 Sprints</span>
+      <h2 class="title-lg">Nine bugs. Four root causes. Two sprints. All targeted within four weeks of SLA activation.</h2>
+    </div>
+
+    <!-- 4 Root Cause Families -->
+    <div class="col gap-5" style="width:100%;">
+      <div class="eyebrow">The Four Root Cause Families — Identified Before Environment Access</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+
+        <div class="card col gap-5" style="padding:11px 14px; border-top:3px solid var(--err);">
+          <div class="row gap-6 vcenter">
+            <span style="font-size:11px; font-weight:700; color:var(--err);">Family 1</span>
+            <span class="chip" style="font-size:9px;">Bugs 8 + 7</span>
+          </div>
+          <div class="title-sm">JS and PCF Rendering</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px; line-height:1.45;">Custom JS in the "Updated JS Files" layer conflicting with form initialisation. Fixing this resolves both bugs in a single intervention.</div>
+          <div style="font-size:10px; color:var(--err); margin-top:auto; padding-top:6px; font-weight:600;">Highest priority — legal team impact</div>
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; border-top:3px solid var(--orange);">
+          <div class="row gap-6 vcenter">
+            <span style="font-size:11px; font-weight:700; color:var(--orange);">Family 2</span>
+            <span class="chip" style="font-size:9px;">Bugs 4 + 5</span>
+          </div>
+          <div class="title-sm">Document List Component</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px; line-height:1.45;">A notes section event triggers a Document List Component refresh that initiates an unwanted file download. Adding a note causes the Document List to re-render and begin a download. Affects document reliability for the legal team during active matter management.</div>
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; border-top:3px solid var(--warn);">
+          <div class="row gap-6 vcenter">
+            <span style="font-size:11px; font-weight:700; color:var(--warn);">Family 3</span>
+            <span class="chip" style="font-size:9px;">Bugs 2, 3, 6</span>
+          </div>
+          <div class="title-sm">Power Automate Flows</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px; line-height:1.45;">Flow trigger conditions, connection reference issues, and conditional branch logic. Acceptance emails, SharePoint folder creation, and routing failures.</div>
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; border-top:3px solid var(--muted);">
+          <div class="row gap-6 vcenter">
+            <span style="font-size:11px; font-weight:700; color:var(--muted);">Family 4</span>
+            <span class="chip" style="font-size:9px;">Bugs 1, 9</span>
+          </div>
+          <div class="title-sm">Configuration and Access</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px; line-height:1.45;">Business rule and view filter mismatch. Azure AD Contact provisioning failure affecting portal access for new matters.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2 Sprints -->
+    <div class="col gap-5" style="width:100%;">
+      <div class="eyebrow">Two-Sprint Delivery Structure — Weeks 1–4 Post SLA Activation</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+        <!-- Sprint 1 -->
+        <div class="card col gap-6" style="padding:12px 16px; border-left:4px solid var(--err);">
+          <div class="row gap-10 vcenter" style="justify-content:space-between;">
+            <div class="row gap-8 vcenter">
+              <span style="font-size:13px; font-weight:800; color:var(--err);">Sprint 1</span>
+              <span class="chip" style="font-size:9px;">Weeks 1–2 · Families 1 + 2</span>
+            </div>
+            <span style="font-size:10px; color:var(--muted);">Bugs 8, 7, 4, 5</span>
+          </div>
+          <div style="font-size:11px; color:var(--text); line-height:1.5;">Save button restored. Description field visible. Document upload reliable. The two highest-severity issues for the legal team resolved within the first two weeks of active sprint work.</div>
+          <!-- Sprint process -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px;">
+            <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 8px; border-radius:4px;"><span style="color:var(--text); font-weight:600;">Day 1</span><br>Sprint planning with IT Contact — scope confirmed in writing</div>
+            <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 8px; border-radius:4px;"><span style="color:var(--text); font-weight:600;">Days 2–9</span><br>Fix in Dev > test in Test > ALM deployment to Prod with Ciel approval</div>
+            <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 8px; border-radius:4px;"><span style="color:var(--text); font-weight:600;">Day 10</span><br>Retrospective + written report to Ciel — feeds Sprint 2 planning</div>
+          </div>
+        </div>
+
+        <!-- Sprint 2 -->
+        <div class="card col gap-6" style="padding:12px 16px; border-left:4px solid var(--orange);">
+          <div class="row gap-10 vcenter" style="justify-content:space-between;">
+            <div class="row gap-8 vcenter">
+              <span style="font-size:13px; font-weight:800; color:var(--orange);">Sprint 2</span>
+              <span class="chip" style="font-size:9px;">Weeks 3–4 · Families 3 + 4</span>
+            </div>
+            <span style="font-size:10px; color:var(--muted);">Bugs 2, 3, 6, 1, 9</span>
+          </div>
+          <div style="font-size:11px; color:var(--text); line-height:1.5;">Acceptance emails working. SharePoint folders created for all matter types. Portal access restored for new contacts. Platform operating cleanly end-to-end.</div>
+          <!-- Sprint process -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px;">
+            <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 8px; border-radius:4px;"><span style="color:var(--text); font-weight:600;">Day 1</span><br>Sprint planning with IT Contact — scope confirmed in writing</div>
+            <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 8px; border-radius:4px;"><span style="color:var(--text); font-weight:600;">Days 2–9</span><br>Fix in Dev > test in Test > ALM deployment to Prod with Ciel approval</div>
+            <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 8px; border-radius:4px;"><span style="color:var(--text); font-weight:600;">Day 10</span><br>Retrospective + written report to Ciel — closes the remediation phase</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer disclaimer -->
+    <div style="font-size:10px; color:var(--dim); width:100%; padding-top:2px;">Root cause hypotheses are preliminary and will be confirmed or revised after the Week 1 platform audit. Any material change to scope or timeline will be communicated to Ciel in writing before work on the affected bugs commences. Every Production deployment carries Ciel's explicit written approval attached to the ticket before it is executed.</div>
+
+    <div class="notes">Open with the framing: nine bugs are not nine separate problems — they are four root causes. Fixing a root cause fixes the whole family. Walk Family 1 directly: JS conflict in the fifth solution layer is the root cause of both the Save button failure AND the blank Description field. One fix, two bugs, first sprint, legal team gets relief. Walk the sprint structure: two weeks each, Day 1 planning, ALM pipeline, Day 10 retrospective and written report. Every change through Ciel's written approval before it touches Production. Close: all nine bugs targeted within four weeks of SLA activation. Root cause hypotheses confirmed after Week 1 audit — any material change communicated in writing before we proceed.</div>
+  </section>
+  <!-- END SLIDE 11 -->
+
+  <!-- ==============================================================
+       SLIDE 12 - SUPPORT MODEL
+       ============================================================== -->
+  <section style="gap:12px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">13 / 18</span>
+    <span class="act-label">APPROACH · 04 OF 5</span>
+
+    <div class="col gap-5">
+      <span class="chip-accent" style="align-self:flex-start;">Support Model · COE-Enabled, Single Point of Contact</span>
+      <h2 class="title-lg">One relationship for Ciel. A full Centre of Excellence behind it.</h2>
+    </div>
+
+    <div class="row gap-20" style="width:100%; align-items:flex-start;">
+
+      <!-- LEFT: Why single-developer breaks down -->
+      <div class="col gap-10" style="flex:1.1;">
+        <div class="eyebrow">Why Single-Developer AMS Left These Problems Unsolved</div>
+
+        <div class="col gap-6">
+
+          <div class="card col gap-5" style="padding:11px 14px; border-left:3px solid var(--err);">
+            <div class="title-sm" style="color:var(--err);">Bugs 8 and 7 Remained Open</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.5;">This platform requires simultaneous expertise across Power Pages Standard model, custom JavaScript debugging, PCF controls, and managed solution ALM. No single developer holds all of that at depth. Without that combination, the bugs stayed open.</div>
+          </div>
+
+          <div class="card col gap-5" style="padding:11px 14px; border-left:3px solid var(--warn);">
+            <div class="title-sm" style="color:var(--warn);">No Escalation Path</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.5;">Single-developer AMS has no bench, no COE, no second perspective. When complexity exceeded the developer's capability, there was nowhere to escalate within the engagement.</div>
+          </div>
+
+          <div class="card col gap-5" style="padding:11px 14px; border-left:3px solid var(--muted);">
+            <div class="title-sm">Knowledge Left With the Vendor</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.5;">All platform knowledge in one person's head. No shared knowledge base, no structured documentation, no continuity when SYKE exited. The zero-KT scenario in Q&A was the direct result.</div>
+          </div>
+
+        </div>
+
+        <div style="font-size:11px; color:var(--text); line-height:1.6; padding:12px 14px; background:var(--card2); border-radius:6px;">The structural problem is not capability. It is model design. No single developer should carry this engagement alone. The COE model is the structural fix.</div>
+      </div>
+
+      <!-- RIGHT: COE hierarchy -->
+      <div class="col gap-8" style="flex:1.3;">
+        <div class="eyebrow">The COE Model</div>
+
+        <!-- Ciel to Tarandeep connector -->
+        <div class="row gap-8 vcenter">
+          <div class="card col gap-2" style="padding:8px 14px; background:var(--card2); flex:0 0 auto;">
+            <div style="font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.05em;">CIEL GROUP</div>
+          </div>
+          <div style="font-size:10px; color:var(--dim); flex:1; border-bottom:1px dashed var(--border); position:relative; height:1px;"></div>
+          <div style="font-size:10px; color:var(--muted); flex:0 0 auto;">one contact &middot; one relationship</div>
+          <div style="font-size:10px; color:var(--dim); flex:1; border-bottom:1px dashed var(--border); position:relative; height:1px;"></div>
+          <div style="font-size:16px; color:var(--orange); flex:0 0 auto;">&#8595;</div>
+        </div>
+
+        <!-- Engagement Lead -->
+        <div class="card-maroon col gap-5" style="padding:12px 16px;">
+          <div style="font-size:9px; font-weight:700; color:#E07090; letter-spacing:.07em;">NAMED ENGAGEMENT LEAD</div>
+          <div style="font-size:15px; font-weight:800; color:var(--text);">Tarandeep Singh Sethi</div>
+          <div class="row gap-6" style="flex-wrap:wrap;">
+            <span class="chip" style="font-size:9px;">PL-400</span>
+            <span class="chip" style="font-size:9px;">PL-100</span>
+            <span class="chip" style="font-size:9px;">PL-900</span>
+            <span class="chip" style="font-size:9px;">AZ-900</span>
+            <span class="chip" style="font-size:9px;">MB-910</span>
+          </div>
+          <div style="font-size:10px; color:var(--ok); margin-top:2px;">Mon &ndash; Fri &nbsp;&middot;&nbsp; 09:30 &ndash; 18:30 IST &nbsp;&middot;&nbsp; 08:00 &ndash; 17:00 GMT+4</div>
+          <div style="font-size:10px; color:var(--muted);">Every ticket. Every check-in. Every Production deployment approval.</div>
+        </div>
+
+        <!-- 4 COE branches -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+
+          <div class="card col gap-4" style="padding:10px 12px; border-top:2px solid var(--orange);">
+            <div style="font-size:10px; font-weight:700; color:var(--orange);">Solution Architect</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">Architecture sign-off &middot; ALM governance &middot; Enhancement scoping</div>
+          </div>
+
+          <div class="card col gap-4" style="padding:10px 12px; border-top:2px solid var(--orange);">
+            <div style="font-size:10px; font-weight:700; color:var(--orange);">COE Technical Pool</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">Complex platform challenges &middot; Peer review &middot; Second perspective</div>
+          </div>
+
+          <div class="card col gap-4" style="padding:10px 12px; border-top:2px solid var(--blue);">
+            <div style="font-size:10px; font-weight:700; color:var(--blue);">Microsoft MVP Advisory</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">Cloud Lighthouse &middot; Platform direction &middot; Pre-release visibility &middot; Defect advisory</div>
+          </div>
+
+          <div class="card col gap-4" style="padding:10px 12px; border-top:2px solid var(--muted);">
+            <div style="font-size:10px; font-weight:700; color:var(--muted);">Peer Developer</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">P1 events &middot; Peak load &middot; Certified &middot; Briefed on this platform from Month 1</div>
+          </div>
+
+        </div>
+
+        <!-- Footer note -->
+        <div style="font-size:10px; color:var(--dim); background:var(--card2); padding:8px 12px; border-radius:4px;">Ciel manages one person. The depth is behind that person. The escalation is internal &mdash; Ciel never manages it.</div>
+
+      </div>
+
+    </div>
+
+    <div class="notes">Open with the structural reframe: the developer was not the problem, the model was. Walk the left column: three failure modes of single-developer AMS, all evidenced by this engagement. Then introduce the COE model: Tarandeep is the single point of contact for Ciel. Everything goes through him. Behind him is the Solution Architect, the COE Technical Pool, the Microsoft MVP Advisory Board (Cloud Lighthouse). When Tarandeep hits an edge case, he brings it to the COE. Ciel gets an answer. The escalation is internal. Emphasise: the peer developer is available within the quarterly bucket for P1 events. No additional billing. The bench is already part of the model. Close: this is not just more people. This is a different structural answer to the problem you just lived through.</div>
+  </section>
+  <!-- END SLIDE 12 -->
+
+  <!-- ==============================================================
+       SLIDE 13 - CLIENT REFERENCES
+       ============================================================== -->
+  <section style="gap:14px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">14 / 18</span>
+    <span class="act-label">APPROACH · 05 OF 5</span>
+
+    <div class="col gap-5">
+      <span class="chip-accent" style="align-self:flex-start;">Client References · Two Direct Analogies</span>
+      <h2 class="title-lg">Two clients. Two direct analogies to what Ciel is asking us to do.</h2>
+    </div>
+
+    <div class="row gap-16" style="width:100%; align-items:flex-start;">
+
+      <!-- LEFT: UAIC -->
+      <div class="col gap-10" style="flex:1;">
+
+        <div class="card col gap-8" style="padding:14px 18px; border-top:3px solid var(--orange);">
+          <div class="row gap-10 vcenter" style="justify-content:space-between;">
+            <div class="col gap-3">
+              <div style="font-size:16px; font-weight:800; color:var(--text);">UAIC</div>
+              <div style="font-size:11px; color:var(--muted);">United Automobile Insurance Company &middot; P&amp;C Insurance &middot; United States</div>
+            </div>
+            <div class="col gap-3" style="text-align:right; flex-shrink:0;">
+              <div style="font-size:clamp(28px,3vw,36px); font-weight:800; color:var(--orange); line-height:1;">12+</div>
+              <div style="font-size:10px; color:var(--muted);">years &middot; active since 2014</div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--border); padding-top:10px;" class="col gap-6">
+            <div style="font-size:11px; color:var(--muted); line-height:1.5;">Three workstreams delivered: AI Builder document extraction for demand letters, a multi-department audit collection and reporting application (dynamic scoring, appeals management), and a glass invoice automation pipeline eliminating manual matching against Guidewire Claim Centre.</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;"><span style="color:var(--ok); font-weight:700;">80%</span> demand letter processing time reduced</div>
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;"><span style="color:var(--ok); font-weight:700;">98%</span> AI document extraction accuracy</div>
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;"><span style="color:var(--ok); font-weight:700;">28</span> components delivered in 2 months</div>
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;"><span style="color:var(--ok); font-weight:700;">100%</span> glass invoice pipeline automated</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; border-left:3px solid var(--orange);">
+          <div style="font-size:10px; font-weight:600; color:var(--orange);">Why This Reference Matters for Ciel</div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.5;">UAIC operates in a regulated environment where data accuracy and defensible audit trails are non-negotiable &mdash; the same standard a legal platform demands. The engagement has expanded over twelve years as the platform's role within UAIC grew. Incident management, monitoring, enhancement, and governance are all under the same AMC structure today. The goal has never been to close tickets. It has been to ensure the platform serves the business reliably and never becomes a problem the client has to manage. That is the model Damco is proposing for Ciel.</div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Compass Group -->
+      <div class="col gap-10" style="flex:1;">
+
+        <div class="card col gap-8" style="padding:14px 18px; border-top:3px solid var(--blue);">
+          <div class="row gap-10 vcenter" style="justify-content:space-between;">
+            <div class="col gap-3">
+              <div style="font-size:16px; font-weight:800; color:var(--text);">Compass Group</div>
+              <div style="font-size:11px; color:var(--muted);">Canteen Services Division &middot; Fortune 500 &middot; Active engagement</div>
+            </div>
+            <div class="col gap-3" style="text-align:right; flex-shrink:0;">
+              <div style="font-size:clamp(28px,3vw,36px); font-weight:800; color:var(--blue); line-height:1;">2mo</div>
+              <div style="font-size:10px; color:var(--muted);">Phases 1&ndash;3 live</div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--border); padding-top:10px;" class="col gap-6">
+            <div style="font-size:11px; color:var(--muted); line-height:1.5;">Four core operations running on Excel, email chains, and PDF scans: daily cash reconciliation, quarterly compliance testing, monthly alarm zone tracking, and weekly payroll across the Chicago team. Damco built the platform and has managed it under AMS since its first day of operation.</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;">Cash reconciliation: email-based &rarr; <span style="color:var(--ok); font-weight:700;">48hr SLA-enforced</span> with signed audit receipts</div>
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;">Quarterly compliance: manual days &rarr; <span style="color:var(--ok); font-weight:700;">fully automated</span></div>
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;"><span style="color:var(--ok); font-weight:700;">100%</span> monthly alarm zone coverage</div>
+              <div style="font-size:10px; color:var(--muted); background:var(--card2); padding:6px 10px; border-radius:4px;">Payroll: fragile Excel chain &rarr; <span style="color:var(--ok); font-weight:700;">SAP-integrated</span> maker-checker-approver</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col gap-5" style="padding:11px 14px; border-left:3px solid var(--blue);">
+          <div style="font-size:10px; font-weight:600; color:var(--blue);">Why This Reference Is Relevant to Ciel</div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.5;">Compass had no structured platform to begin with &mdash; only spreadsheets and email chains. Damco took over operationally critical workflows, documented them from first principles, built the platform, and has provided structured managed support without operational disruption since go-live. The parallel for Ciel is the methodology: documentation from first principles, managed ownership from day one, a clear escalation path maintained throughout. That combination is exactly what the onboarding phase delivers here.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="width:100%; border-top:1px solid var(--border); padding-top:10px;">
+      <div style="font-size:10px; color:var(--muted);">Reference contacts named in the proposal. Available for direct conversation under NDA on request.</div>
+    </div>
+
+    <div class="notes">Introduce the two references by saying: these are not our biggest or longest clients. They are the two most directly comparable to what Ciel is asking. UAIC first: regulated industry, data accuracy and audit trails non-negotiable, platform under AMC for over a decade. Walk the outcomes. The key line: the goal has never been to close tickets &mdash; it has been to ensure the platform serves the business reliably. Then Compass: four operations on Excel and email chains. Damco built the platform, documented it from first principles, has managed it since go-live. Phases 1-3 live in two months. The parallel for Ciel is the methodology: documentation from first principles and managed ownership from day one. Close: reference contacts are named. Available for a direct conversation if you want to speak to them.</div>
+  </section>
+  <!-- END SLIDE 13 -->
+
+  <!-- ==============================================================
+       SLIDE 14 - SLA + GOVERNANCE
+       ============================================================== -->
+  <section style="gap:12px; justify-content:center; padding:28px 60px;">
+    <span class="slide-num">15 / 18</span>
+    <span class="act-label">PART 3 OF 3 · COMMITMENTS</span>
+
+    <div class="col gap-5">
+      <span class="chip-accent" style="align-self:flex-start;">SLA Commitments · Accepted Without Modification</span>
+      <h2 class="title-lg">All four SLA targets accepted as written. Service credits apply as-of-right.</h2>
+    </div>
+
+    <div class="row gap-16" style="width:100%; align-items:flex-start;">
+
+      <!-- LEFT: SLA table + service credits -->
+      <div class="col gap-10" style="flex:1.2;">
+
+        <!-- P1-P4 table -->
+        <div class="col gap-0" style="width:100%; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+
+          <!-- Header -->
+          <div style="display:grid; grid-template-columns:0.7fr 1.2fr 1fr 0.8fr 0.7fr; background:var(--card2);">
+            <div style="padding:7px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em;">PRIORITY</div>
+            <div style="padding:7px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em; border-left:1px solid var(--border);">DEFINITION</div>
+            <div style="padding:7px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em; border-left:1px solid var(--border);">RESPONSE</div>
+            <div style="padding:7px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em; border-left:1px solid var(--border);">RESOLUTION</div>
+            <div style="padding:7px 10px; font-size:9px; font-weight:700; color:var(--ok); letter-spacing:.05em; border-left:1px solid var(--border);">DAMCO</div>
+          </div>
+
+          <!-- P1 -->
+          <div style="display:grid; grid-template-columns:0.7fr 1.2fr 1fr 0.8fr 0.7fr; border-top:1px solid var(--border);">
+            <div style="padding:8px 10px; display:flex; align-items:center;"><span style="font-size:10px; font-weight:700; color:var(--err);">P1 Critical</span></div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border); line-height:1.4;">Platform inaccessible or core workflow blocked</div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--text); border-left:1px solid var(--border); line-height:1.4;">1 business hour<br><span style="color:var(--dim); font-size:9px;">Out-of-hours: 30-min ack + 2-hr assessment call</span></div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:600; color:var(--text); border-left:1px solid var(--border);">4 business hours</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:700; color:var(--ok); border-left:1px solid var(--border);">Accepted</div>
+          </div>
+
+          <!-- P2 -->
+          <div style="display:grid; grid-template-columns:0.7fr 1.2fr 1fr 0.8fr 0.7fr; border-top:1px solid var(--border);">
+            <div style="padding:8px 10px; display:flex; align-items:center;"><span style="font-size:10px; font-weight:700; color:var(--orange);">P2 High</span></div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border); line-height:1.4;">Major feature broken; workaround exists</div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--text); border-left:1px solid var(--border);">2 business hours</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:600; color:var(--text); border-left:1px solid var(--border);">1 business day</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:700; color:var(--ok); border-left:1px solid var(--border);">Accepted</div>
+          </div>
+
+          <!-- P3 -->
+          <div style="display:grid; grid-template-columns:0.7fr 1.2fr 1fr 0.8fr 0.7fr; border-top:1px solid var(--border);">
+            <div style="padding:8px 10px; display:flex; align-items:center;"><span style="font-size:10px; font-weight:700; color:var(--warn);">P3 Medium</span></div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border); line-height:1.4;">Platform degraded; acceptable workaround available</div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--text); border-left:1px solid var(--border);">4 business hours</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:600; color:var(--text); border-left:1px solid var(--border);">2&ndash;3 business days</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:700; color:var(--ok); border-left:1px solid var(--border);">Accepted</div>
+          </div>
+
+          <!-- P4 -->
+          <div style="display:grid; grid-template-columns:0.7fr 1.2fr 1fr 0.8fr 0.7fr; border-top:1px solid var(--border);">
+            <div style="padding:8px 10px; display:flex; align-items:center;"><span style="font-size:10px; font-weight:700; color:var(--muted);">P4 Low</span></div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border); line-height:1.4;">Cosmetic or minor; no operational impact</div>
+            <div style="padding:8px 10px; font-size:10px; color:var(--text); border-left:1px solid var(--border);">1 business day</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:600; color:var(--text); border-left:1px solid var(--border);">5&ndash;7 business days</div>
+            <div style="padding:8px 10px; font-size:10px; font-weight:700; color:var(--ok); border-left:1px solid var(--border);">Accepted</div>
+          </div>
+
+        </div>
+
+        <div style="font-size:10px; color:var(--dim);">Coverage: Monday&ndash;Friday, 08:00&ndash;17:00 GMT+4, excluding Mauritian public holidays &middot; Out-of-hours P1: Tarandeep reachable by WhatsApp and email</div>
+
+        <!-- Service credits -->
+        <div class="col gap-6">
+          <div class="eyebrow">Service Credits &mdash; Apply As-of-Right, No Request Required</div>
+          <div class="col gap-0" style="border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+
+            <div style="display:grid; grid-template-columns:1.8fr 0.6fr 1.2fr; background:var(--card2);">
+              <div style="padding:6px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em;">TRIGGER</div>
+              <div style="padding:6px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em; border-left:1px solid var(--border);">CREDIT</div>
+              <div style="padding:6px 10px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.05em; border-left:1px solid var(--border);">BASIS</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1.8fr 0.6fr 1.2fr; border-top:1px solid var(--border);">
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted);">P1 breach: resolution exceeds 4 business hours</div>
+              <div style="padding:7px 10px; font-size:10px; font-weight:700; color:var(--err); border-left:1px solid var(--border);">5%</div>
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border);">of monthly equivalent fee</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1.8fr 0.6fr 1.2fr; border-top:1px solid var(--border);">
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted);">Single P2 missed</div>
+              <div style="padding:7px 10px; font-size:10px; font-weight:700; color:var(--orange); border-left:1px solid var(--border);">2%</div>
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border);">of monthly equivalent fee</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1.8fr 0.6fr 1.2fr; border-top:1px solid var(--border);">
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted);">Two or more P2 missed in same month</div>
+              <div style="padding:7px 10px; font-size:10px; font-weight:700; color:var(--err); border-left:1px solid var(--border);">5%</div>
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border);">of monthly equivalent fee</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1.8fr 0.6fr 1.2fr; border-top:2px solid var(--border); background:var(--card2);">
+              <div style="padding:7px 10px; font-size:10px; font-weight:600; color:var(--text);">Maximum credit per calendar month</div>
+              <div style="padding:7px 10px; font-size:10px; font-weight:700; color:var(--text); border-left:1px solid var(--border);">15%</div>
+              <div style="padding:7px 10px; font-size:10px; color:var(--muted); border-left:1px solid var(--border);">Applied as reduction on next quarterly invoice</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Governance cadence -->
+      <div class="col gap-10" style="flex:1;">
+        <div class="eyebrow">Governance Cadence &mdash; Structured Visibility, Every Week</div>
+
+        <div class="card col gap-6" style="padding:11px 14px; border-left:3px solid var(--orange);">
+          <div class="row gap-8 vcenter">
+            <span class="chip" style="font-size:9px; flex-shrink:0;">Every Monday</span>
+            <span class="title-sm">Weekly Status Update</span>
+          </div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.45;">Open tickets &middot; SLA compliance this week &middot; Planned deployments &middot; Microsoft platform update flags</div>
+          <div style="font-size:10px; color:var(--dim);">Audience: IT Contact</div>
+        </div>
+
+        <div class="card col gap-6" style="padding:11px 14px; border-left:3px solid var(--orange);">
+          <div class="row gap-8 vcenter">
+            <span class="chip" style="font-size:9px; flex-shrink:0;">Monthly &middot; Day 1</span>
+            <span class="title-sm">Monthly Service Report</span>
+          </div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.45;">Incident log by severity &middot; Hours used vs. bucket &middot; Flow health &middot; Open items &middot; Recommendations</div>
+          <div style="font-size:10px; color:var(--dim);">Audience: IT Contact</div>
+        </div>
+
+        <div class="card col gap-6" style="padding:11px 14px; border-left:3px solid var(--blue);">
+          <div class="row gap-8 vcenter">
+            <span class="chip" style="font-size:9px; flex-shrink:0;">Quarterly</span>
+            <span class="title-sm">Quarterly Steering Session</span>
+          </div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.45;">Platform health scorecard &middot; SLA trends &middot; Risk register &middot; Bucket review &middot; 90-day outlook &middot; Scope adjustments agreed</div>
+          <div style="font-size:10px; color:var(--dim);">Audience: IT Contact</div>
+        </div>
+
+        <div class="card col gap-6" style="padding:11px 14px; border-left:3px solid var(--err);">
+          <div class="row gap-8 vcenter">
+            <span class="chip" style="font-size:9px; flex-shrink:0;">Post P1 / P2</span>
+            <span class="title-sm">Root Cause Analysis Report</span>
+          </div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.45;">Incident timeline &middot; Root cause &middot; Affected components &middot; Preventive action &middot; Delivered within 2 business days of resolution</div>
+          <div style="font-size:10px; color:var(--dim);">Audience: IT Contact</div>
+        </div>
+
+        <div style="font-size:11px; color:var(--muted); line-height:1.6; padding:10px 12px; background:var(--card2); border-radius:4px;">This governance rhythm is how your IT Contact stays in control of a platform they are not managing day-to-day. The weekly update surfaces issues before they become incidents. The monthly report shows engagement health in one view. The quarterly session is where the bucket, outlook, and any scope adjustments are formally agreed.</div>
+
+      </div>
+
+    </div>
+
+    <div class="notes">Walk the SLA table first: all four accepted without modification. P1 at four-hour resolution. P2 at one business day. Then the out-of-hours P1: Tarandeep is reachable by WhatsApp and email, acknowledgement within 30 minutes, assessment call within 2 hours. Then move to service credits: five percent for a P1 breach, two percent for a single P2 miss. These are not negotiated on request &mdash; they apply as-of-right and are written into the SOW. The monthly cap is 15 percent. The credit mechanism makes the commitment real. Then walk governance: Monday weekly, first-of-month service report, quarterly steering. This is not reporting for its own sake. It is how the IT Contact stays in control without managing the platform themselves. Every post-P1/P2 event generates a written RCA within two business days.</div>
+  </section>
+  <!-- END SLIDE 14 -->
+
+  <!-- ==============================================================
+       SLIDE 15 - BEYOND THIS ENGAGEMENT
+       ============================================================== -->
+  <section style="gap:20px; justify-content:center; padding:36px 60px;">
+    <span class="slide-num">16 / 18</span>
+    <span class="act-label">PART 3 OF 3</span>
+
+    <div class="col gap-6">
+      <h2 class="title-lg">The team managing this platform already knows it well enough to build what comes next.</h2>
+      <div class="body-sm" style="color:var(--muted); max-width:800px;">This section is deliberately brief. The engagement is about stabilising and sustaining the platform. We are not here to sell the next phase before we have delivered the first one. But Madani's phrase deserves a direct answer.</div>
+    </div>
+
+    <!-- Three blocks -->
+    <div class="row gap-14" style="width:100%;">
+
+      <div class="card col gap-8" style="flex:1; padding:14px 16px; border-top:3px solid var(--orange);">
+        <div class="title-sm">Power BI on the Matters Entity</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.6;">The 27-field Matters schema in Dataverse is already accumulating data every month. Matter cycle times by type, allocation patterns by cluster, volume trends, legal team SLA adherence. No new infrastructure required.</div>
+        <div style="font-size:10px; color:var(--orange); font-weight:600; margin-top:auto;">The data is already there.</div>
+      </div>
+
+      <div class="card col gap-8" style="flex:1; padding:14px 16px; border-top:3px solid var(--orange);">
+        <div class="title-sm">AI-Assisted Matter Intake</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.6;">Dataverse is the native foundation for Microsoft Copilot and AI Builder. Once the platform is stable and the data model is clean, AI-assisted triage, matter classification on submission, and intelligent routing are natural next layers. The first month of this engagement produces exactly what that requires: clean documentation, reliable flows, well-governed data.</div>
+        <div style="font-size:10px; color:var(--orange); font-weight:600; margin-top:auto;">The groundwork is what Month 1 produces.</div>
+      </div>
+
+      <div class="card col gap-8" style="flex:1; padding:14px 16px; border-top:3px solid var(--orange);">
+        <div class="title-sm">Workflow Intelligence</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.6;">The 17 Power Automate flows handling notifications, routing, and access control are the same flows that carry AI-driven document processing and obligation tracking as the legal team's needs evolve. The architecture supports it. The platform needs to be stable first.</div>
+        <div style="font-size:10px; color:var(--orange); font-weight:600; margin-top:auto;">The architecture already supports it.</div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="width:100%; border-top:1px solid var(--border); padding-top:12px;">
+      <div style="font-size:11px; color:var(--muted); line-height:1.7;">The <span style="color:var(--text); font-weight:600;">depth</span> is this engagement &mdash; platform knowledge, documentation, data governance, COE behind a single point of contact. The <span style="color:var(--text); font-weight:600;">breadth</span> is what that foundation enables across Ciel clusters when the time is right. The team supporting the AMS engagement will know this platform's data model, security architecture, solution layers, and integration dependencies better than anyone. When the time comes to build the next layer &mdash; on this platform or across the broader Ciel environment &mdash; that context is already in place.</div>
+    </div>
+
+    <div class="notes">Keep this short. Open: we have kept this section brief deliberately. This engagement is about stabilising and sustaining a platform that needs to run reliably for the legal team. We are not selling the next phase before we have delivered the first one. Then address the pull quote directly: Madani used a specific phrase &mdash; breadth and depth. The depth is this engagement. Walk the three blocks quickly: Power BI on the Matters entity needs no new infrastructure, the data is there. AI intake is the natural next layer once Copilot has a clean Dataverse model to work from. The 17 flows are the same flows that carry intelligence. Close: the team managing AMS will know this platform better than anyone. When the time comes, the context is already in place.</div>
+  </section>
+  <!-- END SLIDE 15 -->
+
+  <!-- ==============================================================
+       SLIDE 17 - PARTNERSHIP
+       ============================================================== -->
+  <section style="justify-content:center; gap:22px; padding:36px 60px;">
+    <span class="slide-num">17 / 18</span>
+
+    <!-- Hero -->
+    <div class="col gap-8" style="width:100%;">
+      <h2 class="title-lg">A partner to your platform. Not a vendor on your vendor list.</h2>
+      <div style="font-size:13px; color:var(--muted); max-width:720px; line-height:1.6;">Ciel manages a 38,000-person group from a lean corporate centre. Every vendor that requires active oversight costs bandwidth you do not have. We are structured to cost you none.</div>
+    </div>
+
+    <!-- Three pillars -->
+    <div class="row gap-14" style="width:100%;">
+
+      <div class="col gap-8" style="flex:1; padding:18px 20px; background:var(--card); border-radius:10px; border-top:3px solid var(--orange);">
+        <div style="font-size:13px; font-weight:700; color:var(--text);">Proactive</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.6;">We track the Microsoft Power Platform roadmap and your platform's posture continuously. You hear about risks and changes from us before they become incidents. Not after.</div>
+        <div style="font-size:10px; color:var(--orange); margin-top:auto;">Entra ID October 2026. PCF wave changes. Deprecation events. On your radar before they are on anyone else's.</div>
+      </div>
+
+      <div class="col gap-8" style="flex:1; padding:18px 20px; background:var(--card); border-radius:10px; border-top:3px solid var(--orange);">
+        <div style="font-size:13px; font-weight:700; color:var(--text);">Transparent</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.6;">Weekly pulse. Monthly performance report. Quarterly business review. At every point, you know what is open, what is resolved, what is coming, and what the platform's health looks like.</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:auto;">One relationship. One contact. Tarandeep owns every ticket, every update, every conversation with Ciel.</div>
+      </div>
+
+      <div class="col gap-8" style="flex:1; padding:18px 20px; background:var(--card); border-radius:10px; border-top:3px solid var(--blue);">
+        <div style="font-size:13px; font-weight:700; color:var(--text);">Clean by design</div>
+        <div style="font-size:11px; color:var(--muted); line-height:1.6;">All platform IP vests with Ciel on payment. Full transition documentation pack delivered within 30 days of contract end. No leverage. No lock-in. You exit cleanly whenever you choose.</div>
+        <div style="font-size:10px; color:var(--blue); margin-top:auto;">This is not a gesture. It is a commercial commitment written into the SOW.</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom statement -->
+    <div style="width:100%; padding:12px 18px; background:var(--card2); border-radius:6px; border-left:3px solid var(--orange);">
+      <div style="font-size:11px; color:var(--text); line-height:1.6;">We will not ask for a meeting you do not need. We will not wait for a ticket to tell you about a risk we already see. The platform is ours to manage while it is yours to own. That is the relationship we are proposing.</div>
+    </div>
+
+    <div class="notes">Final substantive slide before the close. Reinforce the partnership framing: Ciel is not looking for another vendor on a vendor list. They want a firm that takes ownership. Walk the three pillars: Proactive &mdash; they hear about risks from us before incidents; give the Entra ID date as concrete evidence. Transparent &mdash; zero ambiguity about platform health at any point. Clean by design &mdash; no leverage, they exit whenever they choose with a full documentation pack. Read the bottom statement aloud. Then move to the close.</div>
+  </section>
+  <!-- END SLIDE 17 -->
+
+
+
+  <!-- ==============================================================
+       SLIDE 16 - CLOSER
+       ============================================================== -->
+  <section style="justify-content:center; gap:28px; padding:44px 60px;">
+    <span class="slide-num">18 / 18</span>
+
+    <!-- Ghost watermark -->
+    <div style="position:absolute; right:-10px; top:50%; transform:translateY(-50%); font-size:clamp(200px,22vw,320px); font-weight:800; color:var(--orange); opacity:0.05; line-height:1; user-select:none; z-index:0; pointer-events:none;">?</div>
+
+    <!-- Hero -->
+    <div class="col gap-10" style="position:relative; z-index:1; text-align:center; align-items:center; width:100%;">
+      <h2 class="title-xl">Thank you for the time today.</h2>
+      <div class="sub-md" style="color:var(--muted); max-width:620px; text-align:center;">We have covered the platform, the approach, the team, and the commercial terms. The floor is open.</div>
+    </div>
+
+    <!-- Three cards -->
+    <div class="row gap-14" style="width:100%; position:relative; z-index:1;">
+
+      <div class="q-tile col gap-10" style="border-top:3px solid var(--orange); flex:1;">
+        <div class="title-sm">Questions and Answers</div>
+        <div class="body-sm" style="color:var(--muted);">Ask anything &mdash; platform knowledge, commercial terms, the team, references, or the transition plan. No question is out of scope at this stage.</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:auto;">Any follow-up after today: response within 24 hours. Reach out directly &mdash; no formal process required.</div>
+      </div>
+
+      <div class="q-tile col gap-10" style="border-top:3px solid var(--orange); flex:1;">
+        <div class="title-sm">What Happens Next</div>
+        <div class="col gap-6" style="margin-top:4px;">
+          <div style="font-size:11px; color:var(--muted); line-height:1.5; padding-left:10px; border-left:2px solid var(--orange);">Select your vendor and notify Damco. We will send the SOW and contract for execution within 24 hours of selection.</div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.5; padding-left:10px; border-left:2px solid var(--border);">NDA executed within 3 business days. Environment access within 5 business days of NDA. Onboarding begins immediately.</div>
+          <div style="font-size:11px; color:var(--muted); line-height:1.5; padding-left:10px; border-left:2px solid var(--border);">No dependency on the outgoing vendor at any stage.</div>
+        </div>
+      </div>
+
+      <div class="q-tile col gap-10" style="border-top:3px solid var(--blue); flex:1;">
+        <div class="title-sm" style="color:var(--blue);">2 Weeks to SLA Active</div>
+        <div class="body-sm" style="color:var(--muted);">From contract signing to SLA active is 2 calendar weeks. Team engagement preparation, environment access, platform audit, and five baseline documents &mdash; all within that window.</div>
+        <div style="font-size:10px; color:var(--blue); font-weight:600; margin-top:auto;">Plan your selection timeline with this lead time in mind.</div>
+      </div>
+
+    </div>
+
+    <!-- Contact -->
+    <div class="row gap-0 vcenter" style="width:100%; position:relative; z-index:1; border-top:1px solid var(--border); padding-top:16px; gap:0; justify-content:center;">
+      <div class="col gap-4" style="text-align:center; align-items:center;">
+        <div style="font-size:13px; font-weight:700; color:var(--text);">Vishav Bhatia</div>
+        <div style="font-size:10px; color:var(--muted);">Sr. Business Manager GCC &nbsp;&middot;&nbsp; Damco</div>
+        <div class="row gap-16 vcenter" style="margin-top:4px;">
+          <div style="font-size:10px; color:var(--orange);">vishavb@damcogroup.com</div>
+          <div style="font-size:10px; color:var(--muted);">+91-9034572560 &nbsp;&middot;&nbsp; +971-45945007</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">Vishav closes. Say: that is everything we wanted to cover today. Thank you for the time. The floor is open for questions. Do not rush to close Q&A. If the room goes quiet, offer: we are happy to go deeper on the technical platform work, the commercial structure, or the transition plan. Anything you want more detail on. After Q&A: follow-up is simple &mdash; reach out to Vishav directly. Response within 24 hours, no formal process. Two weeks from your go-ahead to SLA active.</div>
+  </section>
+  <!-- END SLIDE 16 -->
+
+</div><!-- .deck -->
+
+<!-- ================================================================
+     ENGINE
+     ================================================================ -->
+<script>
+  var slides  = Array.from(document.querySelectorAll('.deck section'));
+  var total   = slides.length;
+  var current = 0;
+
+  function showSlide(idx) {
+    slides.forEach(function(s) { s.classList.remove('present'); });
+    slides[idx].classList.add('present');
+    document.getElementById('progress').style.width = ((idx + 1) / total * 100) + '%';
+    current = idx;
+    if (notesOpen) updateNotes();
+  }
+
+  function navigate(dir) {
+    var n = current + dir;
+    if (n >= 0 && n < total) showSlide(n);
+  }
+
+  /* Notes */
+  var notesOpen = false;
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    document.getElementById('notes-panel').style.display = notesOpen ? 'block' : 'none';
+    if (notesOpen) updateNotes();
+  }
+  function updateNotes() {
+    var el = slides[current].querySelector('.notes');
+    document.getElementById('notes-text').textContent = el
+      ? el.textContent.trim()
+      : '(No notes for this slide)';
+  }
+
+  /* Keyboard */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); navigate(1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); navigate(-1);
+    }
+    if (e.key === 'n' || e.key === 'N') {
+      e.preventDefault(); toggleNotes();
+    }
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>
