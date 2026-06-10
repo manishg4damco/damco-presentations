@@ -2,448 +2,432 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agentic Enterprise Intelligence | Damco Solutions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* ── ROOT VARS ── */
 :root {
-  --bg:       #08090F;
-  --bg2:      #0D1117;
-  --card:     #111827;
-  --card-hi:  #141D30;
-  --orange:   #FF9408;
-  --o10:      rgba(255,148,8,0.10);
-  --o20:      rgba(255,148,8,0.20);
-  --o30:      rgba(255,148,8,0.30);
-  --maroon:   #94122C;
-  --green:    #10B981;
-  --g10:      rgba(16,185,129,0.10);
-  --g20:      rgba(16,185,129,0.20);
-  --red:      #EF4444;
-  --text:     #F9FAFB;
-  --t2:       #9CA3AF;
-  --t3:       #6B7280;
-  --border:   #1F2937;
-  --bhi:      #2D3748;
+  --bg:      #08090F;
+  --bg2:     #0D1117;
+  --card:    #111827;
+  --card-hi: #141D30;
+  --orange:  #FF9408;
+  --o10:     rgba(255,148,8,0.10);
+  --o20:     rgba(255,148,8,0.20);
+  --o30:     rgba(255,148,8,0.30);
+  --maroon:  #94122C;
+  --green:   #10B981;
+  --g10:     rgba(16,185,129,0.10);
+  --g20:     rgba(16,185,129,0.20);
+  --red:     #EF4444;
+  --text:    #F9FAFB;
+  --t2:      #9CA3AF;
+  --t3:      #6B7280;
+  --border:  #1F2937;
+  --bhi:     #2D3748;
 }
-@page { size: 297mm 210mm; margin: 0; }
-* { margin:0; padding:0; box-sizing:border-box; }
-html,body {
+
+/* ── RESET ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
   font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
-  background:var(--bg); color:var(--text);
+  background:#000;color:var(--text);
   line-height:1.4;
   -webkit-print-color-adjust:exact;
   print-color-adjust:exact;
 }
 
-/* ── SLIDE BASE ── */
-.slide {
-  width:297mm; height:210mm;
-  overflow:hidden; position:relative;
+/* ══════════════════════════════════════
+   SCREEN — PRESENTATION MODE
+══════════════════════════════════════ */
+@media screen {
+  html,body{ overflow:hidden; height:100%; }
+
+  #deck{
+    position:fixed;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    background:#000;
+  }
+
+  .slide{
+    position:absolute;
+    width:1400px;height:990px;
+    transform-origin:center center;
+    flex-direction:column;
+    display:none;
+    flex-shrink:0;
+    border-radius:2px;
+    box-shadow:0 0 120px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .slide.active{ display:flex; }
+
+  /* Nav buttons */
+  .nav-btn{
+    position:fixed;top:50%;z-index:999;
+    transform:translateY(-50%);
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    color:rgba(255,255,255,0.5);
+    width:40px;height:72px;border-radius:8px;
+    cursor:pointer;font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all 0.2s;user-select:none;
+  }
+  .nav-btn:hover{background:rgba(255,148,8,0.15);color:var(--orange);border-color:rgba(255,148,8,0.3);}
+  #btn-prev{left:14px;}
+  #btn-next{right:14px;}
+
+  /* Slide counter */
+  #counter{
+    position:fixed;bottom:20px;right:20px;z-index:999;
+    font-size:12px;color:rgba(255,255,255,0.25);
+    font-family:'Inter',sans-serif;letter-spacing:0.5px;
+  }
+  #counter b{color:var(--orange);}
+
+  /* Progress bar */
+  #progress{
+    position:fixed;bottom:0;left:0;right:0;z-index:999;
+    height:3px;background:rgba(255,255,255,0.05);
+  }
+  #progress-bar{
+    height:100%;background:var(--orange);
+    transition:width 0.35s ease;
+  }
+
+  /* Dot navigation */
+  #dots{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+    z-index:999;display:flex;gap:6px;align-items:center;
+  }
+  .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    cursor:pointer;transition:all 0.2s;
+  }
+  .dot.on{background:var(--orange);transform:scale(1.3);}
+}
+
+/* ══════════════════════════════════════
+   PRINT — A4 LANDSCAPE
+══════════════════════════════════════ */
+@media print {
+  @page{size:297mm 210mm;margin:0;}
+  html,body{background:var(--bg);}
+  #deck{display:block;}
+  .slide{
+    width:297mm!important;height:210mm!important;
+    display:flex!important;
+    flex-direction:column;
+    overflow:hidden;
+    page-break-after:always;
+    break-after:page;
+    transform:none!important;
+    position:relative!important;
+  }
+  .nav-btn,#counter,#progress,#dots{display:none!important;}
+}
+
+/* ══════════════════════════════════════
+   SLIDE BASE (shared)
+══════════════════════════════════════ */
+.slide{
   background:var(--bg);
-  display:flex; flex-direction:column;
-  page-break-after:always; break-after:page;
+  overflow:hidden;
+  position:relative;
 }
-.slide::before {
-  content:''; position:absolute; inset:0; z-index:0;
-  background-image:radial-gradient(rgba(255,148,8,0.025) 1px,transparent 1px);
-  background-size:18px 18px; pointer-events:none;
+.slide::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background-image:radial-gradient(rgba(255,148,8,0.022) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
 }
-.slide > * { position:relative; z-index:1; }
+.slide>*{position:relative;z-index:1;}
 
-/* ── SLIDE HEADER ── */
-.sh {
-  height:10mm; flex-shrink:0;
-  background:rgba(13,17,23,0.97);
-  border-bottom:0.25mm solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 14mm;
-}
-.sh-logo { font-size:8pt; font-weight:800; letter-spacing:-0.2px; }
-.sh-logo b { color:var(--orange); font-weight:800; }
-.sh-event { font-size:6.5pt; color:var(--t3); }
-.sh-event strong { color:var(--orange); font-weight:700; }
-
-/* ── SLIDE FOOTER ── */
-.sf {
-  height:8mm; flex-shrink:0;
-  border-top:0.25mm solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 14mm;
-}
-.sf-l { font-size:5.5pt; color:var(--t3); }
-.sf-r { font-size:6pt; color:var(--t3); }
-.sf-r b { color:var(--orange); }
-
-/* ── CONTENT AREA ── */
-.sc {
-  flex:1; overflow:hidden;
-  padding:7mm 14mm 6mm;
-}
-
-/* ── SECTION LABELS ── */
-.lbl {
-  font-size:6pt; font-weight:800;
-  letter-spacing:2.5px; text-transform:uppercase;
-  color:var(--orange); margin-bottom:2.5mm;
-}
-.ttl {
-  font-size:18pt; font-weight:800;
-  letter-spacing:-0.5px; line-height:1.1;
-  margin-bottom:2mm;
-}
-.sub {
-  font-size:7.5pt; color:var(--t2);
-  line-height:1.6; margin-bottom:5mm;
-  max-width:230mm;
-}
-
-/* ── GRADIENT TEXT ── */
-.grad {
-  background:linear-gradient(130deg,var(--orange) 0%,#FFBE5C 100%);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-
-/* ── GLOW DECORATIONS ── */
-.glow-r {
-  position:absolute; top:-50mm; right:-20mm; z-index:0;
-  width:160mm; height:160mm; border-radius:50%; pointer-events:none;
+/* Glow decorations */
+.glow-r{
+  position:absolute;top:-80px;right:-40px;z-index:0;
+  width:500px;height:500px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(255,148,8,0.07) 0%,transparent 65%);
 }
-.glow-l {
-  position:absolute; bottom:-30mm; left:-10mm; z-index:0;
-  width:110mm; height:110mm; border-radius:50%; pointer-events:none;
+.glow-l{
+  position:absolute;bottom:-60px;left:-30px;z-index:0;
+  width:360px;height:360px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(148,18,44,0.05) 0%,transparent 65%);
 }
 
-/* ═══════════════ SLIDE 1 ═══════════════ */
-.s1 .sc {
-  display:flex; align-items:center;
-  padding-top:0; padding-bottom:0;
+/* ── SLIDE HEADER ── */
+.sh{
+  height:44px;flex-shrink:0;
+  background:rgba(13,17,23,0.97);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
 }
-.s1-left { flex:1.15; padding:5mm 10mm 5mm 0; }
-.s1-right { flex:0.85; display:flex; align-items:center; justify-content:center; }
+.sh-logo{font-size:13px;font-weight:800;letter-spacing:-0.3px;}
+.sh-logo b{color:var(--orange);font-weight:800;}
+.sh-event{font-size:11px;color:var(--t3);}
+.sh-event strong{color:var(--orange);font-weight:700;}
 
-.eyebrow {
-  display:inline-flex; align-items:center; gap:4px;
-  background:var(--o10); border:0.3mm solid var(--o30);
-  color:var(--orange); padding:1.5mm 4mm; border-radius:20px;
-  font-size:6.5pt; font-weight:700; letter-spacing:0.5px;
-  text-transform:uppercase; margin-bottom:3.5mm;
+/* ── SLIDE FOOTER ── */
+.sf{
+  height:32px;flex-shrink:0;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
 }
-.eyebrow-dot {
-  width:4px; height:4px;
-  background:var(--orange); border-radius:50%;
+.sf-l{font-size:10px;color:var(--t3);}
+.sf-r{font-size:10px;color:var(--t3);}
+.sf-r b{color:var(--orange);}
+
+/* ── CONTENT AREA ── */
+.sc{
+  flex:1;overflow:hidden;
+  padding:28px 48px 24px;
 }
-.s1-h1 {
-  font-size:25pt; font-weight:900;
-  letter-spacing:-1px; line-height:1.08;
-  margin-bottom:3.5mm;
+
+/* ── TYPOGRAPHY ── */
+.lbl{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.ttl{font-size:32px;font-weight:800;letter-spacing:-0.8px;line-height:1.1;margin-bottom:8px;}
+.sub{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:18px;max-width:820px;}
+.grad{
+  background:linear-gradient(130deg,var(--orange) 0%,#FFBE5C 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.s1-sub {
-  font-size:8pt; color:var(--t2);
-  line-height:1.65; margin-bottom:4.5mm;
-  max-width:130mm;
+
+/* ══════════════════════════════════════
+   SLIDE 1 — TITLE
+══════════════════════════════════════ */
+.s1 .sc{display:flex;align-items:center;padding-top:0;padding-bottom:0;}
+.s1-left{flex:1.1;padding:20px 36px 20px 0;}
+.s1-right{flex:0.9;display:flex;align-items:center;justify-content:center;}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--o10);border:1px solid var(--o30);
+  color:var(--orange);padding:6px 14px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:0.8px;
+  text-transform:uppercase;margin-bottom:16px;
 }
-.s1-stats {
-  display:flex; gap:0;
-  padding-top:3.5mm; border-top:0.3mm solid var(--border);
-}
-.s1-stat { flex:1; }
-.s1-stat+.s1-stat {
-  border-left:0.3mm solid var(--border);
-  padding-left:4.5mm;
-}
-.stat-n {
-  font-size:19pt; font-weight:900;
-  color:var(--orange); line-height:1;
-}
-.stat-n sup { font-size:9pt; }
-.stat-l {
-  font-size:6.5pt; color:var(--t3);
-  margin-top:1mm; line-height:1.4;
-}
+.eyebrow-dot{width:5px;height:5px;background:var(--orange);border-radius:50%;}
+
+.s1-h1{font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1.08;margin-bottom:16px;}
+.s1-sub{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px;max-width:500px;}
+.s1-stats{display:flex;gap:0;padding-top:18px;border-top:1px solid var(--border);}
+.s1-stat{flex:1;}
+.s1-stat+.s1-stat{border-left:1px solid var(--border);padding-left:20px;}
+.stat-n{font-size:32px;font-weight:900;color:var(--orange);line-height:1;}
+.stat-n sup{font-size:16px;}
+.stat-l{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4;}
 
 /* Chat mockup */
-.mockup {
-  width:116mm; background:var(--card);
-  border:0.3mm solid var(--bhi); border-radius:9px;
-  overflow:hidden;
-  box-shadow:0 6mm 18mm rgba(0,0,0,0.5);
+.mockup{
+  width:420px;background:var(--card);
+  border:1px solid var(--bhi);border-radius:14px;overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,0.6);
 }
-.mock-bar {
-  background:#10172A; padding:2.5mm 3.5mm;
-  display:flex; align-items:center; gap:2.5mm;
-  border-bottom:0.3mm solid var(--border);
+.mock-bar{
+  background:#10172A;padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
 }
-.mock-dots { display:flex; gap:2px; }
-.mock-dots span { width:6px; height:6px; border-radius:50%; }
+.mock-dots{display:flex;gap:5px;}
+.mock-dots span{width:10px;height:10px;border-radius:50%;}
 .mock-dots span:nth-child(1){background:#EF4444;}
 .mock-dots span:nth-child(2){background:#F59E0B;}
 .mock-dots span:nth-child(3){background:#10B981;}
-.mock-ttl { font-size:6pt; color:var(--t2); font-weight:500; }
-.mock-live {
-  margin-left:auto; background:rgba(16,185,129,0.12);
-  border:0.3mm solid rgba(16,185,129,0.3); color:var(--green);
-  padding:0.8mm 2mm; border-radius:5px;
-  font-size:5.5pt; font-weight:700;
+.mock-ttl{font-size:10.5px;color:var(--t2);font-weight:500;}
+.mock-live{
+  margin-left:auto;background:rgba(16,185,129,0.12);
+  border:1px solid rgba(16,185,129,0.3);color:var(--green);
+  padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;
 }
-.mock-body { padding:3mm 3.5mm 2.5mm; }
-.msg { display:flex; gap:2mm; align-items:flex-start; margin-bottom:2.5mm; }
-.msg.u { flex-direction:row-reverse; }
-.av {
-  width:15px; height:15px; border-radius:3px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:5pt; font-weight:800; flex-shrink:0;
+.mock-body{padding:14px;}
+.msg{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;}
+.msg.u{flex-direction:row-reverse;}
+.av{
+  width:22px;height:22px;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:800;flex-shrink:0;
 }
-.av-u { background:var(--maroon); color:#fff; }
-.av-ai { background:linear-gradient(135deg,var(--orange),#d97000); color:#fff; }
-.bbl {
-  max-width:85%; padding:2mm 2.5mm;
-  font-size:6.5pt; line-height:1.45; border-radius:5px;
+.av-u{background:var(--maroon);color:#fff;}
+.av-ai{background:linear-gradient(135deg,var(--orange),#d97000);color:#fff;}
+.bbl{max-width:85%;padding:8px 11px;font-size:11px;line-height:1.5;border-radius:8px;}
+.b-u{background:var(--maroon);color:#fff;}
+.b-ai{background:#1A2240;border:1px solid var(--bhi);color:var(--text);}
+.mini-c{background:#0C1120;border:1px solid var(--border);border-radius:6px;padding:9px;margin-top:7px;}
+.mc-lbl{font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+.mc-bars{display:flex;gap:4px;align-items:flex-end;height:52px;}
+.mc-bar{flex:1;border-radius:3px 3px 0 0;position:relative;}
+.mc-bar-l{position:absolute;bottom:-13px;left:50%;transform:translateX(-50%);font-size:7.5px;color:var(--t3);white-space:nowrap;}
+.mc-src{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;}
+.mc-tag{background:var(--o10);border:1px solid var(--o20);color:var(--orange);padding:2px 6px;border-radius:4px;font-size:8.5px;font-weight:600;}
+.mock-input{
+  background:#0C1120;border:1px solid var(--bhi);
+  border-radius:6px;padding:7px 10px;
+  display:flex;align-items:center;gap:8px;margin-top:8px;
 }
-.b-u { background:var(--maroon); color:#fff; }
-.b-ai { background:#1A2240; border:0.25mm solid var(--bhi); color:var(--text); }
-.mini-c {
-  background:#0C1120; border:0.25mm solid var(--border);
-  border-radius:4px; padding:2mm; margin-top:1.5mm;
-}
-.mc-lbl { font-size:5pt; color:var(--t3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:1mm; }
-.mc-bars { display:flex; gap:1.5px; align-items:flex-end; height:14mm; }
-.mc-bar { flex:1; border-radius:2px 2px 0 0; position:relative; }
-.mc-bar-l {
-  position:absolute; bottom:-3mm; left:50%;
-  transform:translateX(-50%);
-  font-size:4.5pt; color:var(--t3); white-space:nowrap;
-}
-.mc-src { display:flex; gap:1mm; margin-top:2.5mm; flex-wrap:wrap; }
-.mc-tag {
-  background:var(--o10); border:0.25mm solid var(--o20);
-  color:var(--orange); padding:0.5mm 1.5mm;
-  border-radius:3px; font-size:5pt; font-weight:600;
-}
-.mock-input {
-  background:#0C1120; border:0.25mm solid var(--bhi);
-  border-radius:4px; padding:1.5mm 2.5mm;
-  display:flex; align-items:center; gap:2mm; margin-top:1.5mm;
-}
-.mi-t { flex:1; font-size:6pt; color:var(--t3); }
-.mi-b {
-  background:var(--orange); border-radius:3px;
-  padding:1mm 2.5mm; font-size:5.5pt; font-weight:700; color:#fff;
-}
+.mi-t{flex:1;font-size:10px;color:var(--t3);}
+.mi-b{background:var(--orange);border-radius:5px;padding:4px 10px;font-size:9px;font-weight:700;color:#fff;}
 
-/* ═══════════════ SLIDE 2 – PAIN ═══════════════ */
-.pain-grid {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:4mm;
+/* ══════════════════════════════════════
+   SLIDE 2 — PAIN POINTS
+══════════════════════════════════════ */
+.pain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.pain-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:22px;position:relative;overflow:hidden;
 }
-.pain-card {
-  background:var(--card); border:0.3mm solid var(--border);
-  border-radius:7px; padding:4.5mm 5mm;
-  position:relative; overflow:hidden;
-}
-.pain-card::before {
-  content:''; position:absolute; top:0; left:0; right:0;
-  height:0.8mm; background:var(--maroon);
-}
-.pain-n { font-size:20pt; font-weight:900; color:var(--orange); line-height:1; }
-.pain-n small { font-size:12pt; }
-.pain-l { font-size:8pt; font-weight:700; margin:2mm 0 1.5mm; }
-.pain-d { font-size:7pt; color:var(--t3); line-height:1.55; }
-.pain-src { font-size:5.5pt; color:var(--t3); margin-top:2mm; opacity:0.6; font-style:italic; }
+.pain-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--maroon);}
+.pain-n{font-size:36px;font-weight:900;color:var(--orange);line-height:1;}
+.pain-n small{font-size:20px;}
+.pain-l{font-size:13px;font-weight:700;margin:8px 0 6px;}
+.pain-d{font-size:11.5px;color:var(--t3);line-height:1.6;}
+.pain-src{font-size:9.5px;color:var(--t3);margin-top:10px;opacity:0.6;font-style:italic;}
 
-/* ═══════════════ SLIDE 3 – ARCHITECTURE ═══════════════ */
-.arch-flow {
+/* ══════════════════════════════════════
+   SLIDE 3 — ARCHITECTURE
+══════════════════════════════════════ */
+.arch-flow{
   display:grid;
-  grid-template-columns:1fr 10mm 1fr 10mm 1fr 10mm 1fr;
-  align-items:stretch; gap:0;
+  grid-template-columns:1fr 36px 1fr 36px 1fr 36px 1fr;
+  align-items:stretch;gap:0;
 }
-.arch-node {
-  background:var(--card); border:0.3mm solid var(--bhi);
-  border-radius:7px; padding:3.5mm 4mm;
+.arch-node{
+  background:var(--card);border:1px solid var(--bhi);
+  border-radius:10px;padding:14px 16px;
 }
-.arch-node.hi {
-  border-color:var(--o30); background:var(--card-hi);
+.arch-node.hi{border-color:var(--o30);background:var(--card-hi);}
+.an-lbl{font-size:8.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.an-icon{font-size:22px;margin-bottom:6px;}
+.an-title{font-size:12px;font-weight:700;margin-bottom:8px;}
+.an-items{display:flex;flex-direction:column;gap:3px;}
+.an-item{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:4px;padding:3px 8px;font-size:10px;color:var(--t2);
 }
-.an-lbl {
-  font-size:5pt; font-weight:800; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--orange); margin-bottom:2mm;
+.arch-arr{display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:20px;}
+.arch-note{
+  margin-top:14px;padding:10px 16px;
+  background:rgba(255,148,8,0.05);border:1px solid rgba(255,148,8,0.12);
+  border-radius:7px;font-size:11px;color:var(--t2);line-height:1.55;
 }
-.an-icon { font-size:14pt; margin-bottom:1.5mm; }
-.an-title { font-size:7.5pt; font-weight:700; margin-bottom:2mm; }
-.an-items { display:flex; flex-direction:column; gap:1mm; }
-.an-item {
-  background:rgba(255,255,255,0.04); border:0.2mm solid var(--border);
-  border-radius:3px; padding:0.8mm 2mm;
-  font-size:6pt; color:var(--t2);
-}
-.arch-arr {
-  display:flex; align-items:center; justify-content:center;
-  color:var(--orange); font-size:13pt;
-}
-.arch-note {
-  margin-top:4mm; padding:2.5mm 4mm;
-  background:rgba(255,148,8,0.05);
-  border:0.3mm solid rgba(255,148,8,0.12);
-  border-radius:5px; font-size:6.5pt; color:var(--t2); line-height:1.5;
-}
-.arch-note b { color:var(--orange); }
+.arch-note b{color:var(--orange);}
 
-/* ═══════════════ SLIDE 4 – CAPABILITIES ═══════════════ */
-.cap-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:3.5mm;
+/* ══════════════════════════════════════
+   SLIDE 4 — CAPABILITIES
+══════════════════════════════════════ */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.cap-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.cap-icon{
+  width:36px;height:36px;background:var(--o10);
+  border:1px solid var(--o20);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;margin-bottom:11px;
 }
-.cap-card {
-  background:var(--card); border:0.3mm solid var(--border);
-  border-radius:7px; padding:4mm 5mm;
-}
-.cap-icon {
-  width:8mm; height:8mm; background:var(--o10);
-  border:0.3mm solid var(--o20); border-radius:5px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:11pt; margin-bottom:2.5mm;
-}
-.cap-t { font-size:8pt; font-weight:700; margin-bottom:1.5mm; }
-.cap-d { font-size:7pt; color:var(--t2); line-height:1.55; }
+.cap-t{font-size:13px;font-weight:700;margin-bottom:6px;}
+.cap-d{font-size:11.5px;color:var(--t2);line-height:1.6;}
 
-/* ═══════════════ SLIDE 5 – SECURITY ═══════════════ */
-.sec-grid {
-  display:grid; grid-template-columns:1.1fr 0.9fr; gap:6mm;
+/* ══════════════════════════════════════
+   SLIDE 5 — SECURITY
+══════════════════════════════════════ */
+.sec-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:20px;}
+.sec-list{display:flex;flex-direction:column;gap:9px;}
+.sec-item{
+  display:flex;gap:12px;align-items:flex-start;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:9px;padding:12px 14px;
 }
-.sec-list { display:flex; flex-direction:column; gap:2.5mm; }
-.sec-item {
-  display:flex; gap:3mm; align-items:flex-start;
-  background:var(--card); border:0.3mm solid var(--border);
-  border-radius:7px; padding:3mm 3.5mm;
+.sec-ico{
+  width:34px;height:34px;border-radius:7px;
+  background:var(--g10);display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0;
 }
-.sec-ico {
-  width:8mm; height:8mm; border-radius:5px;
-  background:var(--g10);
-  display:flex; align-items:center; justify-content:center;
-  font-size:11pt; flex-shrink:0;
+.sec-t{font-size:12px;font-weight:700;margin-bottom:3px;}
+.sec-d{font-size:10.5px;color:var(--t2);line-height:1.55;}
+.sec-right{display:flex;flex-direction:column;gap:11px;}
+.sec-panel{background:var(--card);border:1px solid var(--bhi);border-radius:9px;padding:16px;}
+.sp-t{font-size:12px;font-weight:700;margin-bottom:4px;}
+.sp-s{font-size:10px;color:var(--t3);margin-bottom:10px;}
+.comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.comp-badge{
+  background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);
+  color:var(--green);border-radius:6px;padding:7px;
+  text-align:center;font-size:11px;font-weight:800;
 }
-.sec-t { font-size:7.5pt; font-weight:700; margin-bottom:1mm; }
-.sec-d { font-size:6.5pt; color:var(--t2); line-height:1.5; }
-.sec-right { display:flex; flex-direction:column; gap:3mm; }
-.sec-panel {
-  background:var(--card); border:0.3mm solid var(--bhi);
-  border-radius:7px; padding:4mm;
-}
-.sp-t { font-size:7.5pt; font-weight:700; margin-bottom:1mm; }
-.sp-s { font-size:6pt; color:var(--t3); margin-bottom:2.5mm; }
-.comp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5mm; }
-.comp-badge {
-  background:rgba(16,185,129,0.08);
-  border:0.25mm solid rgba(16,185,129,0.2);
-  color:var(--green); border-radius:4px; padding:2mm;
-  text-align:center; font-size:7pt; font-weight:800;
-}
-.sp-note { font-size:6pt; color:var(--t2); line-height:1.55; margin-top:2mm; }
-.sp-mcp-t { font-size:7pt; font-weight:700; color:var(--orange); margin-bottom:1.5mm; }
+.sp-note{font-size:10px;color:var(--t2);line-height:1.6;margin-top:8px;}
+.sp-mcp-t{font-size:12px;font-weight:700;color:var(--orange);margin-bottom:5px;}
 
-/* ═══════════════ SLIDE 6 – COMPARISON ═══════════════ */
-.cmp-table {
-  width:100%; border-collapse:collapse;
-  border-radius:7px; overflow:hidden;
-}
-.cmp-table th {
-  padding:2.5mm 3.5mm; font-size:7pt;
-  font-weight:800; letter-spacing:0.3px;
-  text-transform:uppercase; text-align:left;
-}
-.cmp-table th:nth-child(1){ background:#0D1117; color:var(--t3); width:28%; }
-.cmp-table th:nth-child(2){ background:#17141E; color:var(--t2); width:36%; }
-.cmp-table th:nth-child(3){ background:#0F1A12; color:var(--green); width:36%; }
-.cmp-table td {
-  padding:2mm 3.5mm; font-size:7pt;
-  border-bottom:0.25mm solid var(--border);
-}
-.cmp-table tr:last-child td { border-bottom:none; }
-.cmp-table td:nth-child(1){ background:#0D1117; color:var(--t2); font-weight:600; }
-.cmp-table td:nth-child(2){ background:#120F1A; color:var(--t3); }
-.cmp-table td:nth-child(3){ background:#0D150F; color:#A7F3D0; font-weight:600; }
-.bad { color:var(--red) !important; }
-.gd  { color:var(--green) !important; }
+/* ══════════════════════════════════════
+   SLIDE 6 — COMPARISON
+══════════════════════════════════════ */
+.cmp-table{width:100%;border-collapse:collapse;border-radius:9px;overflow:hidden;}
+.cmp-table th{padding:10px 14px;font-size:11px;font-weight:800;letter-spacing:0.3px;text-transform:uppercase;text-align:left;}
+.cmp-table th:nth-child(1){background:#0D1117;color:var(--t3);width:28%;}
+.cmp-table th:nth-child(2){background:#17141E;color:var(--t2);width:36%;}
+.cmp-table th:nth-child(3){background:#0F1A12;color:var(--green);width:36%;}
+.cmp-table td{padding:8px 14px;font-size:11.5px;border-bottom:1px solid var(--border);}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table td:nth-child(1){background:#0D1117;color:var(--t2);font-weight:600;}
+.cmp-table td:nth-child(2){background:#120F1A;color:var(--t3);}
+.cmp-table td:nth-child(3){background:#0D150F;color:#A7F3D0;font-weight:600;}
+.bad{color:var(--red)!important;}
+.gd{color:var(--green)!important;}
 
-/* ═══════════════ SLIDE 7 – POC ═══════════════ */
-.poc-grid {
-  display:grid; grid-template-columns:1fr 0.95fr; gap:6mm;
-}
-.poc-steps { display:flex; flex-direction:column; }
-.poc-step { display:flex; gap:3mm; position:relative; }
-.poc-step:not(:last-child)::after {
-  content:''; position:absolute; left:4.2mm; top:9.5mm;
-  width:0.3mm; height:calc(100% - 2mm);
+/* ══════════════════════════════════════
+   SLIDE 7 — POC
+══════════════════════════════════════ */
+.poc-grid{display:grid;grid-template-columns:1fr 0.95fr;gap:22px;}
+.poc-steps{display:flex;flex-direction:column;}
+.poc-step{display:flex;gap:12px;position:relative;}
+.poc-step:not(:last-child)::after{
+  content:'';position:absolute;left:17px;top:38px;
+  width:1px;height:calc(100% - 6px);
   background:linear-gradient(180deg,var(--orange),transparent);
 }
-.poc-num {
-  width:8.5mm; height:8.5mm; border-radius:50%;
-  background:var(--o10); border:0.3mm solid var(--o30);
-  display:flex; align-items:center; justify-content:center;
-  font-size:7.5pt; font-weight:900; color:var(--orange); flex-shrink:0;
+.poc-num{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--o10);border:1px solid var(--o30);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:var(--orange);flex-shrink:0;
 }
-.poc-body { padding-bottom:3.5mm; }
-.poc-t { font-size:7.5pt; font-weight:700; margin-bottom:1mm; }
-.poc-d { font-size:6.5pt; color:var(--t2); line-height:1.55; }
-.poc-card {
-  background:var(--card); border:0.3mm solid var(--o20);
-  border-radius:9px; padding:5mm;
-}
-.poc-card-t { font-size:10.5pt; font-weight:800; margin-bottom:3mm; }
-.poc-card-t b { color:var(--orange); }
-.poc-items { display:flex; flex-direction:column; gap:1.8mm; margin-bottom:3mm; }
-.poc-item {
-  display:flex; gap:2mm; font-size:6.5pt;
-  color:var(--t2); align-items:flex-start; line-height:1.45;
-}
-.poc-item::before { content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; }
-.poc-note {
-  background:var(--o10); border:0.3mm solid var(--o20);
-  border-radius:5px; padding:2.5mm;
-  font-size:6.5pt; color:var(--t2); line-height:1.55;
-}
-.poc-note b { color:var(--orange); }
+.poc-body{padding-bottom:16px;}
+.poc-t{font-size:12px;font-weight:700;margin-bottom:4px;}
+.poc-d{font-size:11px;color:var(--t2);line-height:1.55;}
+.poc-card{background:var(--card);border:1px solid var(--o20);border-radius:12px;padding:20px;}
+.poc-card-t{font-size:16px;font-weight:800;margin-bottom:12px;}
+.poc-card-t b{color:var(--orange);}
+.poc-items{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.poc-item{display:flex;gap:8px;font-size:11px;color:var(--t2);align-items:flex-start;line-height:1.5;}
+.poc-item::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0;}
+.poc-note{background:var(--o10);border:1px solid var(--o20);border-radius:7px;padding:10px 12px;font-size:11px;color:var(--t2);line-height:1.6;}
+.poc-note b{color:var(--orange);}
 
-/* ═══════════════ SLIDE 8 – CLOSING ═══════════════ */
-.s8 .sc {
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center; text-align:center;
-}
-.s8-eye {
-  font-size:6pt; font-weight:800; letter-spacing:2.5px;
-  text-transform:uppercase; color:var(--orange); margin-bottom:3.5mm;
-}
-.s8-h1 {
-  font-size:25pt; font-weight:900;
-  letter-spacing:-0.8px; line-height:1.1;
-  margin-bottom:3.5mm;
-}
-.s8-sub {
-  font-size:8pt; color:var(--t2); line-height:1.65;
-  max-width:180mm; margin-bottom:7mm;
-}
-.s8-contacts {
-  display:flex; gap:5mm; margin-bottom:7mm;
-}
-.s8-contact {
-  background:var(--card); border:0.3mm solid var(--border);
-  border-radius:6px; padding:3mm 6mm; text-align:center;
-}
-.s8-cl { font-size:5.5pt; text-transform:uppercase; letter-spacing:1px; color:var(--t3); margin-bottom:1mm; }
-.s8-cv { font-size:7.5pt; font-weight:600; color:var(--text); }
-.s8-cv a { color:var(--orange); text-decoration:none; }
-.s8-brand { font-size:10pt; font-weight:900; }
-.s8-brand b { color:var(--orange); }
-.s8-bs { font-size:6pt; color:var(--t3); margin-top:1mm; }
+/* ══════════════════════════════════════
+   SLIDE 8 — CLOSING
+══════════════════════════════════════ */
+.s8 .sc{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.s8-eye{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);margin-bottom:14px;}
+.s8-h1{font-size:44px;font-weight:900;letter-spacing:-1.2px;line-height:1.1;margin-bottom:14px;}
+.s8-sub{font-size:14px;color:var(--t2);line-height:1.7;max-width:660px;margin-bottom:28px;}
+.s8-contacts{display:flex;gap:16px;margin-bottom:28px;}
+.s8-contact{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 22px;text-align:center;}
+.s8-cl{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:4px;}
+.s8-cv{font-size:13px;font-weight:600;color:var(--text);}
+.s8-cv a{color:var(--orange);text-decoration:none;}
+.s8-brand{font-size:16px;font-weight:900;}
+.s8-brand b{color:var(--orange);}
+.s8-bs{font-size:10.5px;color:var(--t3);margin-top:4px;}
 </style>
 </head>
 <body>
 
-<!-- ═══════ SLIDE 1 · TITLE ═══════ -->
-<div class="slide s1">
-  <div class="glow-r"></div>
-  <div class="glow-l"></div>
+<div id="deck">
+
+<!-- ════════ SLIDE 1 · TITLE ════════ -->
+<div class="slide s1 active">
+  <div class="glow-r"></div><div class="glow-l"></div>
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
     <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Enterprise AI Track</strong> &nbsp;·&nbsp; June 2026</div>
@@ -454,18 +438,9 @@ html,body {
       <div class="s1-h1">Ask your enterprise<br><span class="grad">anything.</span><br>Get answers, not tickets.</div>
       <div class="s1-sub">Enterprise data is locked in dozens of disconnected systems, each with its own login, schema, and owner. Leaders wait weeks for dashboards that answer yesterday's questions. We connect your existing systems through an AI-native intelligence layer: live, secure, and in plain language.</div>
       <div class="s1-stats">
-        <div class="s1-stat">
-          <div class="stat-n">131<sup>+</sup></div>
-          <div class="stat-l">Avg. enterprise<br>apps per org</div>
-        </div>
-        <div class="s1-stat">
-          <div class="stat-n">3–18</div>
-          <div class="stat-l">Months to build<br>traditional BI</div>
-        </div>
-        <div class="s1-stat">
-          <div class="stat-n">4–6</div>
-          <div class="stat-l">Weeks to a<br>working POC</div>
-        </div>
+        <div class="s1-stat"><div class="stat-n">131<sup>+</sup></div><div class="stat-l">Avg. enterprise<br>apps per org</div></div>
+        <div class="s1-stat"><div class="stat-n">3–18</div><div class="stat-l">Months to build<br>traditional BI</div></div>
+        <div class="s1-stat"><div class="stat-n">4–6</div><div class="stat-l">Weeks to a<br>working POC</div></div>
       </div>
     </div>
     <div class="s1-right">
@@ -487,16 +462,14 @@ html,body {
               <div class="mini-c">
                 <div class="mc-lbl">Q2 Revenue vs Target — EMEA by BU</div>
                 <div class="mc-bars">
-                  <div class="mc-bar" style="height:14mm;background:linear-gradient(180deg,var(--orange),rgba(255,148,8,0.2))"><span class="mc-bar-l">Tech</span></div>
-                  <div class="mc-bar" style="height:12.3mm;background:linear-gradient(180deg,#60A5FA,rgba(96,165,250,0.2))"><span class="mc-bar-l">Fin</span></div>
-                  <div class="mc-bar" style="height:10.4mm;background:linear-gradient(180deg,#A78BFA,rgba(167,139,250,0.2))"><span class="mc-bar-l">Ops</span></div>
-                  <div class="mc-bar" style="height:11.5mm;background:linear-gradient(180deg,#34D399,rgba(52,211,153,0.2))"><span class="mc-bar-l">Sales</span></div>
-                  <div class="mc-bar" style="height:12.7mm;background:linear-gradient(180deg,#F87171,rgba(248,113,113,0.2))"><span class="mc-bar-l">Svcs</span></div>
+                  <div class="mc-bar" style="height:52px;background:linear-gradient(180deg,var(--orange),rgba(255,148,8,0.2))"><span class="mc-bar-l">Tech</span></div>
+                  <div class="mc-bar" style="height:46px;background:linear-gradient(180deg,#60A5FA,rgba(96,165,250,0.2))"><span class="mc-bar-l">Fin</span></div>
+                  <div class="mc-bar" style="height:38px;background:linear-gradient(180deg,#A78BFA,rgba(167,139,250,0.2))"><span class="mc-bar-l">Ops</span></div>
+                  <div class="mc-bar" style="height:43px;background:linear-gradient(180deg,#34D399,rgba(52,211,153,0.2))"><span class="mc-bar-l">Sales</span></div>
+                  <div class="mc-bar" style="height:48px;background:linear-gradient(180deg,#F87171,rgba(248,113,113,0.2))"><span class="mc-bar-l">Svcs</span></div>
                 </div>
                 <div class="mc-src">
-                  <span class="mc-tag">SAP ERP</span>
-                  <span class="mc-tag">Salesforce</span>
-                  <span class="mc-tag">Finance DB</span>
+                  <span class="mc-tag">SAP ERP</span><span class="mc-tag">Salesforce</span><span class="mc-tag">Finance DB</span>
                 </div>
               </div>
             </div>
@@ -515,7 +488,7 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 2 · THE PROBLEM ═══════ -->
+<!-- ════════ SLIDE 2 · THE PROBLEM ════════ -->
 <div class="slide">
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
@@ -558,7 +531,7 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 3 · THE SOLUTION ═══════ -->
+<!-- ════════ SLIDE 3 · THE SOLUTION ════════ -->
 <div class="slide">
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
@@ -635,7 +608,7 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 4 · CAPABILITIES ═══════ -->
+<!-- ════════ SLIDE 4 · CAPABILITIES ════════ -->
 <div class="slide">
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
@@ -684,7 +657,7 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 5 · SECURITY ═══════ -->
+<!-- ════════ SLIDE 5 · SECURITY ════════ -->
 <div class="slide">
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
@@ -698,31 +671,19 @@ html,body {
       <div class="sec-list">
         <div class="sec-item">
           <div class="sec-ico">🏛️</div>
-          <div>
-            <div class="sec-t">Data Never Leaves Your Systems</div>
-            <div class="sec-d">MCP is a query protocol, not a data migration protocol. Your data stays on your infrastructure, behind your perimeter. The AI queries through the MCP server and never circumvents it.</div>
-          </div>
+          <div><div class="sec-t">Data Never Leaves Your Systems</div><div class="sec-d">MCP is a query protocol, not a data migration protocol. Your data stays on your infrastructure, behind your perimeter. The AI queries through the MCP server and never circumvents it.</div></div>
         </div>
         <div class="sec-item">
           <div class="sec-ico">🔐</div>
-          <div>
-            <div class="sec-t">Inherits Your Existing RBAC and SSO</div>
-            <div class="sec-d">OAuth 2.1 authentication plugs directly into your existing identity provider: Okta, Azure AD, Ping Identity, via OIDC and SAML. No separate access model to configure or maintain.</div>
-          </div>
+          <div><div class="sec-t">Inherits Your Existing RBAC and SSO</div><div class="sec-d">OAuth 2.1 authentication plugs directly into your existing identity provider: Okta, Azure AD, Ping Identity, via OIDC and SAML. No separate access model to configure or maintain.</div></div>
         </div>
         <div class="sec-item">
           <div class="sec-ico">📋</div>
-          <div>
-            <div class="sec-t">Full Audit Trail on Every Query</div>
-            <div class="sec-d">Every AI operation is logged: who asked, which tool was called, what data was accessed, and when. Satisfies GDPR, SOC 2, HIPAA, and SOX audit requirements without additional tooling.</div>
-          </div>
+          <div><div class="sec-t">Full Audit Trail on Every Query</div><div class="sec-d">Every AI operation is logged: who asked, which tool was called, what data was accessed, and when. Satisfies GDPR, SOC 2, HIPAA, and SOX audit requirements without additional tooling.</div></div>
         </div>
         <div class="sec-item">
           <div class="sec-ico">🛡️</div>
-          <div>
-            <div class="sec-t">Cannot Exceed User Permissions</div>
-            <div class="sec-d">The AI operates within the requesting user's authorisation scope on every single query. It is architecturally impossible for the system to return data the user is not cleared to see.</div>
-          </div>
+          <div><div class="sec-t">Cannot Exceed User Permissions</div><div class="sec-d">The AI operates within the requesting user's authorisation scope on every single query. It is architecturally impossible for the system to return data the user is not cleared to see.</div></div>
         </div>
       </div>
       <div class="sec-right">
@@ -730,12 +691,8 @@ html,body {
           <div class="sp-t">Compliance Framework Alignment</div>
           <div class="sp-s">MCP audit logging satisfies cross-framework requirements out of the box.</div>
           <div class="comp-grid">
-            <div class="comp-badge">GDPR</div>
-            <div class="comp-badge">SOC 2</div>
-            <div class="comp-badge">ISO 27001</div>
-            <div class="comp-badge">HIPAA</div>
-            <div class="comp-badge">SOX</div>
-            <div class="comp-badge">FedRAMP</div>
+            <div class="comp-badge">GDPR</div><div class="comp-badge">SOC 2</div><div class="comp-badge">ISO 27001</div>
+            <div class="comp-badge">HIPAA</div><div class="comp-badge">SOX</div><div class="comp-badge">FedRAMP</div>
           </div>
           <div class="sp-note">On-premise deployment eliminates GDPR cross-border data transfer risk. Sensitivity label evaluation and per-operation scope controls are built into the MCP specification.</div>
         </div>
@@ -752,7 +709,7 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 6 · COMPARISON ═══════ -->
+<!-- ════════ SLIDE 6 · COMPARISON ════════ -->
 <div class="slide">
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
@@ -761,7 +718,7 @@ html,body {
   <div class="sc">
     <div class="lbl">Traditional BI vs. Agentic Intelligence</div>
     <div class="ttl">The old approach doesn't fit<br>the new pace.</div>
-    <div class="sub" style="margin-bottom:3.5mm;">Traditional data warehousing was designed for a world where data moved slowly and business questions were predictable. Neither is true anymore.</div>
+    <div class="sub" style="margin-bottom:12px;">Traditional data warehousing was designed for a world where data moved slowly and business questions were predictable. Neither is true anymore.</div>
     <table class="cmp-table">
       <thead>
         <tr>
@@ -771,51 +728,15 @@ html,body {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Time to first insight</td>
-          <td class="bad">3 to 18 months</td>
-          <td class="gd">2 to 8 weeks (POC)</td>
-        </tr>
-        <tr>
-          <td>Upfront investment</td>
-          <td class="bad">$70,000 to $1,000,000+</td>
-          <td class="gd">Fixed-scope POC pricing</td>
-        </tr>
-        <tr>
-          <td>Schema and modelling</td>
-          <td class="bad">Extensive upfront design required</td>
-          <td class="gd">Minimal: AI discovers at runtime</td>
-        </tr>
-        <tr>
-          <td>Multi-system queries</td>
-          <td class="bad">ETL consolidation required first</td>
-          <td class="gd">Native: all systems in one session</td>
-        </tr>
-        <tr>
-          <td>Data freshness</td>
-          <td class="bad">Batch pipelines, often 5+ days stale</td>
-          <td class="gd">Live and near-real-time</td>
-        </tr>
-        <tr>
-          <td>Access model</td>
-          <td class="bad">Separate DW access layer to maintain</td>
-          <td class="gd">Inherits existing enterprise RBAC</td>
-        </tr>
-        <tr>
-          <td>Question flexibility</td>
-          <td class="bad">Preset reports and dashboards only</td>
-          <td class="gd">Any question, any time</td>
-        </tr>
-        <tr>
-          <td>Data migration risk</td>
-          <td class="bad">Full data movement required</td>
-          <td class="gd">Data stays in your systems</td>
-        </tr>
-        <tr>
-          <td>Budget and timeline risk</td>
-          <td class="bad">75% of projects run over budget</td>
-          <td class="gd">Fixed-scope, milestone-gated</td>
-        </tr>
+        <tr><td>Time to first insight</td><td class="bad">3 to 18 months</td><td class="gd">2 to 8 weeks (POC)</td></tr>
+        <tr><td>Upfront investment</td><td class="bad">$70,000 to $1,000,000+</td><td class="gd">Fixed-scope POC pricing</td></tr>
+        <tr><td>Schema and modelling</td><td class="bad">Extensive upfront design required</td><td class="gd">Minimal: AI discovers at runtime</td></tr>
+        <tr><td>Multi-system queries</td><td class="bad">ETL consolidation required first</td><td class="gd">Native: all systems in one session</td></tr>
+        <tr><td>Data freshness</td><td class="bad">Batch pipelines, often 5+ days stale</td><td class="gd">Live and near-real-time</td></tr>
+        <tr><td>Access model</td><td class="bad">Separate DW access layer to maintain</td><td class="gd">Inherits existing enterprise RBAC</td></tr>
+        <tr><td>Question flexibility</td><td class="bad">Preset reports and dashboards only</td><td class="gd">Any question, any time</td></tr>
+        <tr><td>Data migration risk</td><td class="bad">Full data movement required</td><td class="gd">Data stays in your systems</td></tr>
+        <tr><td>Budget and timeline risk</td><td class="bad">75% of projects run over budget</td><td class="gd">Fixed-scope, milestone-gated</td></tr>
       </tbody>
     </table>
   </div>
@@ -825,7 +746,7 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 7 · POC ═══════ -->
+<!-- ════════ SLIDE 7 · POC ════════ -->
 <div class="slide">
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
@@ -839,31 +760,19 @@ html,body {
       <div class="poc-steps">
         <div class="poc-step">
           <div class="poc-num">1</div>
-          <div class="poc-body">
-            <div class="poc-t">Discovery and System Mapping — Weeks 1 and 2</div>
-            <div class="poc-d">Map 2 to 3 of your highest-value enterprise systems. Define the business questions leadership needs answered. Agree RBAC and compliance requirements upfront.</div>
-          </div>
+          <div class="poc-body"><div class="poc-t">Discovery and System Mapping — Weeks 1 and 2</div><div class="poc-d">Map 2 to 3 of your highest-value enterprise systems. Define the business questions leadership needs answered. Agree RBAC and compliance requirements upfront.</div></div>
         </div>
         <div class="poc-step">
           <div class="poc-num">2</div>
-          <div class="poc-body">
-            <div class="poc-t">MCP Connector Build and Security Layer — Weeks 2 to 4</div>
-            <div class="poc-d">Build MCP servers for your target systems. Configure OAuth 2.1 against your identity provider. Set up RBAC rules, audit logging, and sensitivity controls.</div>
-          </div>
+          <div class="poc-body"><div class="poc-t">MCP Connector Build and Security Layer — Weeks 2 to 4</div><div class="poc-d">Build MCP servers for your target systems. Configure OAuth 2.1 against your identity provider. Set up RBAC rules, audit logging, and sensitivity controls.</div></div>
         </div>
         <div class="poc-step">
           <div class="poc-num">3</div>
-          <div class="poc-body">
-            <div class="poc-t">AI Orchestration and Executive Interface — Weeks 3 to 5</div>
-            <div class="poc-d">Deploy the AI orchestration layer. Build the executive query interface. Tune for your specific business context, terminology, and reporting needs.</div>
-          </div>
+          <div class="poc-body"><div class="poc-t">AI Orchestration and Executive Interface — Weeks 3 to 5</div><div class="poc-d">Deploy the AI orchestration layer. Build the executive query interface. Tune for your specific business context, terminology, and reporting needs.</div></div>
         </div>
         <div class="poc-step">
           <div class="poc-num">4</div>
-          <div class="poc-body" style="padding-bottom:0;">
-            <div class="poc-t">Live Demonstration and ROI Assessment — Weeks 5 to 6</div>
-            <div class="poc-d">Present a working system to your leadership team. Quantify the value: time saved, decisions accelerated, data accessed. Agree the path forward.</div>
-          </div>
+          <div class="poc-body" style="padding-bottom:0;"><div class="poc-t">Live Demonstration and ROI Assessment — Weeks 5 to 6</div><div class="poc-d">Present a working system to your leadership team. Quantify the value: time saved, decisions accelerated, data accessed. Agree the path forward.</div></div>
         </div>
       </div>
       <div class="poc-card">
@@ -876,9 +785,7 @@ html,body {
           <div class="poc-item">Full audit trail and compliance documentation</div>
           <div class="poc-item">Validated ROI model and roadmap for full enterprise rollout</div>
         </div>
-        <div class="poc-note">
-          <b>Our commitment:</b> The POC is scoped with a fixed, agreed outcome. You will have a working, demonstrated system at the end, not a slide deck. We engage as a custom development partner: if it does not meet the agreed specification, we do not invoice for the build.
-        </div>
+        <div class="poc-note"><b>Our commitment:</b> The POC is scoped with a fixed, agreed outcome. You will have a working, demonstrated system at the end, not a slide deck. We engage as a custom development partner: if it does not meet the agreed specification, we do not invoice for the build.</div>
       </div>
     </div>
   </div>
@@ -888,10 +795,9 @@ html,body {
   </div>
 </div>
 
-<!-- ═══════ SLIDE 8 · CLOSING ═══════ -->
+<!-- ════════ SLIDE 8 · CLOSING ════════ -->
 <div class="slide s8">
-  <div class="glow-r"></div>
-  <div class="glow-l"></div>
+  <div class="glow-r"></div><div class="glow-l"></div>
   <div class="sh">
     <div class="sh-logo">Damco <b>Solutions</b></div>
     <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
@@ -901,18 +807,9 @@ html,body {
     <div class="s8-h1">See it working<br>on <span class="grad">your</span> data.</div>
     <div class="s8-sub">We do not need months of preparation. We need 2 to 3 of your most valuable systems, your compliance requirements, and your biggest unanswered business question. We will show you a working answer in 4 to 6 weeks.</div>
     <div class="s8-contacts">
-      <div class="s8-contact">
-        <div class="s8-cl">Email</div>
-        <div class="s8-cv">ai@thedamcogroup.com</div>
-      </div>
-      <div class="s8-contact">
-        <div class="s8-cl">Website</div>
-        <div class="s8-cv">damcogroup.com</div>
-      </div>
-      <div class="s8-contact">
-        <div class="s8-cl">Talk to us</div>
-        <div class="s8-cv"><a>Book a discovery call →</a></div>
-      </div>
+      <div class="s8-contact"><div class="s8-cl">Email</div><div class="s8-cv">ai@thedamcogroup.com</div></div>
+      <div class="s8-contact"><div class="s8-cl">Website</div><div class="s8-cv">damcogroup.com</div></div>
+      <div class="s8-contact"><div class="s8-cl">Talk to us</div><div class="s8-cv"><a>Book a discovery call →</a></div></div>
     </div>
     <div class="s8-brand">Damco <b>Solutions</b></div>
     <div class="s8-bs">Custom Development &nbsp;·&nbsp; Enterprise AI &nbsp;·&nbsp; Technology Transformation</div>
@@ -923,5 +820,67 @@ html,body {
   </div>
 </div>
 
+</div><!-- #deck -->
+
+<!-- Navigation controls (screen only) -->
+<button class="nav-btn" id="btn-prev">&#8249;</button>
+<button class="nav-btn" id="btn-next">&#8250;</button>
+<div id="counter"><b>1</b> / 8</div>
+<div id="dots"></div>
+<div id="progress"><div id="progress-bar" style="width:12.5%"></div></div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  let cur = 0;
+
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' on':'');
+    d.addEventListener('click', ()=>go(i));
+    dotsEl.appendChild(d);
+  });
+
+  function go(n){
+    slides[cur].classList.remove('active');
+    document.querySelectorAll('.dot')[cur].classList.remove('on');
+    cur = (n + total) % total;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.dot')[cur].classList.add('on');
+    document.getElementById('counter').innerHTML = '<b>'+(cur+1)+'</b> / '+total;
+    document.getElementById('progress-bar').style.width = ((cur+1)/total*100)+'%';
+  }
+
+  // Scale slides to fill viewport
+  function scale(){
+    const W=1400, H=990;
+    const s = Math.min(window.innerWidth/W, window.innerHeight/H) * 0.97;
+    slides.forEach(sl=>{ sl.style.transform='scale('+s+')'; });
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); go(cur+1); }
+    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')                { e.preventDefault(); go(cur-1); }
+  });
+
+  // Touch / swipe
+  let tx=0;
+  document.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend',   e=>{
+    const dx = e.changedTouches[0].clientX - tx;
+    if(Math.abs(dx)>40){ dx<0 ? go(cur+1) : go(cur-1); }
+  },{passive:true});
+
+  document.getElementById('btn-prev').addEventListener('click', ()=>go(cur-1));
+  document.getElementById('btn-next').addEventListener('click', ()=>go(cur+1));
+
+  window.addEventListener('resize', scale);
+  scale();
+})();
+</script>
 </body>
 </html>
