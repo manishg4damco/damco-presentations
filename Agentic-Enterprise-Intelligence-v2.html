@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Enterprise Intelligence v2 | Damco Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:        #08090F;
+            --bg-card:   #111827;
+            --bg-hover:  #1A2035;
+            --border:    #1F2937;
+            --border-hi: #2D3748;
+            --orange:    #FF9408;
+            --orange-10: rgba(255,148,8,0.10);
+            --orange-20: rgba(255,148,8,0.20);
+            --orange-30: rgba(255,148,8,0.30);
+            --maroon:    #94122C;
+            --maroon-10: rgba(148,18,44,0.10);
+            --green:     #10B981;
+            --red-text:  #EF4444;
+            --text:      #F9FAFB;
+            --text-2:    #9CA3AF;
+            --text-3:    #6B7280;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body {
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            background:var(--bg); color:var(--text);
+            line-height:1.6; overflow-x:hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position:fixed; top:0; left:0; right:0; z-index:200;
+            background:rgba(8,9,15,0.96); backdrop-filter:blur(14px);
+            border-bottom:1px solid var(--border);
+            padding:14px 48px;
+            display:flex; align-items:center; justify-content:space-between;
+        }
+        .nav-logo { font-size:17px; font-weight:800; letter-spacing:-0.3px; }
+        .nav-logo span { color:var(--orange); }
+        .nav-pill {
+            background:var(--orange-10); border:1px solid var(--orange-30);
+            color:var(--orange); padding:5px 14px; border-radius:20px;
+            font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height:100vh; display:flex; align-items:center;
+            padding:128px 48px 80px; position:relative; overflow:hidden;
+        }
+        .hero-glow-r {
+            position:absolute; top:-150px; right:-100px;
+            width:700px; height:700px; border-radius:50%;
+            background:radial-gradient(circle,rgba(255,148,8,0.07) 0%,transparent 65%);
+            pointer-events:none;
+        }
+        .hero-glow-l {
+            position:absolute; bottom:-80px; left:-80px;
+            width:500px; height:500px; border-radius:50%;
+            background:radial-gradient(circle,rgba(148,18,44,0.06) 0%,transparent 65%);
+            pointer-events:none;
+        }
+        .hero-inner {
+            max-width:1240px; margin:0 auto;
+            display:grid; grid-template-columns:1.1fr 0.9fr; gap:72px; align-items:center;
+        }
+        .hero-eyebrow {
+            display:inline-flex; align-items:center; gap:8px;
+            background:var(--orange-10); border:1px solid var(--orange-30);
+            color:var(--orange); padding:6px 14px; border-radius:20px;
+            font-size:11px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;
+            margin-bottom:22px;
+        }
+        .hero-dot {
+            width:6px; height:6px; background:var(--orange);
+            border-radius:50%; animation:blink 2s infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+        h1 {
+            font-size:54px; font-weight:900; line-height:1.08;
+            letter-spacing:-1.8px; margin-bottom:22px;
+        }
+        h1 .grad {
+            background:linear-gradient(130deg,var(--orange) 0%,#FFBE5C 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .hero-sub {
+            font-size:17px; color:var(--text-2); line-height:1.75;
+            margin-bottom:40px; font-weight:400;
+        }
+        .hero-stats {
+            display:flex; gap:36px;
+            padding-top:28px; border-top:1px solid var(--border);
+        }
+        .stat-n { font-size:30px; font-weight:900; color:var(--orange); line-height:1; }
+        .stat-l { font-size:11px; color:var(--text-3); margin-top:4px; line-height:1.4; }
+
+        /* ── CHAT MOCKUP ── */
+        .mockup {
+            background:var(--bg-card); border:1px solid var(--border-hi);
+            border-radius:18px; overflow:hidden;
+            box-shadow:0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,148,8,0.05);
+        }
+        .mockup-bar {
+            background:#10172A; padding:14px 18px;
+            display:flex; align-items:center; gap:12px;
+            border-bottom:1px solid var(--border);
+        }
+        .dots { display:flex; gap:6px; }
+        .dots span { width:10px; height:10px; border-radius:50%; }
+        .dots span:nth-child(1){background:#EF4444;}
+        .dots span:nth-child(2){background:#F59E0B;}
+        .dots span:nth-child(3){background:#10B981;}
+        .mockup-title { font-size:12px; color:var(--text-2); font-weight:500; }
+        .mockup-live {
+            margin-left:auto; background:rgba(16,185,129,0.12);
+            border:1px solid rgba(16,185,129,0.3); color:var(--green);
+            padding:3px 10px; border-radius:10px; font-size:10px; font-weight:700;
+        }
+        .chat-body { padding:18px 18px 14px; display:flex; flex-direction:column; gap:14px; }
+        .msg { display:flex; gap:9px; align-items:flex-start; }
+        .msg.u { flex-direction:row-reverse; }
+        .avatar {
+            width:26px; height:26px; border-radius:7px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:10px; font-weight:800; flex-shrink:0;
+        }
+        .av-u { background:var(--maroon); color:#fff; }
+        .av-ai { background:linear-gradient(135deg,var(--orange),#d97000); color:#fff; }
+        .bubble {
+            max-width:82%; padding:10px 14px; font-size:12px; line-height:1.55; border-radius:10px;
+        }
+        .b-u { background:var(--maroon); color:#fff; border-radius:10px 3px 10px 10px; }
+        .b-ai {
+            background:#1A2240; border:1px solid var(--border-hi);
+            color:var(--text); border-radius:3px 10px 10px 10px;
+        }
+        .mini-chart {
+            background:#0C1120; border:1px solid var(--border);
+            border-radius:8px; padding:10px; margin-top:8px;
+        }
+        .chart-lbl { font-size:9px; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+        .bars { display:flex; gap:5px; align-items:flex-end; height:52px; padding-bottom:18px; }
+        .bar { flex:1; border-radius:3px 3px 0 0; position:relative; transition:all 0.4s; }
+        .bar-lbl {
+            position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+            font-size:8px; color:var(--text-3); white-space:nowrap;
+        }
+        .src-row { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+        .src-tag {
+            background:var(--orange-10); border:1px solid var(--orange-20);
+            color:var(--orange); padding:2px 7px; border-radius:5px;
+            font-size:9px; font-weight:600;
+        }
+        .chat-input {
+            background:#0C1120; border:1px solid var(--border-hi);
+            border-radius:7px; padding:9px 12px;
+            display:flex; align-items:center; gap:8px; margin-top:4px;
+        }
+        .ci-text { flex:1; font-size:11px; color:var(--text-3); transition:opacity 0.3s; }
+        .ci-btn {
+            background:var(--orange); border:none; border-radius:5px;
+            padding:5px 11px; font-size:10px; font-weight:700; color:#fff; cursor:pointer;
+        }
+
+        /* ── SECTION BASE ── */
+        section { padding:88px 48px; }
+        .wrap { max-width:1240px; margin:0 auto; }
+        .s-label {
+            font-size:10px; font-weight:800; letter-spacing:2.5px;
+            text-transform:uppercase; color:var(--orange); margin-bottom:10px;
+        }
+        .s-title {
+            font-size:38px; font-weight:800; letter-spacing:-1px;
+            line-height:1.15; margin-bottom:14px;
+        }
+        .s-sub { font-size:16px; color:var(--text-2); line-height:1.75; max-width:580px; }
+
+        /* ── PAIN ── */
+        .pain-bg { background:#0A0D18; border-top:1px solid var(--border); }
+        .pain-grid {
+            display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:52px;
+        }
+        .pain-card {
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:13px; padding:26px;
+            transition:all 0.3s; position:relative; overflow:hidden;
+        }
+        .pain-card::after {
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background:var(--maroon); transform:scaleX(0); transition:transform 0.3s;
+        }
+        .pain-card:hover { border-color:var(--border-hi); transform:translateY(-2px); }
+        .pain-card:hover::after { transform:scaleX(1); }
+        .pain-n { font-size:38px; font-weight:900; color:var(--orange); line-height:1; }
+        .pain-l { font-size:13px; font-weight:700; margin:8px 0 5px; }
+        .pain-d { font-size:12px; color:var(--text-3); line-height:1.55; }
+        .pain-src { font-size:9px; color:var(--text-3); margin-top:10px; opacity:0.55; }
+
+        /* ── ARCH ── */
+        .arch-bg { background:#0C1018; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+        .arch-flow {
+            display:grid;
+            grid-template-columns:1fr 36px 1fr 36px 1fr 36px 1fr;
+            align-items:center; gap:0; margin-top:52px;
+        }
+        .arch-node {
+            background:var(--bg-card); border:1px solid var(--border-hi);
+            border-radius:14px; padding:22px 18px; text-align:center;
+        }
+        .arch-node.hi {
+            border-color:var(--orange-30); background:#141D30;
+            box-shadow:0 0 32px rgba(255,148,8,0.06);
+        }
+        .node-lbl { font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+        .node-icon { font-size:26px; margin-bottom:10px; }
+        .node-title { font-size:12px; font-weight:700; margin-bottom:10px; }
+        .node-items { display:flex; flex-direction:column; gap:5px; }
+        .node-item {
+            background:rgba(255,255,255,0.04); border:1px solid var(--border);
+            border-radius:6px; padding:4px 8px;
+            font-size:10px; color:var(--text-2);
+        }
+        .arch-arr {
+            display:flex; align-items:center; justify-content:center;
+            color:rgba(255,148,8,0.35); font-size:18px;
+            transition:color 0.5s;
+        }
+        .arch-arr.lit { color:var(--orange); }
+        .arch-note {
+            text-align:center; margin-top:28px; padding:14px 20px;
+            background:rgba(255,148,8,0.05); border:1px solid rgba(255,148,8,0.12);
+            border-radius:10px; font-size:12px; color:var(--text-2);
+        }
+        .arch-note strong { color:var(--orange); }
+
+        /* ── CAPABILITIES ── */
+        .cap-grid {
+            display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:52px;
+        }
+        .cap-card {
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:13px; padding:26px; transition:all 0.3s;
+        }
+        .cap-card:hover { border-color:var(--orange-20); background:var(--bg-hover); }
+        .cap-icon {
+            width:44px; height:44px; background:var(--orange-10);
+            border:1px solid var(--orange-20); border-radius:10px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:20px; margin-bottom:14px;
+        }
+        .cap-title { font-size:14px; font-weight:700; margin-bottom:7px; }
+        .cap-desc { font-size:12px; color:var(--text-2); line-height:1.65; }
+
+        /* ── SECURITY ── */
+        .sec-bg { background:#090C14; }
+        .sec-grid { display:grid; grid-template-columns:1fr 1fr; gap:44px; margin-top:52px; }
+        .sec-list { display:flex; flex-direction:column; gap:14px; }
+        .sec-item {
+            display:flex; gap:14px; align-items:flex-start;
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:12px; padding:18px; transition:border-color 0.3s;
+        }
+        .sec-item:hover { border-color:rgba(16,185,129,0.25); }
+        .sec-ico {
+            width:38px; height:38px; border-radius:9px;
+            background:rgba(16,185,129,0.1); display:flex;
+            align-items:center; justify-content:center; font-size:17px; flex-shrink:0;
+        }
+        .sec-t { font-size:13px; font-weight:700; margin-bottom:4px; }
+        .sec-d { font-size:11px; color:var(--text-2); line-height:1.6; }
+        .sec-right { display:flex; flex-direction:column; gap:16px; }
+        .sec-panel {
+            background:var(--bg-card); border:1px solid var(--border-hi);
+            border-radius:13px; padding:24px;
+        }
+        .comp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; }
+        .comp-badge {
+            background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2);
+            color:var(--green); border-radius:8px; padding:12px;
+            text-align:center; font-size:11px; font-weight:800; letter-spacing:0.5px;
+        }
+
+        /* ── COMPARE TABLE ── */
+        .cmp-bg { background:var(--bg); }
+        .cmp-table { width:100%; border-collapse:collapse; margin-top:44px; border-radius:13px; overflow:hidden; }
+        .cmp-table th { padding:14px 18px; font-size:11px; font-weight:800; letter-spacing:0.5px; text-transform:uppercase; }
+        .cmp-table th:nth-child(1) { background:#0D1117; color:var(--text-3); text-align:left; }
+        .cmp-table th:nth-child(2) { background:#17141E; color:var(--text-2); text-align:left; }
+        .cmp-table th:nth-child(3) { background:#0F1A12; color:var(--green); text-align:left; }
+        .cmp-table td { padding:13px 18px; font-size:12px; border-bottom:1px solid var(--border); }
+        .cmp-table tr:last-child td { border-bottom:none; }
+        .cmp-table td:nth-child(1) { background:#0D1117; color:var(--text-2); font-weight:500; }
+        .cmp-table td:nth-child(2) { background:#120F1A; color:var(--text-3); }
+        .cmp-table td:nth-child(3) { background:#0D150F; color:#A7F3D0; font-weight:600; }
+        .bad { color:var(--red-text) !important; }
+        .good { color:var(--green) !important; }
+
+        /* ── POC ── */
+        .poc-bg {
+            background:linear-gradient(160deg,#0D1420,#0C140A);
+            border-top:1px solid rgba(255,148,8,0.15);
+            border-bottom:1px solid rgba(255,148,8,0.15);
+        }
+        .poc-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; margin-top:52px; align-items:start; }
+        .poc-steps { display:flex; flex-direction:column; }
+        .poc-step { display:flex; gap:18px; position:relative; }
+        .poc-step:not(:last-child)::after {
+            content:''; position:absolute; left:19px; top:42px;
+            width:1px; height:calc(100% + 4px);
+            background:linear-gradient(180deg,var(--orange),transparent);
+        }
+        .poc-num {
+            width:38px; height:38px; border-radius:50%;
+            background:var(--orange-10); border:1px solid var(--orange-30);
+            display:flex; align-items:center; justify-content:center;
+            font-size:13px; font-weight:900; color:var(--orange); flex-shrink:0;
+        }
+        .poc-step-body { padding-bottom:28px; }
+        .poc-step-t { font-size:13px; font-weight:700; margin-bottom:4px; }
+        .poc-step-d { font-size:12px; color:var(--text-2); line-height:1.6; }
+        .poc-card {
+            background:var(--bg-card); border:1px solid var(--orange-20);
+            border-radius:16px; padding:32px;
+        }
+        .poc-card-t { font-size:20px; font-weight:800; margin-bottom:14px; }
+        .poc-card-t span { color:var(--orange); }
+        .poc-list { display:flex; flex-direction:column; gap:9px; margin-bottom:20px; }
+        .poc-item { display:flex; gap:9px; font-size:12px; color:var(--text-2); align-items:flex-start; line-height:1.5; }
+        .poc-item::before { content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; margin-top:1px; }
+        .poc-note {
+            background:var(--orange-10); border:1px solid var(--orange-20);
+            border-radius:9px; padding:14px; margin-bottom:20px;
+            font-size:12px; color:var(--text-2); line-height:1.6;
+        }
+        .poc-note strong { color:var(--orange); }
+        .cta-btn {
+            display:inline-block; cursor:pointer; border:none;
+            background:linear-gradient(135deg,var(--orange),#d97000);
+            color:#fff; padding:14px 26px; border-radius:10px;
+            font-size:13px; font-weight:800; transition:all 0.3s;
+        }
+        .cta-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,148,8,0.28); }
+
+        /* ── FOOTER ── */
+        footer {
+            padding:44px 48px; border-top:1px solid var(--border);
+            display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px;
+        }
+        .foot-brand { font-size:18px; font-weight:900; letter-spacing:-0.3px; }
+        .foot-brand span { color:var(--orange); }
+        .foot-sub { font-size:11px; color:var(--text-3); margin-top:4px; }
+        .foot-center { text-align:center; }
+        .foot-offering { font-size:14px; font-weight:700; color:var(--orange); }
+        .foot-event { font-size:11px; color:var(--text-3); margin-top:3px; }
+        .foot-contact { text-align:right; font-size:11px; color:var(--text-3); line-height:1.8; }
+        .foot-contact a { color:var(--orange); text-decoration:none; }
+
+        /* ── UTILS ── */
+        .fade { opacity:0; transform:translateY(18px); transition:opacity 0.65s ease, transform 0.65s ease; }
+        .fade.vis { opacity:1; transform:translateY(0); }
+
+        /* ── VERTICAL ARCHITECTURE STACK ── */
+        .varch { margin-top:52px; display:flex; flex-direction:column; gap:0; }
+
+        /* Layer shells */
+        .va-layer { border-radius:16px; padding:30px 32px; position:relative; overflow:hidden; }
+
+        .va-exec {
+            background:linear-gradient(150deg,#0F1826 0%,#141D30 55%,#0F1520 100%);
+            border:1px solid rgba(255,148,8,0.25);
+            box-shadow:0 -8px 64px rgba(255,148,8,0.05), inset 0 1px 0 rgba(255,148,8,0.12);
+        }
+        .va-exec::before {
+            content:''; position:absolute; top:-90px; left:50%; transform:translateX(-50%);
+            width:700px; height:240px;
+            background:radial-gradient(ellipse,rgba(255,148,8,0.09) 0%,transparent 70%);
+            pointer-events:none;
+        }
+        .va-ai {
+            background:linear-gradient(150deg,#0F1B24 0%,#112232 100%);
+            border:1px solid rgba(255,148,8,0.4);
+            box-shadow:0 0 56px rgba(255,148,8,0.07);
+        }
+        .va-mcp {
+            background:linear-gradient(150deg,#0E1A20 0%,#111F2C 100%);
+            border:1px solid rgba(255,148,8,0.4);
+            box-shadow:0 0 56px rgba(255,148,8,0.07);
+        }
+        .va-sys {
+            background:linear-gradient(150deg,#0C1018 0%,#0F1520 100%);
+            border:1px solid var(--border-hi);
+        }
+
+        /* Orange Damco-built top band */
+        .va-dband {
+            position:absolute; top:0; left:0; right:0;
+            background:linear-gradient(90deg,rgba(255,148,8,0.16),rgba(255,148,8,0.04));
+            border-bottom:1px solid rgba(255,148,8,0.22);
+            padding:7px 32px;
+            font-size:10px; font-weight:800; letter-spacing:1.8px;
+            text-transform:uppercase; color:var(--orange);
+        }
+        .va-ai .va-lh, .va-mcp .va-lh { margin-top:34px; }
+
+        /* Layer header */
+        .va-badge {
+            font-size:10px; font-weight:800; letter-spacing:1.5px;
+            text-transform:uppercase; color:var(--text-3); margin-bottom:9px;
+        }
+        .va-lh { margin-bottom:18px; }
+        .va-title {
+            font-size:20px; font-weight:800; letter-spacing:-0.3px;
+            margin-bottom:5px; display:flex; align-items:center; gap:9px;
+        }
+        .va-ico { font-size:22px; }
+        .va-sub { font-size:13px; color:var(--text-2); line-height:1.5; max-width:860px; }
+
+        /* ── Executive windows ── */
+        .exec-wins {
+            display:grid; grid-template-columns:1.2fr 0.8fr 1fr;
+            gap:12px; margin-bottom:18px;
+        }
+        .ew {
+            background:rgba(6,7,12,0.8); border:1px solid var(--border-hi);
+            border-radius:10px; padding:13px 15px;
+        }
+        .ew-lbl {
+            font-size:9px; font-weight:700; letter-spacing:0.5px;
+            color:var(--text-3); text-transform:uppercase; margin-bottom:9px;
+        }
+        /* Chart */
+        .ew-bars {
+            display:flex; gap:5px; align-items:flex-end; height:76px; margin-bottom:4px;
+        }
+        .ebar { flex:1; border-radius:3px 3px 0 0; opacity:0.85; position:relative; min-height:14%; }
+        .ebar::after {
+            content:attr(data-l); position:absolute; bottom:-15px; left:50%;
+            transform:translateX(-50%); font-size:9px; color:var(--text-3); white-space:nowrap;
+        }
+        .ew-src { font-size:9px; color:var(--text-3); margin-top:18px; opacity:0.55; font-style:italic; }
+        /* KPIs */
+        .kpi-rows { display:flex; flex-direction:column; gap:6px; }
+        .kpi-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding-bottom:5px; border-bottom:1px solid var(--border);
+        }
+        .kpi-row:last-child { border-bottom:none; padding-bottom:0; }
+        .kpi-v { font-size:14px; font-weight:900; }
+        .kpi-up { color:var(--green); } .kpi-or { color:var(--orange); } .kpi-bl { color:#60A5FA; }
+        .kpi-l { font-size:10px; color:var(--text-3); }
+        /* Chat */
+        .echat { display:flex; flex-direction:column; gap:6px; }
+        .ec-u, .ec-ai { border-radius:7px; padding:8px 10px; font-size:11px; line-height:1.5; }
+        .ec-u { background:rgba(148,18,44,0.12); border:1px solid rgba(148,18,44,0.2); color:var(--text-2); }
+        .ec-ai { background:rgba(255,148,8,0.06); border:1px solid rgba(255,148,8,0.12); color:var(--text-2); }
+        .ec-inp { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:10px; color:var(--text-3); margin-top:2px; }
+        /* Tags */
+        .va-tags { display:flex; flex-wrap:wrap; gap:6px; }
+        .vtag { background:rgba(255,148,8,0.07); border:1px solid rgba(255,148,8,0.15); color:var(--text-2); padding:4px 11px; border-radius:20px; font-size:11px; }
+
+        /* ── Connectors between layers ── */
+        .va-conn { display:flex; align-items:center; justify-content:center; position:relative; height:70px; }
+        .va-conn-lbl {
+            font-size:11px; color:var(--text-3);
+            background:rgba(8,9,15,0.92); padding:3px 14px;
+            border-radius:20px; border:1px solid var(--border);
+            position:absolute; top:8px; z-index:2; white-space:nowrap;
+            pointer-events:none;
+        }
+        .va-pipe {
+            position:absolute; top:0; bottom:0; left:50%;
+            width:2px; transform:translateX(-50%); overflow:visible;
+            background:linear-gradient(180deg,transparent 0%,rgba(255,148,8,0.25) 25%,var(--orange) 50%,rgba(255,148,8,0.25) 75%,transparent 100%);
+        }
+        .va-arr {
+            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            z-index:3; color:var(--orange); font-size:16px; font-weight:900;
+            background:rgba(8,9,15,0.95); border:1px solid rgba(255,148,8,0.3);
+            width:26px; height:26px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 0 16px rgba(255,148,8,0.4);
+        }
+        .vdot {
+            width:7px; height:7px; border-radius:50%;
+            background:var(--orange); box-shadow:0 0 10px rgba(255,148,8,0.9);
+            position:absolute; left:50%; transform:translateX(-50%);
+            animation:vflow 1.9s ease-in-out infinite;
+        }
+        .vdot:nth-child(1){animation-delay:0s;}
+        .vdot:nth-child(2){animation-delay:0.63s;}
+        .vdot:nth-child(3){animation-delay:1.26s;}
+        @keyframes vflow {
+            0%   { bottom:0; opacity:0; }
+            15%  { opacity:1; }
+            85%  { opacity:1; }
+            100% { bottom:100%; opacity:0; }
+        }
+
+        /* ── AI process steps ── */
+        .ai-proc {
+            display:grid; grid-template-columns:1fr 24px 1fr 24px 1fr 24px 1fr;
+            align-items:stretch; gap:0; margin-top:4px;
+        }
+        .ap-step { background:rgba(255,148,8,0.05); border:1px solid rgba(255,148,8,0.15); border-radius:10px; padding:14px 15px; }
+        .ap-n { font-size:10px; font-weight:900; color:var(--orange); letter-spacing:1px; margin-bottom:4px; }
+        .ap-t { font-size:13px; font-weight:700; margin-bottom:5px; }
+        .ap-d { font-size:11px; color:var(--text-2); line-height:1.5; }
+        .ap-arr { display:flex; align-items:center; justify-content:center; color:rgba(255,148,8,0.35); font-size:14px; }
+
+        /* ── MCP inner ── */
+        .mcp-inner { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+        .mcp-clist { display:flex; flex-direction:column; gap:8px; }
+        .mcp-ctrl { display:flex; gap:11px; align-items:flex-start; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:9px; padding:10px 13px; }
+        .mc-ico { font-size:18px; flex-shrink:0; }
+        .mc-t { font-size:12px; font-weight:700; margin-bottom:2px; }
+        .mc-s { font-size:11px; color:var(--text-2); }
+        .mcp-comp { background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.15); border-radius:10px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; justify-content:center; }
+        .mc-comp-t { font-size:11px; font-weight:700; color:var(--green); }
+        .mc-comp-s { font-size:11px; color:var(--text-2); line-height:1.5; }
+        .mc-badges { display:flex; flex-wrap:wrap; gap:6px; }
+        .mc-badge { background:rgba(16,185,129,0.10); border:1px solid rgba(16,185,129,0.22); color:var(--green); border-radius:6px; padding:5px 13px; font-size:11px; font-weight:800; }
+
+        /* ── System tiles ── */
+        .sys-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-top:8px; }
+        .sys-tile { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 10px; text-align:center; transition:border-color 0.2s,background 0.2s; }
+        .sys-tile:hover { border-color:var(--orange-20); background:rgba(255,148,8,0.04); }
+        .sys-ico { font-size:22px; margin-bottom:7px; }
+        .sys-n { font-size:11px; font-weight:700; margin-bottom:3px; }
+        .sys-t { font-size:10px; color:var(--text-3); line-height:1.35; }
+
+        /* ── RESPONSIVE ── */
+
+        /* Tablet / small desktop */
+        @media(max-width:1100px){
+            .hero-inner { grid-template-columns:1fr; gap:40px; }
+            .pain-grid { grid-template-columns:repeat(2,1fr); }
+            .arch-flow { display:flex; flex-direction:column; gap:10px; }
+            .arch-arr { transform:rotate(90deg); }
+            .exec-wins { grid-template-columns:1fr 1fr; }
+            .ai-proc { grid-template-columns:1fr; gap:8px; }
+            .ai-proc .ap-arr { display:none; }
+            .mcp-inner { grid-template-columns:1fr; }
+            .sys-grid { grid-template-columns:repeat(3,1fr); }
+            .va-conn-lbl { font-size:10px; }
+            .cap-grid { grid-template-columns:repeat(2,1fr); }
+            .sec-grid { grid-template-columns:1fr; }
+            .poc-grid { grid-template-columns:1fr; }
+            .cmp-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+        }
+
+        /* Mobile */
+        @media(max-width:640px){
+            nav { padding:12px 16px; }
+            nav .nav-logo { font-size:15px; }
+
+            section { padding:56px 16px; }
+
+            .hero { padding:100px 16px 56px; min-height:auto; }
+            h1 { font-size:32px; letter-spacing:-1px; }
+            h1 br { display:none; }
+            .hero-sub { font-size:15px; margin-bottom:28px; }
+            .hero-eyebrow { font-size:10px; }
+            .hero-stats { gap:0; flex-direction:column; border-top:none; padding-top:0; }
+            .hero-stats > div {
+                border-left:none !important; padding-left:0 !important;
+                padding:14px 0; border-bottom:1px solid var(--border);
+                display:flex; align-items:center; gap:14px;
+            }
+            .hero-stats > div:last-child { border-bottom:none; }
+            .stat-n { font-size:26px; }
+            .stat-l { margin-top:0; }
+
+            .mockup { border-radius:12px; }
+            .chat-body { padding:14px 14px 10px; }
+            .bubble { font-size:11px; padding:9px 12px; }
+            .mini-chart { padding:8px; }
+
+            .s-title { font-size:26px; letter-spacing:-0.5px; }
+            .s-sub { font-size:14px; }
+            .s-label { font-size:10px; }
+
+            .pain-grid { grid-template-columns:1fr; }
+            .pain-n { font-size:32px; }
+
+            .arch-node { padding:16px 14px; }
+            .node-title { font-size:11px; }
+            .node-item { font-size:10px; padding:3px 7px; }
+            .arch-note { font-size:11px; padding:12px 14px; }
+            .va-layer { padding:20px 16px; }
+            .exec-wins { grid-template-columns:1fr; }
+            .sys-grid { grid-template-columns:repeat(2,1fr); }
+            .va-conn-lbl { display:none; }
+            .va-dband { font-size:9px; padding:6px 16px; }
+            .va-title { font-size:16px; }
+
+            .cap-grid { grid-template-columns:1fr; }
+            .cap-card { padding:20px; }
+
+            .sec-item { padding:14px; }
+            .comp-grid { grid-template-columns:repeat(2,1fr); }
+            .sec-panel { padding:18px; }
+
+            .cmp-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+            .cmp-table { min-width:560px; }
+            .cmp-table th, .cmp-table td { padding:11px 14px; font-size:11px; }
+
+            .poc-steps { gap:0; }
+            .poc-step-body { padding-bottom:22px; }
+            .poc-card { padding:22px; }
+            .poc-card-t { font-size:17px; }
+            .cta-btn { display:block; text-align:center; width:100%; }
+
+            footer { padding:28px 16px; flex-direction:column; align-items:flex-start; gap:16px; }
+            .foot-contact { text-align:left; }
+        }
+
+        /* Small phones */
+        @media(max-width:400px){
+            h1 { font-size:28px; }
+            .s-title { font-size:22px; }
+            .hero-eyebrow { display:none; }
+            .comp-grid { grid-template-columns:repeat(2,1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">Damco <span>Solutions</span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-glow-r"></div>
+    <div class="hero-glow-l"></div>
+    <div class="hero-inner">
+        <div>
+            <div class="hero-eyebrow">
+                <div class="hero-dot"></div>
+                New Offering &nbsp;·&nbsp; Powered by MCP
+            </div>
+            <h1>Ask your enterprise <span class="grad">anything.</span><br>Get answers, not tickets.</h1>
+            <p class="hero-sub">
+                Enterprise data is locked in dozens of disconnected systems — different logins, different schemas, different owners. Leaders wait weeks for dashboards that answer yesterday's questions. We connect your existing systems through an AI-native intelligence layer: live, secure, and in plain language.
+            </p>
+            <div class="hero-stats">
+                <div>
+                    <div class="stat-n">131<sup style="font-size:16px">+</sup></div>
+                    <div class="stat-l">Avg. enterprise<br>apps per org</div>
+                </div>
+                <div style="border-left:1px solid var(--border); padding-left:36px;">
+                    <div class="stat-n">3–18</div>
+                    <div class="stat-l">Months to build<br>traditional BI</div>
+                </div>
+                <div style="border-left:1px solid var(--border); padding-left:36px;">
+                    <div class="stat-n">4–6</div>
+                    <div class="stat-l">Weeks to a<br>working POC</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAT MOCKUP -->
+        <div class="mockup">
+            <div class="mockup-bar">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <div class="mockup-title">Enterprise Intelligence &nbsp;·&nbsp; 4 systems connected</div>
+                <div class="mockup-live">● Live</div>
+            </div>
+            <div class="chat-body">
+                <div class="msg u">
+                    <div class="avatar av-u">CFO</div>
+                    <div class="bubble b-u">What is our EMEA revenue vs. target for Q2, broken down by business unit?</div>
+                </div>
+                <div class="msg">
+                    <div class="avatar av-ai">AI</div>
+                    <div class="bubble b-ai">
+                        EMEA Q2 is tracking at <strong>87% of target</strong> across all BUs. Technology Services leads at 104%. Finance and Operations are below threshold.
+                        <div class="mini-chart">
+                            <div class="chart-lbl">Q2 Revenue vs Target — EMEA by BU</div>
+                            <div class="bars">
+                                <div class="bar" style="height:100%;background:linear-gradient(180deg,var(--orange),rgba(255,148,8,0.25))"><span class="bar-lbl">Tech</span></div>
+                                <div class="bar" style="height:88%;background:linear-gradient(180deg,#60A5FA,rgba(96,165,250,0.25))"><span class="bar-lbl">Fin</span></div>
+                                <div class="bar" style="height:74%;background:linear-gradient(180deg,#A78BFA,rgba(167,139,250,0.25))"><span class="bar-lbl">Ops</span></div>
+                                <div class="bar" style="height:82%;background:linear-gradient(180deg,#34D399,rgba(52,211,153,0.25))"><span class="bar-lbl">Sales</span></div>
+                                <div class="bar" style="height:91%;background:linear-gradient(180deg,#F87171,rgba(248,113,113,0.25))"><span class="bar-lbl">Svcs</span></div>
+                            </div>
+                            <div class="src-row">
+                                <span class="src-tag">SAP ERP</span>
+                                <span class="src-tag">Salesforce</span>
+                                <span class="src-tag">Finance DB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <span class="ci-text" id="ciText">Which regions are below 80% of forecast?</span>
+                    <button class="ci-btn">Ask →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PAIN POINTS -->
+<section class="pain-bg">
+    <div class="wrap">
+        <div class="s-label">The Problem</div>
+        <div class="s-title">Your data exists.<br>Your visibility doesn't.</div>
+        <p class="s-sub">Every enterprise has the data. The challenge is fragmentation, access complexity, and the time it takes to turn raw records into a decision.</p>
+        <div class="pain-grid fade">
+            <div class="pain-card">
+                <div class="pain-n">131<span style="font-size:20px">+</span></div>
+                <div class="pain-l">Apps per enterprise</div>
+                <div class="pain-d">Large enterprises run 131 to 447 SaaS applications, each with its own login, schema, and owner. No unified view exists by default.</div>
+                <div class="pain-src">BetterCloud Enterprise SaaS Trends 2024</div>
+            </div>
+            <div class="pain-card">
+                <div class="pain-n">12 <span style="font-size:20px">hrs</span></div>
+                <div class="pain-l">Per week chasing data</div>
+                <div class="pain-d">Knowledge workers lose 12 hours every week searching for data across disconnected systems — time that should be spent making decisions.</div>
+                <div class="pain-src">Forrester Research</div>
+            </div>
+            <div class="pain-card">
+                <div class="pain-n">3–18 <span style="font-size:20px">mo</span></div>
+                <div class="pain-l">To build traditional BI</div>
+                <div class="pain-d">A traditional data warehouse and BI stack takes 3 to 18 months and $70K–$1M+ to build. 75% of those projects run over budget.</div>
+                <div class="pain-src">McKinsey / Gartner</div>
+            </div>
+            <div class="pain-card">
+                <div class="pain-n">80<span style="font-size:20px">%</span></div>
+                <div class="pain-l">Analyst time: finding, not analyzing</div>
+                <div class="pain-d">Data analysts spend 80% of their time locating and preparing data. 68% of organizations cite silos as their top obstacle to transformation.</div>
+                <div class="pain-src">DATAVERSITY 2024 / Forrester</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ARCHITECTURE — VERTICAL STACK -->
+<section class="arch-bg">
+    <div class="wrap">
+        <div class="s-label">The Solution</div>
+        <div class="s-title">Agentic Enterprise Intelligence</div>
+        <p class="s-sub">We connect your existing enterprise systems through an AI-native orchestration layer — built on the Model Context Protocol (MCP), an open standard now governed by the Linux Foundation and adopted by Microsoft, Google, OpenAI, and AWS.</p>
+
+        <div class="varch fade">
+
+            <!-- ══ LAYER 4 · EXECUTIVE INTERFACE (top) ══ -->
+            <div class="va-layer va-exec">
+                <div class="va-badge">Layer 4 &nbsp;·&nbsp; Where Decisions Are Made</div>
+                <div class="va-lh">
+                    <div class="va-title"><span class="va-ico">👔</span> Executive Intelligence Interface</div>
+                    <div class="va-sub">CFO &nbsp;·&nbsp; COO &nbsp;·&nbsp; CTO &nbsp;·&nbsp; CMO &nbsp;·&nbsp; Board &nbsp;—&nbsp; any question, answered in seconds, from any device.</div>
+                </div>
+                <div class="exec-wins">
+                    <!-- Window 1: Live bar chart -->
+                    <div class="ew">
+                        <div class="ew-lbl">Q2 Revenue vs Target — EMEA by BU</div>
+                        <div class="ew-bars">
+                            <div class="ebar" style="height:72%;background:linear-gradient(180deg,var(--orange),rgba(255,148,8,0.2))" data-l="Tech"></div>
+                            <div class="ebar" style="height:58%;background:linear-gradient(180deg,#60A5FA,rgba(96,165,250,0.2))" data-l="Fin"></div>
+                            <div class="ebar" style="height:47%;background:linear-gradient(180deg,#A78BFA,rgba(167,139,250,0.2))" data-l="Ops"></div>
+                            <div class="ebar" style="height:54%;background:linear-gradient(180deg,#34D399,rgba(52,211,153,0.2))" data-l="Sales"></div>
+                            <div class="ebar" style="height:63%;background:linear-gradient(180deg,#F87171,rgba(248,113,113,0.2))" data-l="Svcs"></div>
+                        </div>
+                        <div class="ew-src">Sources: SAP ERP · Salesforce · Finance DB</div>
+                    </div>
+                    <!-- Window 2: KPI panel -->
+                    <div class="ew">
+                        <div class="ew-lbl">Live KPIs — pulled now</div>
+                        <div class="kpi-rows">
+                            <div class="kpi-row"><span class="kpi-v kpi-up">87%</span><span class="kpi-l">EMEA vs target</span></div>
+                            <div class="kpi-row"><span class="kpi-v kpi-or">€12.4M</span><span class="kpi-l">Q2 pipeline</span></div>
+                            <div class="kpi-row"><span class="kpi-v kpi-bl">340</span><span class="kpi-l">Open tickets</span></div>
+                            <div class="kpi-row"><span class="kpi-v kpi-up">94%</span><span class="kpi-l">SLA compliance</span></div>
+                        </div>
+                    </div>
+                    <!-- Window 3: AI chat -->
+                    <div class="ew">
+                        <div class="ew-lbl">AI Chat Interface</div>
+                        <div class="echat">
+                            <div class="ec-u">What is our EMEA revenue vs target for Q2?</div>
+                            <div class="ec-ai">EMEA Q2 tracking at <strong>87% of target</strong>. Technology leads at 104%. Finance and Operations are below threshold — drill down?</div>
+                            <div class="ec-inp">Which regions are below 80% of forecast?</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="va-tags">
+                    <span class="vtag">Any question in plain English</span>
+                    <span class="vtag">Live charts &amp; tables</span>
+                    <span class="vtag">Cross-system answers</span>
+                    <span class="vtag">Drill-down follow-ups</span>
+                    <span class="vtag">Exportable reports</span>
+                    <span class="vtag">Mobile-ready</span>
+                </div>
+            </div>
+
+            <!-- ══ CONNECTOR 3 → 4 ══ -->
+            <div class="va-conn">
+                <div class="va-conn-lbl">Intelligence delivered in seconds — charts, tables, narrative, exportable</div>
+                <div class="va-pipe">
+                    <div class="vdot"></div><div class="vdot"></div><div class="vdot"></div>
+                    <div class="va-arr">↑</div>
+                </div>
+            </div>
+
+            <!-- ══ LAYER 3 · AI ORCHESTRATION ══ -->
+            <div class="va-layer va-ai">
+                <div class="va-dband">Damco Builds &nbsp;·&nbsp; Layer 3 &nbsp;·&nbsp; The Intelligence Engine</div>
+                <div class="va-lh">
+                    <div class="va-title"><span class="va-ico">🧠</span> AI Orchestration Layer</div>
+                    <div class="va-sub">Understands what the executive asked. Routes to the right systems. Synthesises across sources. Generates the clearest possible answer.</div>
+                </div>
+                <div class="ai-proc">
+                    <div class="ap-step">
+                        <div class="ap-n">01</div>
+                        <div class="ap-t">Parse Intent</div>
+                        <div class="ap-d">Natural language query broken into system-level tasks — no SQL, no training required</div>
+                    </div>
+                    <div class="ap-arr">→</div>
+                    <div class="ap-step">
+                        <div class="ap-n">02</div>
+                        <div class="ap-t">Route &amp; Fetch</div>
+                        <div class="ap-d">Queries sent in parallel to the correct MCP connectors — only the authorised ones</div>
+                    </div>
+                    <div class="ap-arr">→</div>
+                    <div class="ap-step">
+                        <div class="ap-n">03</div>
+                        <div class="ap-t">Synthesise</div>
+                        <div class="ap-d">Multi-system results merged with full context, follow-up conversation maintained</div>
+                    </div>
+                    <div class="ap-arr">→</div>
+                    <div class="ap-step">
+                        <div class="ap-n">04</div>
+                        <div class="ap-t">Generate</div>
+                        <div class="ap-d">Optimal format chosen: chart, table, narrative, or drill-down — exportable instantly</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ CONNECTOR 2 → 3 ══ -->
+            <div class="va-conn">
+                <div class="va-conn-lbl">Structured, scoped, fully audited data responses from authorised systems</div>
+                <div class="va-pipe">
+                    <div class="vdot"></div><div class="vdot"></div><div class="vdot"></div>
+                    <div class="va-arr">↑</div>
+                </div>
+            </div>
+
+            <!-- ══ LAYER 2 · MCP SECURITY ══ -->
+            <div class="va-layer va-mcp">
+                <div class="va-dband">Damco Builds &nbsp;·&nbsp; Layer 2 &nbsp;·&nbsp; Security and Access Fabric</div>
+                <div class="va-lh">
+                    <div class="va-title"><span class="va-ico">🔐</span> MCP Connector and Security Layer</div>
+                    <div class="va-sub">Per-system MCP servers with enterprise-grade access controls. Every query is authenticated, scoped, and logged. Data never moves — it is queried in place.</div>
+                </div>
+                <div class="mcp-inner">
+                    <div class="mcp-clist">
+                        <div class="mcp-ctrl"><div class="mc-ico">🔑</div><div><div class="mc-t">OAuth 2.1 + SSO</div><div class="mc-s">Plugs into your existing Okta, Azure AD, or Ping Identity</div></div></div>
+                        <div class="mcp-ctrl"><div class="mc-ico">🛡️</div><div><div class="mc-t">Role-based Access Control</div><div class="mc-s">The AI inherits your enterprise RBAC — architecturally cannot exceed it</div></div></div>
+                        <div class="mcp-ctrl"><div class="mc-ico">📋</div><div><div class="mc-t">Full Audit Logging</div><div class="mc-s">Every query logged: who asked, which tool called, what data accessed, when</div></div></div>
+                        <div class="mcp-ctrl"><div class="mc-ico">🏛️</div><div><div class="mc-t">Data Stays On-Premise</div><div class="mc-s">MCP is a query protocol — no data migration, no ETL, no copies</div></div></div>
+                    </div>
+                    <div class="mcp-comp">
+                        <div class="mc-comp-t">Compliance Framework Coverage</div>
+                        <div class="mc-comp-s">MCP audit logging satisfies cross-framework requirements out of the box. On-premise deployment eliminates GDPR cross-border data transfer risk.</div>
+                        <div class="mc-badges">
+                            <div class="mc-badge">GDPR</div>
+                            <div class="mc-badge">SOC 2</div>
+                            <div class="mc-badge">ISO 27001</div>
+                            <div class="mc-badge">HIPAA</div>
+                            <div class="mc-badge">SOX</div>
+                            <div class="mc-badge">FedRAMP</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ CONNECTOR 1 → 2 ══ -->
+            <div class="va-conn">
+                <div class="va-conn-lbl">Read queries only — your data never leaves your infrastructure</div>
+                <div class="va-pipe">
+                    <div class="vdot"></div><div class="vdot"></div><div class="vdot"></div>
+                    <div class="va-arr">↑</div>
+                </div>
+            </div>
+
+            <!-- ══ LAYER 1 · ENTERPRISE SYSTEMS (bottom) ══ -->
+            <div class="va-layer va-sys">
+                <div class="va-badge">Layer 1 &nbsp;·&nbsp; Your Existing Infrastructure &nbsp;·&nbsp; Nothing Moves, Nothing Changes</div>
+                <div class="va-lh">
+                    <div class="va-title"><span class="va-ico">🏢</span> Enterprise Systems</div>
+                    <div class="va-sub">Your current technology estate — exactly as it is today. No migration. No data warehouse. No ETL pipeline. The AI reads; your systems stay where they are.</div>
+                </div>
+                <div class="sys-grid">
+                    <div class="sys-tile"><div class="sys-ico">🏛️</div><div class="sys-n">SAP / Oracle ERP</div><div class="sys-t">Finance, procurement, supply chain</div></div>
+                    <div class="sys-tile"><div class="sys-ico">☁️</div><div class="sys-n">Salesforce CRM</div><div class="sys-t">Pipeline, accounts, opportunities</div></div>
+                    <div class="sys-tile"><div class="sys-ico">🎫</div><div class="sys-n">ServiceNow ITSM</div><div class="sys-t">Incidents, SLAs, change management</div></div>
+                    <div class="sys-tile"><div class="sys-ico">👥</div><div class="sys-n">Workday HRIS</div><div class="sys-t">Headcount, performance, payroll</div></div>
+                    <div class="sys-tile"><div class="sys-ico">💰</div><div class="sys-n">Finance &amp; Reporting</div><div class="sys-t">P&amp;L, forecasts, actuals</div></div>
+                    <div class="sys-tile"><div class="sys-ico">🗄️</div><div class="sys-n">Custom Databases</div><div class="sys-t">Any proprietary data source</div></div>
+                </div>
+            </div>
+
+        </div><!-- .varch -->
+
+        <div class="arch-note fade">
+            Built on <strong>Model Context Protocol (MCP)</strong> — an open, model-agnostic standard that works with any enterprise AI model, governed by the Linux Foundation. Now adopted by Microsoft, Google, OpenAI, AWS, Salesforce, ServiceNow, and Oracle.
+        </div>
+    </div>
+</section>
+
+<!-- CAPABILITIES -->
+<section>
+    <div class="wrap">
+        <div class="s-label">What You Can Do</div>
+        <div class="s-title">Not dashboards. Intelligence.</div>
+        <p class="s-sub">Preset dashboards answer yesterday's questions. Agentic intelligence answers any question, live, in context, across all your systems — without raising a ticket to IT.</p>
+        <div class="cap-grid fade">
+            <div class="cap-card">
+                <div class="cap-icon">💬</div>
+                <div class="cap-title">Ask Anything in Plain Language</div>
+                <div class="cap-desc">No SQL. No pre-built reports. Ask "What is our churn rate in the UK this quarter?" and get an immediate, sourced answer drawn from live systems — in seconds.</div>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon">📊</div>
+                <div class="cap-title">Auto-Generated Charts and Tables</div>
+                <div class="cap-desc">The AI determines the best format — bar chart, trend line, ranked table, or narrative — based on the data and the question. No manual charting, no spreadsheet exports.</div>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon">🔗</div>
+                <div class="cap-title">Cross-System Analysis in One Session</div>
+                <div class="cap-desc">"What are our top accounts by revenue, and how many open support tickets do they have?" Query your ERP, CRM, and ITSM simultaneously — in one conversation.</div>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon">🎯</div>
+                <div class="cap-title">Role-Based Data Visibility</div>
+                <div class="cap-desc">Every user sees exactly what they are authorised to see. The AI inherits enterprise RBAC directly. No separate access model to design, configure, or maintain.</div>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon">⚡</div>
+                <div class="cap-title">No Migration. No ETL. Live Data.</div>
+                <div class="cap-desc">Data never moves. MCP servers query your existing systems in real time. No data warehouse to build, no pipeline to maintain, no batch lag — data is always current.</div>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon">🔄</div>
+                <div class="cap-title">Conversational Follow-Ups</div>
+                <div class="cap-desc">"Now show me only the underperforming regions." "Compare to last year." "Export this as a table." The AI holds full context across the session and drills into any answer.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECURITY -->
+<section class="sec-bg">
+    <div class="wrap">
+        <div class="s-label">Security and Compliance</div>
+        <div class="s-title">Enterprise-grade by design,<br>not by afterthought.</div>
+        <p class="s-sub">Every MCP deployment we build meets enterprise security standards from the ground up — integrated with your existing identity infrastructure, not layered on top of it.</p>
+        <div class="sec-grid fade">
+            <div class="sec-list">
+                <div class="sec-item">
+                    <div class="sec-ico">🏛️</div>
+                    <div>
+                        <div class="sec-t">Data Never Leaves Your Systems</div>
+                        <div class="sec-d">MCP is a query protocol, not a data migration protocol. Your data stays on your infrastructure, behind your perimeter. The AI queries through the MCP server — not around it.</div>
+                    </div>
+                </div>
+                <div class="sec-item">
+                    <div class="sec-ico">🔐</div>
+                    <div>
+                        <div class="sec-t">Inherits Your Existing RBAC and SSO</div>
+                        <div class="sec-d">OAuth 2.1 authentication plugs directly into your existing identity provider — Okta, Azure AD, Ping Identity — via OIDC and SAML. No separate access model to configure or maintain.</div>
+                    </div>
+                </div>
+                <div class="sec-item">
+                    <div class="sec-ico">📋</div>
+                    <div>
+                        <div class="sec-t">Full Audit Trail on Every Query</div>
+                        <div class="sec-d">Every AI operation is logged: who asked, which tool was called, what data was accessed, and when. Satisfies GDPR, SOC 2, HIPAA, and SOX audit requirements without additional tooling.</div>
+                    </div>
+                </div>
+                <div class="sec-item">
+                    <div class="sec-ico">🛡️</div>
+                    <div>
+                        <div class="sec-t">Cannot Exceed User Permissions</div>
+                        <div class="sec-d">The AI operates within the requesting user's authorisation scope on every single query. It is architecturally impossible for the system to return data the user is not cleared to see.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sec-right">
+                <div class="sec-panel">
+                    <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Compliance Framework Alignment</div>
+                    <div style="font-size:11px;color:var(--text-3);margin-bottom:0;">MCP audit logging satisfies cross-framework requirements out of the box.</div>
+                    <div class="comp-grid">
+                        <div class="comp-badge">GDPR</div>
+                        <div class="comp-badge">SOC 2</div>
+                        <div class="comp-badge">ISO 27001</div>
+                        <div class="comp-badge">HIPAA</div>
+                        <div class="comp-badge">SOX</div>
+                        <div class="comp-badge">FedRAMP</div>
+                    </div>
+                    <div style="margin-top:16px;font-size:11px;color:var(--text-3);line-height:1.65;">
+                        On-premise deployment eliminates GDPR cross-border data transfer risk. Sensitivity label evaluation and per-operation scope controls are built into the MCP spec.
+                    </div>
+                </div>
+                <div class="sec-panel">
+                    <div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px;">Why MCP is the Right Foundation</div>
+                    <div style="font-size:12px;color:var(--text-2);line-height:1.7;">
+                        Released by Anthropic in November 2024 and donated to the Linux Foundation in December 2025, MCP is now a vendor-neutral open standard. It has been adopted by Microsoft, Google, OpenAI, AWS, Salesforce, ServiceNow, and Oracle within its first year. 97 million monthly SDK downloads and 5,800+ enterprise connectors confirm it as the standard for enterprise AI data connectivity — not an experimental protocol.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="cmp-bg">
+    <div class="wrap">
+        <div class="s-label">Traditional BI vs. Agentic Intelligence</div>
+        <div class="s-title">The old approach doesn't fit<br>the new pace.</div>
+        <p class="s-sub">Traditional data warehousing was designed for a world where data moved slowly and business questions were predictable. Neither is true anymore.</p>
+        <div class="cmp-table-wrap fade"><table class="cmp-table">
+            <thead>
+                <tr>
+                    <th>Dimension</th>
+                    <th>Traditional BI / Data Warehouse</th>
+                    <th>Agentic Enterprise Intelligence</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Time to first insight</td>
+                    <td class="bad">3 to 18 months</td>
+                    <td class="good">2 to 8 weeks (POC)</td>
+                </tr>
+                <tr>
+                    <td>Upfront investment</td>
+                    <td class="bad">$70,000 to $1,000,000+</td>
+                    <td class="good">Fixed-scope POC pricing</td>
+                </tr>
+                <tr>
+                    <td>Schema and modelling</td>
+                    <td class="bad">Extensive upfront design required</td>
+                    <td class="good">Minimal — AI discovers at runtime</td>
+                </tr>
+                <tr>
+                    <td>Multi-system queries</td>
+                    <td class="bad">ETL consolidation required first</td>
+                    <td class="good">Native — all systems in one session</td>
+                </tr>
+                <tr>
+                    <td>Data freshness</td>
+                    <td class="bad">Batch pipelines, often 5+ days stale</td>
+                    <td class="good">Live and near-real-time</td>
+                </tr>
+                <tr>
+                    <td>Access model</td>
+                    <td class="bad">Separate DW access layer to maintain</td>
+                    <td class="good">Inherits existing enterprise RBAC</td>
+                </tr>
+                <tr>
+                    <td>Question flexibility</td>
+                    <td class="bad">Preset reports and dashboards only</td>
+                    <td class="good">Any question, any time</td>
+                </tr>
+                <tr>
+                    <td>Data migration risk</td>
+                    <td class="bad">Full data movement required</td>
+                    <td class="good">Data stays in your systems</td>
+                </tr>
+                <tr>
+                    <td>Budget and timeline risk</td>
+                    <td class="bad">75% of projects run over budget</td>
+                    <td class="good">Fixed-scope, milestone-gated</td>
+                </tr>
+            </tbody>
+        </table></div>
+    </div>
+</section>
+
+<!-- POC -->
+<section class="poc-bg">
+    <div class="wrap">
+        <div class="s-label">Our Offer</div>
+        <div class="s-title">Proof of Concept<br>in 4 to 6 Weeks.</div>
+        <p class="s-sub">We do not ask for a transformation commitment. We prove the concept on your data, with your systems, in your environment — then you decide.</p>
+        <div class="poc-grid fade">
+            <div class="poc-steps">
+                <div class="poc-step">
+                    <div class="poc-num">1</div>
+                    <div class="poc-step-body">
+                        <div class="poc-step-t">Discovery and System Mapping — Weeks 1 and 2</div>
+                        <div class="poc-step-d">Map 2 to 3 of your highest-value enterprise systems. Define the business questions leadership needs answered. Agree RBAC and compliance requirements upfront.</div>
+                    </div>
+                </div>
+                <div class="poc-step">
+                    <div class="poc-num">2</div>
+                    <div class="poc-step-body">
+                        <div class="poc-step-t">MCP Connector Build and Security Layer — Weeks 2 to 4</div>
+                        <div class="poc-step-d">Build MCP servers for your target systems. Configure OAuth 2.1 against your identity provider. Set up RBAC rules, audit logging, and sensitivity controls.</div>
+                    </div>
+                </div>
+                <div class="poc-step">
+                    <div class="poc-num">3</div>
+                    <div class="poc-step-body">
+                        <div class="poc-step-t">AI Orchestration and Executive Interface — Weeks 3 to 5</div>
+                        <div class="poc-step-d">Deploy the AI orchestration layer. Build the executive query interface. Tune for your specific business context, terminology, and reporting needs.</div>
+                    </div>
+                </div>
+                <div class="poc-step">
+                    <div class="poc-num">4</div>
+                    <div class="poc-step-body" style="padding-bottom:0;">
+                        <div class="poc-step-t">Live Demonstration and ROI Assessment — Weeks 5 to 6</div>
+                        <div class="poc-step-d">Present a working system to your leadership team. Quantify the value: time saved, decisions accelerated, data accessed. Agree the path forward.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="poc-card">
+                <div class="poc-card-t">What you get from the <span>POC</span></div>
+                <div class="poc-list">
+                    <div class="poc-item">A working AI intelligence layer connected to your real systems — not a demo environment</div>
+                    <div class="poc-item">2 to 3 enterprise systems connected via MCP with live data access</div>
+                    <div class="poc-item">Role-based access verified against your existing identity provider</div>
+                    <div class="poc-item">Live natural language query interface for your leadership team</div>
+                    <div class="poc-item">Full audit trail and compliance documentation</div>
+                    <div class="poc-item">Validated ROI model and roadmap for full enterprise rollout</div>
+                </div>
+                <div class="poc-note">
+                    <strong>Our commitment:</strong> The POC is scoped with a fixed, agreed outcome. You will have a working, demonstrated system at the end — not a slide deck. We engage as a custom development partner: if it does not meet the agreed specification, we do not invoice for the build.
+                </div>
+                <button class="cta-btn">Explore a POC with Damco →</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div>
+        <div class="foot-brand">Damco <span>Solutions</span></div>
+        <div class="foot-sub">Custom Development &nbsp;·&nbsp; Enterprise AI &nbsp;·&nbsp; Technology Transformation</div>
+    </div>
+
+    <div class="foot-contact">
+        <div style="font-weight:700;color:var(--text);margin-bottom:2px;">Talk to us</div>
+        <div>ai@thedamcogroup.com</div>
+        <div><a href="#">damcogroup.com</a></div>
+    </div>
+</footer>
+
+<script>
+    // Scroll fade-in
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.fade').forEach(el => io.observe(el));
+
+    // Chat input cycling
+    const queries = [
+        "Which regions are below 80% of forecast?",
+        "Show top 5 open opportunities in EMEA",
+        "Compare headcount to revenue by BU",
+        "What is our average support ticket resolution time this month?",
+        "How many active contracts expire in Q3?"
+    ];
+    let qi = 0;
+    const ciEl = document.getElementById('ciText');
+    if(ciEl) {
+        ciEl.style.transition = 'opacity 0.3s ease';
+        setInterval(() => {
+            ciEl.style.opacity = '0';
+            setTimeout(() => {
+                qi = (qi + 1) % queries.length;
+                ciEl.textContent = queries[qi];
+                ciEl.style.opacity = '1';
+            }, 320);
+        }, 3200);
+    }
+
+    // Architecture arrow animation removed (vertical stack uses CSS animated dots)
+
+    // Bar chart animation on scroll
+    const bars = document.querySelectorAll('.bar');
+    const barHeights = ['100%','88%','74%','82%','91%'];
+    bars.forEach((b, i) => { b.style.height = '0'; });
+    const barObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if(e.isIntersecting) {
+                bars.forEach((b, i) => {
+                    setTimeout(() => {
+                        b.style.transition = 'height 0.6s ease';
+                        b.style.height = barHeights[i] || '60%';
+                    }, i * 80);
+                });
+                barObserver.disconnect();
+            }
+        });
+    }, { threshold: 0.5 });
+    if(bars.length) barObserver.observe(bars[0].closest('.mini-chart') || bars[0]);
+</script>
+</body>
+</html>
