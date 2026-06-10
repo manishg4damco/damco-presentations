@@ -7,876 +7,816 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ── ROOT VARS ── */
-:root {
-  --bg:      #08090F;
-  --bg2:     #0D1117;
-  --card:    #111827;
-  --card-hi: #141D30;
-  --orange:  #FF9408;
-  --o10:     rgba(255,148,8,0.10);
-  --o20:     rgba(255,148,8,0.20);
-  --o30:     rgba(255,148,8,0.30);
-  --maroon:  #94122C;
-  --green:   #10B981;
-  --g10:     rgba(16,185,129,0.10);
-  --g20:     rgba(16,185,129,0.20);
-  --red:     #EF4444;
-  --text:    #F9FAFB;
-  --t2:      #9CA3AF;
-  --t3:      #6B7280;
-  --border:  #1F2937;
-  --bhi:     #2D3748;
+:root{
+  --bg:#08090F; --bg2:#0D1117; --card:#111827; --card-hi:#141D30;
+  --orange:#FF9408; --o10:rgba(255,148,8,.10); --o20:rgba(255,148,8,.20); --o30:rgba(255,148,8,.30);
+  --maroon:#94122C; --green:#10B981; --g10:rgba(16,185,129,.10);
+  --red:#EF4444; --text:#F9FAFB; --t2:#9CA3AF; --t3:#6B7280;
+  --border:#1F2937; --bhi:#2D3748;
 }
-
-/* ── RESET ── */
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{
   font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
-  background:#000;color:var(--text);
-  line-height:1.4;
-  -webkit-print-color-adjust:exact;
-  print-color-adjust:exact;
+  background:#000; color:var(--text); line-height:1.4;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  overflow:hidden; height:100%;
 }
 
-/* ══════════════════════════════════════
-   SCREEN — PRESENTATION MODE
-══════════════════════════════════════ */
-@media screen {
-  html,body{ overflow:hidden; height:100%; }
-
+/* ═══════════════════════════════════════
+   SCREEN PRESENTATION MODE
+═══════════════════════════════════════ */
+@media screen{
   #deck{
-    position:fixed;inset:0;
-    display:flex;align-items:center;justify-content:center;
+    position:fixed; inset:0;
     background:#000;
   }
 
+  /* Each slide fills 100vw × 100vh */
   .slide{
-    position:absolute;
-    width:1400px;height:990px;
+    position:absolute; inset:0;
+    width:100vw; height:100vh;
+    background:var(--bg);
+    display:none; overflow:hidden;
+  }
+  .slide.active{ display:block; }
+
+  /* Fixed-size canvas, centred and scaled by JS */
+  .si{
+    width:1920px; height:1080px;
+    position:absolute; top:50%; left:50%;
     transform-origin:center center;
-    flex-direction:column;
-    display:none;
-    flex-shrink:0;
-    border-radius:2px;
-    box-shadow:0 0 120px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.04);
-  }
-  .slide.active{ display:flex; }
-
-  /* Nav buttons */
-  .nav-btn{
-    position:fixed;top:50%;z-index:999;
-    transform:translateY(-50%);
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
-    color:rgba(255,255,255,0.5);
-    width:40px;height:72px;border-radius:8px;
-    cursor:pointer;font-size:22px;
-    display:flex;align-items:center;justify-content:center;
-    transition:all 0.2s;user-select:none;
-  }
-  .nav-btn:hover{background:rgba(255,148,8,0.15);color:var(--orange);border-color:rgba(255,148,8,0.3);}
-  #btn-prev{left:14px;}
-  #btn-next{right:14px;}
-
-  /* Slide counter */
-  #counter{
-    position:fixed;bottom:20px;right:20px;z-index:999;
-    font-size:12px;color:rgba(255,255,255,0.25);
-    font-family:'Inter',sans-serif;letter-spacing:0.5px;
-  }
-  #counter b{color:var(--orange);}
-
-  /* Progress bar */
-  #progress{
-    position:fixed;bottom:0;left:0;right:0;z-index:999;
-    height:3px;background:rgba(255,255,255,0.05);
-  }
-  #progress-bar{
-    height:100%;background:var(--orange);
-    transition:width 0.35s ease;
+    /* transform set by JS: translate(-50%,-50%) scale(s) */
+    background:var(--bg);
+    display:flex; flex-direction:column;
+    overflow:hidden;
   }
 
-  /* Dot navigation */
-  #dots{
-    position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
-    z-index:999;display:flex;gap:6px;align-items:center;
+  /* ── Click zones for navigation ── */
+  .nav-zone{
+    position:fixed; top:0; bottom:0; width:7vw; z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; opacity:0; transition:opacity .25s;
+  }
+  .nav-zone:hover{ opacity:1; }
+  #nz-prev{ left:0; background:linear-gradient(90deg,rgba(0,0,0,.4),transparent); }
+  #nz-next{ right:0; background:linear-gradient(270deg,rgba(0,0,0,.4),transparent); }
+  .nz-icon{ font-size:36px; color:rgba(255,255,255,.55); font-weight:300; line-height:1; }
+
+  /* ── Bottom controls ── */
+  #controls{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    z-index:200; display:flex; align-items:center; gap:8px;
   }
   .dot{
-    width:6px;height:6px;border-radius:50%;
-    background:rgba(255,255,255,0.2);
-    cursor:pointer;transition:all 0.2s;
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(255,255,255,.2); cursor:pointer;
+    transition:all .2s;
   }
-  .dot.on{background:var(--orange);transform:scale(1.3);}
+  .dot.on{ background:var(--orange); transform:scale(1.35); }
+
+  /* ── Slide counter ── */
+  #ctr{
+    position:fixed; bottom:20px; right:28px; z-index:200;
+    font-size:12px; color:rgba(255,255,255,.2);
+    font-family:'Inter',sans-serif; letter-spacing:.5px;
+  }
+  #ctr b{ color:var(--orange); }
+
+  /* ── Progress bar ── */
+  #pbar{
+    position:fixed; bottom:0; left:0; right:0; z-index:300;
+    height:2px; background:rgba(255,255,255,.05);
+  }
+  #pfill{
+    height:100%; background:var(--orange); transition:width .35s ease;
+  }
 }
 
-/* ══════════════════════════════════════
-   PRINT — A4 LANDSCAPE
-══════════════════════════════════════ */
-@media print {
-  @page{size:297mm 210mm;margin:0;}
-  html,body{background:var(--bg);}
-  #deck{display:block;}
+/* ═══════════════════════════════════════
+   PRINT — 16:9 page to match screen
+═══════════════════════════════════════ */
+@media print{
+  @page{ size:1920px 1080px; margin:0; }
+  html,body{ overflow:visible; height:auto; background:var(--bg); }
+  #deck{ position:static; }
   .slide{
-    width:297mm!important;height:210mm!important;
-    display:flex!important;
-    flex-direction:column;
-    overflow:hidden;
-    page-break-after:always;
-    break-after:page;
+    position:relative!important; inset:auto!important;
+    width:1920px!important; height:1080px!important;
+    display:block!important; overflow:hidden;
+    page-break-after:always; break-after:page;
+  }
+  .si{
+    width:1920px!important; height:1080px!important;
+    top:0!important; left:0!important;
     transform:none!important;
     position:relative!important;
   }
-  .nav-btn,#counter,#progress,#dots{display:none!important;}
+  .nav-zone,#controls,#ctr,#pbar{ display:none!important; }
 }
 
-/* ══════════════════════════════════════
-   SLIDE BASE (shared)
-══════════════════════════════════════ */
-.slide{
-  background:var(--bg);
-  overflow:hidden;
-  position:relative;
+/* ═══════════════════════════════════════
+   CANVAS DECORATION (shared)
+═══════════════════════════════════════ */
+.si::before{
+  content:''; position:absolute; inset:0; z-index:0;
+  background-image:radial-gradient(rgba(255,148,8,.022) 1px,transparent 1px);
+  background-size:28px 28px; pointer-events:none;
 }
-.slide::before{
-  content:'';position:absolute;inset:0;z-index:0;
-  background-image:radial-gradient(rgba(255,148,8,0.022) 1px,transparent 1px);
-  background-size:22px 22px;pointer-events:none;
-}
-.slide>*{position:relative;z-index:1;}
+.si>*{ position:relative; z-index:1; }
 
-/* Glow decorations */
 .glow-r{
-  position:absolute;top:-80px;right:-40px;z-index:0;
-  width:500px;height:500px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(255,148,8,0.07) 0%,transparent 65%);
+  position:absolute; top:-120px; right:-60px; z-index:0;
+  width:640px; height:640px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle,rgba(255,148,8,.07) 0%,transparent 65%);
 }
 .glow-l{
-  position:absolute;bottom:-60px;left:-30px;z-index:0;
-  width:360px;height:360px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(148,18,44,0.05) 0%,transparent 65%);
+  position:absolute; bottom:-80px; left:-40px; z-index:0;
+  width:480px; height:480px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle,rgba(148,18,44,.05) 0%,transparent 65%);
 }
 
 /* ── SLIDE HEADER ── */
 .sh{
-  height:44px;flex-shrink:0;
-  background:rgba(13,17,23,0.97);
+  height:56px; flex-shrink:0;
+  background:rgba(13,17,23,.97);
   border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 64px;
 }
-.sh-logo{font-size:13px;font-weight:800;letter-spacing:-0.3px;}
-.sh-logo b{color:var(--orange);font-weight:800;}
-.sh-event{font-size:11px;color:var(--t3);}
-.sh-event strong{color:var(--orange);font-weight:700;}
+.sh-logo{ font-size:15px; font-weight:800; letter-spacing:-.3px; }
+.sh-logo b{ color:var(--orange); }
+.sh-event{ font-size:12px; color:var(--t3); }
+.sh-event strong{ color:var(--orange); font-weight:700; }
 
 /* ── SLIDE FOOTER ── */
 .sf{
-  height:32px;flex-shrink:0;
+  height:42px; flex-shrink:0;
   border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 64px;
 }
-.sf-l{font-size:10px;color:var(--t3);}
-.sf-r{font-size:10px;color:var(--t3);}
-.sf-r b{color:var(--orange);}
+.sf-l{ font-size:11px; color:var(--t3); }
+.sf-r{ font-size:11px; color:var(--t3); }
+.sf-r b{ color:var(--orange); }
 
 /* ── CONTENT AREA ── */
-.sc{
-  flex:1;overflow:hidden;
-  padding:28px 48px 24px;
-}
+.sc{ flex:1; overflow:hidden; padding:38px 64px 32px; }
 
 /* ── TYPOGRAPHY ── */
-.lbl{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
-.ttl{font-size:32px;font-weight:800;letter-spacing:-0.8px;line-height:1.1;margin-bottom:8px;}
-.sub{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:18px;max-width:820px;}
+.lbl{
+  font-size:11px; font-weight:800; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--orange); margin-bottom:10px;
+}
+.ttl{ font-size:40px; font-weight:800; letter-spacing:-.8px; line-height:1.08; margin-bottom:10px; }
+.sub{ font-size:16px; color:var(--t2); line-height:1.65; margin-bottom:22px; max-width:1100px; }
 .grad{
   background:linear-gradient(130deg,var(--orange) 0%,#FFBE5C 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 1 — TITLE
-══════════════════════════════════════ */
-.s1 .sc{display:flex;align-items:center;padding-top:0;padding-bottom:0;}
-.s1-left{flex:1.1;padding:20px 36px 20px 0;}
-.s1-right{flex:0.9;display:flex;align-items:center;justify-content:center;}
+═══════════════════════════════════════ */
+.s1 .sc{ display:flex; align-items:center; padding-top:0; padding-bottom:0; gap:0; }
+.s1-left{ flex:1.1; padding:28px 48px 28px 0; }
+.s1-right{ flex:0.9; display:flex; align-items:center; justify-content:center; }
 
 .eyebrow{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--o10);border:1px solid var(--o30);
-  color:var(--orange);padding:6px 14px;border-radius:20px;
-  font-size:10px;font-weight:700;letter-spacing:0.8px;
-  text-transform:uppercase;margin-bottom:16px;
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--o10); border:1px solid var(--o30); color:var(--orange);
+  padding:7px 16px; border-radius:30px; font-size:11px; font-weight:700;
+  letter-spacing:.8px; text-transform:uppercase; margin-bottom:20px;
 }
-.eyebrow-dot{width:5px;height:5px;background:var(--orange);border-radius:50%;}
+.eyebrow-dot{ width:6px; height:6px; background:var(--orange); border-radius:50%; }
 
-.s1-h1{font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1.08;margin-bottom:16px;}
-.s1-sub{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px;max-width:500px;}
-.s1-stats{display:flex;gap:0;padding-top:18px;border-top:1px solid var(--border);}
-.s1-stat{flex:1;}
-.s1-stat+.s1-stat{border-left:1px solid var(--border);padding-left:20px;}
-.stat-n{font-size:32px;font-weight:900;color:var(--orange);line-height:1;}
-.stat-n sup{font-size:16px;}
-.stat-l{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4;}
+.s1-h1{
+  font-size:56px; font-weight:900; letter-spacing:-2px; line-height:1.06; margin-bottom:20px;
+}
+.s1-sub{ font-size:17px; color:var(--t2); line-height:1.7; margin-bottom:28px; max-width:600px; }
+
+.s1-stats{ display:flex; padding-top:22px; border-top:1px solid var(--border); gap:0; }
+.s1-stat{ flex:1; }
+.s1-stat+.s1-stat{ border-left:1px solid var(--border); padding-left:28px; }
+.stat-n{ font-size:40px; font-weight:900; color:var(--orange); line-height:1; }
+.stat-n sup{ font-size:20px; }
+.stat-l{ font-size:13px; color:var(--t3); margin-top:6px; line-height:1.4; }
 
 /* Chat mockup */
 .mockup{
-  width:420px;background:var(--card);
-  border:1px solid var(--bhi);border-radius:14px;overflow:hidden;
-  box-shadow:0 24px 64px rgba(0,0,0,0.6);
+  width:520px; background:var(--card);
+  border:1px solid var(--bhi); border-radius:16px; overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.7), 0 0 0 1px rgba(255,148,8,.04);
 }
 .mock-bar{
-  background:#10172A;padding:10px 14px;
-  display:flex;align-items:center;gap:10px;
+  background:#10172A; padding:13px 18px;
+  display:flex; align-items:center; gap:12px;
   border-bottom:1px solid var(--border);
 }
-.mock-dots{display:flex;gap:5px;}
-.mock-dots span{width:10px;height:10px;border-radius:50%;}
+.mock-dots{ display:flex; gap:6px; }
+.mock-dots span{ width:11px; height:11px; border-radius:50%; }
 .mock-dots span:nth-child(1){background:#EF4444;}
 .mock-dots span:nth-child(2){background:#F59E0B;}
 .mock-dots span:nth-child(3){background:#10B981;}
-.mock-ttl{font-size:10.5px;color:var(--t2);font-weight:500;}
+.mock-ttl{ font-size:12px; color:var(--t2); font-weight:500; }
 .mock-live{
-  margin-left:auto;background:rgba(16,185,129,0.12);
-  border:1px solid rgba(16,185,129,0.3);color:var(--green);
-  padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;
+  margin-left:auto; background:rgba(16,185,129,.12);
+  border:1px solid rgba(16,185,129,.3); color:var(--green);
+  padding:4px 10px; border-radius:7px; font-size:10px; font-weight:700;
 }
-.mock-body{padding:14px;}
-.msg{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;}
-.msg.u{flex-direction:row-reverse;}
+.mock-body{ padding:18px; }
+.msg{ display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; }
+.msg.u{ flex-direction:row-reverse; }
 .av{
-  width:22px;height:22px;border-radius:5px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:8px;font-weight:800;flex-shrink:0;
+  width:26px; height:26px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:800; flex-shrink:0;
 }
-.av-u{background:var(--maroon);color:#fff;}
-.av-ai{background:linear-gradient(135deg,var(--orange),#d97000);color:#fff;}
-.bbl{max-width:85%;padding:8px 11px;font-size:11px;line-height:1.5;border-radius:8px;}
-.b-u{background:var(--maroon);color:#fff;}
-.b-ai{background:#1A2240;border:1px solid var(--bhi);color:var(--text);}
-.mini-c{background:#0C1120;border:1px solid var(--border);border-radius:6px;padding:9px;margin-top:7px;}
-.mc-lbl{font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
-.mc-bars{display:flex;gap:4px;align-items:flex-end;height:52px;}
-.mc-bar{flex:1;border-radius:3px 3px 0 0;position:relative;}
-.mc-bar-l{position:absolute;bottom:-13px;left:50%;transform:translateX(-50%);font-size:7.5px;color:var(--t3);white-space:nowrap;}
-.mc-src{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;}
-.mc-tag{background:var(--o10);border:1px solid var(--o20);color:var(--orange);padding:2px 6px;border-radius:4px;font-size:8.5px;font-weight:600;}
+.av-u{ background:var(--maroon); color:#fff; }
+.av-ai{ background:linear-gradient(135deg,var(--orange),#d97000); color:#fff; }
+.bbl{
+  max-width:85%; padding:10px 13px;
+  font-size:13px; line-height:1.5; border-radius:9px;
+}
+.b-u{ background:var(--maroon); color:#fff; }
+.b-ai{ background:#1A2240; border:1px solid var(--bhi); color:var(--text); }
+.mini-c{ background:#0C1120; border:1px solid var(--border); border-radius:7px; padding:11px; margin-top:9px; }
+.mc-lbl{ font-size:9px; color:var(--t3); text-transform:uppercase; letter-spacing:.5px; margin-bottom:7px; }
+.mc-bars{ display:flex; gap:5px; align-items:flex-end; height:64px; }
+.mc-bar{ flex:1; border-radius:3px 3px 0 0; position:relative; }
+.mc-bar-l{ position:absolute; bottom:-15px; left:50%; transform:translateX(-50%); font-size:9px; color:var(--t3); white-space:nowrap; }
+.mc-src{ display:flex; gap:5px; margin-top:14px; flex-wrap:wrap; }
+.mc-tag{ background:var(--o10); border:1px solid var(--o20); color:var(--orange); padding:3px 8px; border-radius:4px; font-size:10px; font-weight:600; }
 .mock-input{
-  background:#0C1120;border:1px solid var(--bhi);
-  border-radius:6px;padding:7px 10px;
-  display:flex;align-items:center;gap:8px;margin-top:8px;
+  background:#0C1120; border:1px solid var(--bhi);
+  border-radius:7px; padding:9px 13px;
+  display:flex; align-items:center; gap:10px; margin-top:10px;
 }
-.mi-t{flex:1;font-size:10px;color:var(--t3);}
-.mi-b{background:var(--orange);border-radius:5px;padding:4px 10px;font-size:9px;font-weight:700;color:#fff;}
+.mi-t{ flex:1; font-size:12px; color:var(--t3); }
+.mi-b{ background:var(--orange); border-radius:6px; padding:5px 13px; font-size:11px; font-weight:700; color:#fff; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 2 — PAIN POINTS
-══════════════════════════════════════ */
-.pain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+═══════════════════════════════════════ */
+.pain-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
 .pain-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:22px;position:relative;overflow:hidden;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:28px 28px 24px; position:relative; overflow:hidden;
 }
-.pain-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--maroon);}
-.pain-n{font-size:36px;font-weight:900;color:var(--orange);line-height:1;}
-.pain-n small{font-size:20px;}
-.pain-l{font-size:13px;font-weight:700;margin:8px 0 6px;}
-.pain-d{font-size:11.5px;color:var(--t3);line-height:1.6;}
-.pain-src{font-size:9.5px;color:var(--t3);margin-top:10px;opacity:0.6;font-style:italic;}
+.pain-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--maroon); }
+.pain-n{ font-size:46px; font-weight:900; color:var(--orange); line-height:1; }
+.pain-n small{ font-size:26px; }
+.pain-l{ font-size:15px; font-weight:700; margin:10px 0 8px; }
+.pain-d{ font-size:13px; color:var(--t3); line-height:1.6; }
+.pain-src{ font-size:11px; color:var(--t3); margin-top:12px; opacity:.6; font-style:italic; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 3 — ARCHITECTURE
-══════════════════════════════════════ */
-.arch-flow{
-  display:grid;
-  grid-template-columns:1fr 36px 1fr 36px 1fr 36px 1fr;
-  align-items:stretch;gap:0;
-}
-.arch-node{
-  background:var(--card);border:1px solid var(--bhi);
-  border-radius:10px;padding:14px 16px;
-}
-.arch-node.hi{border-color:var(--o30);background:var(--card-hi);}
-.an-lbl{font-size:8.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
-.an-icon{font-size:22px;margin-bottom:6px;}
-.an-title{font-size:12px;font-weight:700;margin-bottom:8px;}
-.an-items{display:flex;flex-direction:column;gap:3px;}
+═══════════════════════════════════════ */
+.arch-flow{ display:grid; grid-template-columns:1fr 44px 1fr 44px 1fr 44px 1fr; align-items:stretch; gap:0; }
+.arch-node{ background:var(--card); border:1px solid var(--bhi); border-radius:12px; padding:18px 20px; }
+.arch-node.hi{ border-color:var(--o30); background:var(--card-hi); }
+.an-lbl{ font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:10px; }
+.an-icon{ font-size:28px; margin-bottom:8px; }
+.an-title{ font-size:14px; font-weight:700; margin-bottom:10px; }
+.an-items{ display:flex; flex-direction:column; gap:4px; }
 .an-item{
-  background:rgba(255,255,255,0.04);border:1px solid var(--border);
-  border-radius:4px;padding:3px 8px;font-size:10px;color:var(--t2);
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:5px; padding:4px 10px; font-size:12px; color:var(--t2);
 }
-.arch-arr{display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:20px;}
+.arch-arr{ display:flex; align-items:center; justify-content:center; color:var(--orange); font-size:24px; }
 .arch-note{
-  margin-top:14px;padding:10px 16px;
-  background:rgba(255,148,8,0.05);border:1px solid rgba(255,148,8,0.12);
-  border-radius:7px;font-size:11px;color:var(--t2);line-height:1.55;
+  margin-top:16px; padding:12px 18px;
+  background:rgba(255,148,8,.05); border:1px solid rgba(255,148,8,.12);
+  border-radius:9px; font-size:13px; color:var(--t2); line-height:1.55;
 }
-.arch-note b{color:var(--orange);}
+.arch-note b{ color:var(--orange); }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 4 — CAPABILITIES
-══════════════════════════════════════ */
-.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.cap-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+═══════════════════════════════════════ */
+.cap-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.cap-card{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px 26px; }
 .cap-icon{
-  width:36px;height:36px;background:var(--o10);
-  border:1px solid var(--o20);border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:17px;margin-bottom:11px;
+  width:44px; height:44px; background:var(--o10);
+  border:1px solid var(--o20); border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; margin-bottom:13px;
 }
-.cap-t{font-size:13px;font-weight:700;margin-bottom:6px;}
-.cap-d{font-size:11.5px;color:var(--t2);line-height:1.6;}
+.cap-t{ font-size:15px; font-weight:700; margin-bottom:8px; }
+.cap-d{ font-size:13px; color:var(--t2); line-height:1.6; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 5 — SECURITY
-══════════════════════════════════════ */
-.sec-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:20px;}
-.sec-list{display:flex;flex-direction:column;gap:9px;}
+═══════════════════════════════════════ */
+.sec-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:24px; }
+.sec-list{ display:flex; flex-direction:column; gap:10px; }
 .sec-item{
-  display:flex;gap:12px;align-items:flex-start;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:9px;padding:12px 14px;
+  display:flex; gap:14px; align-items:flex-start;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:14px 16px;
 }
 .sec-ico{
-  width:34px;height:34px;border-radius:7px;
-  background:var(--g10);display:flex;align-items:center;
-  justify-content:center;font-size:16px;flex-shrink:0;
+  width:40px; height:40px; border-radius:9px; background:var(--g10);
+  display:flex; align-items:center; justify-content:center;
+  font-size:19px; flex-shrink:0;
 }
-.sec-t{font-size:12px;font-weight:700;margin-bottom:3px;}
-.sec-d{font-size:10.5px;color:var(--t2);line-height:1.55;}
-.sec-right{display:flex;flex-direction:column;gap:11px;}
-.sec-panel{background:var(--card);border:1px solid var(--bhi);border-radius:9px;padding:16px;}
-.sp-t{font-size:12px;font-weight:700;margin-bottom:4px;}
-.sp-s{font-size:10px;color:var(--t3);margin-bottom:10px;}
-.comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.sec-t{ font-size:13px; font-weight:700; margin-bottom:4px; }
+.sec-d{ font-size:12px; color:var(--t2); line-height:1.55; }
+.sec-right{ display:flex; flex-direction:column; gap:13px; }
+.sec-panel{ background:var(--card); border:1px solid var(--bhi); border-radius:10px; padding:18px; }
+.sp-t{ font-size:13px; font-weight:700; margin-bottom:5px; }
+.sp-s{ font-size:11px; color:var(--t3); margin-bottom:11px; }
+.comp-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
 .comp-badge{
-  background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);
-  color:var(--green);border-radius:6px;padding:7px;
-  text-align:center;font-size:11px;font-weight:800;
+  background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.2);
+  color:var(--green); border-radius:7px; padding:9px;
+  text-align:center; font-size:12px; font-weight:800;
 }
-.sp-note{font-size:10px;color:var(--t2);line-height:1.6;margin-top:8px;}
-.sp-mcp-t{font-size:12px;font-weight:700;color:var(--orange);margin-bottom:5px;}
+.sp-note{ font-size:11px; color:var(--t2); line-height:1.6; margin-top:10px; }
+.sp-mcp-t{ font-size:13px; font-weight:700; color:var(--orange); margin-bottom:6px; }
 
-/* ══════════════════════════════════════
-   SLIDE 6 — COMPARISON
-══════════════════════════════════════ */
-.cmp-table{width:100%;border-collapse:collapse;border-radius:9px;overflow:hidden;}
-.cmp-table th{padding:10px 14px;font-size:11px;font-weight:800;letter-spacing:0.3px;text-transform:uppercase;text-align:left;}
+/* ═══════════════════════════════════════
+   SLIDE 6 — COMPARISON TABLE
+═══════════════════════════════════════ */
+.cmp-table{ width:100%; border-collapse:collapse; border-radius:10px; overflow:hidden; }
+.cmp-table th{
+  padding:12px 16px; font-size:12px;
+  font-weight:800; letter-spacing:.3px; text-transform:uppercase; text-align:left;
+}
 .cmp-table th:nth-child(1){background:#0D1117;color:var(--t3);width:28%;}
 .cmp-table th:nth-child(2){background:#17141E;color:var(--t2);width:36%;}
 .cmp-table th:nth-child(3){background:#0F1A12;color:var(--green);width:36%;}
-.cmp-table td{padding:8px 14px;font-size:11.5px;border-bottom:1px solid var(--border);}
-.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table td{ padding:9px 16px; font-size:13px; border-bottom:1px solid var(--border); }
+.cmp-table tr:last-child td{ border-bottom:none; }
 .cmp-table td:nth-child(1){background:#0D1117;color:var(--t2);font-weight:600;}
 .cmp-table td:nth-child(2){background:#120F1A;color:var(--t3);}
 .cmp-table td:nth-child(3){background:#0D150F;color:#A7F3D0;font-weight:600;}
-.bad{color:var(--red)!important;}
-.gd{color:var(--green)!important;}
+.bad{color:var(--red)!important;} .gd{color:var(--green)!important;}
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 7 — POC
-══════════════════════════════════════ */
-.poc-grid{display:grid;grid-template-columns:1fr 0.95fr;gap:22px;}
-.poc-steps{display:flex;flex-direction:column;}
-.poc-step{display:flex;gap:12px;position:relative;}
+═══════════════════════════════════════ */
+.poc-grid{ display:grid; grid-template-columns:1fr .95fr; gap:28px; }
+.poc-steps{ display:flex; flex-direction:column; }
+.poc-step{ display:flex; gap:14px; position:relative; }
 .poc-step:not(:last-child)::after{
-  content:'';position:absolute;left:17px;top:38px;
-  width:1px;height:calc(100% - 6px);
+  content:''; position:absolute; left:20px; top:44px;
+  width:1px; height:calc(100% - 8px);
   background:linear-gradient(180deg,var(--orange),transparent);
 }
 .poc-num{
-  width:34px;height:34px;border-radius:50%;
-  background:var(--o10);border:1px solid var(--o30);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:900;color:var(--orange);flex-shrink:0;
+  width:40px; height:40px; border-radius:50%;
+  background:var(--o10); border:1px solid var(--o30);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; font-weight:900; color:var(--orange); flex-shrink:0;
 }
-.poc-body{padding-bottom:16px;}
-.poc-t{font-size:12px;font-weight:700;margin-bottom:4px;}
-.poc-d{font-size:11px;color:var(--t2);line-height:1.55;}
-.poc-card{background:var(--card);border:1px solid var(--o20);border-radius:12px;padding:20px;}
-.poc-card-t{font-size:16px;font-weight:800;margin-bottom:12px;}
-.poc-card-t b{color:var(--orange);}
-.poc-items{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
-.poc-item{display:flex;gap:8px;font-size:11px;color:var(--t2);align-items:flex-start;line-height:1.5;}
-.poc-item::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0;}
-.poc-note{background:var(--o10);border:1px solid var(--o20);border-radius:7px;padding:10px 12px;font-size:11px;color:var(--t2);line-height:1.6;}
-.poc-note b{color:var(--orange);}
+.poc-body{ padding-bottom:18px; }
+.poc-t{ font-size:13px; font-weight:700; margin-bottom:5px; }
+.poc-d{ font-size:12px; color:var(--t2); line-height:1.55; }
+.poc-card{
+  background:var(--card); border:1px solid var(--o20);
+  border-radius:14px; padding:24px;
+}
+.poc-card-t{ font-size:19px; font-weight:800; margin-bottom:14px; }
+.poc-card-t b{ color:var(--orange); }
+.poc-items{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+.poc-item{
+  display:flex; gap:9px; font-size:13px;
+  color:var(--t2); align-items:flex-start; line-height:1.5;
+}
+.poc-item::before{ content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; }
+.poc-note{ background:var(--o10); border:1px solid var(--o20); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--t2); line-height:1.6; }
+.poc-note b{ color:var(--orange); }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    SLIDE 8 — CLOSING
-══════════════════════════════════════ */
-.s8 .sc{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
-.s8-eye{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);margin-bottom:14px;}
-.s8-h1{font-size:44px;font-weight:900;letter-spacing:-1.2px;line-height:1.1;margin-bottom:14px;}
-.s8-sub{font-size:14px;color:var(--t2);line-height:1.7;max-width:660px;margin-bottom:28px;}
-.s8-contacts{display:flex;gap:16px;margin-bottom:28px;}
-.s8-contact{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 22px;text-align:center;}
-.s8-cl{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:4px;}
-.s8-cv{font-size:13px;font-weight:600;color:var(--text);}
-.s8-cv a{color:var(--orange);text-decoration:none;}
-.s8-brand{font-size:16px;font-weight:900;}
-.s8-brand b{color:var(--orange);}
-.s8-bs{font-size:10.5px;color:var(--t3);margin-top:4px;}
+═══════════════════════════════════════ */
+.s8 .sc{
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+}
+.s8-eye{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--orange); margin-bottom:18px; }
+.s8-h1{ font-size:58px; font-weight:900; letter-spacing:-1.5px; line-height:1.08; margin-bottom:18px; }
+.s8-sub{ font-size:17px; color:var(--t2); line-height:1.7; max-width:760px; margin-bottom:36px; }
+.s8-contacts{ display:flex; gap:18px; margin-bottom:36px; }
+.s8-contact{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 28px; text-align:center; }
+.s8-cl{ font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:var(--t3); margin-bottom:5px; }
+.s8-cv{ font-size:15px; font-weight:600; color:var(--text); }
+.s8-cv a{ color:var(--orange); text-decoration:none; }
+.s8-brand{ font-size:20px; font-weight:900; }
+.s8-brand b{ color:var(--orange); }
+.s8-bs{ font-size:12px; color:var(--t3); margin-top:5px; }
 </style>
 </head>
 <body>
 
 <div id="deck">
 
-<!-- ════════ SLIDE 1 · TITLE ════════ -->
-<div class="slide s1 active">
-  <div class="glow-r"></div><div class="glow-l"></div>
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Enterprise AI Track</strong> &nbsp;·&nbsp; June 2026</div>
-  </div>
-  <div class="sc">
-    <div class="s1-left">
-      <div class="eyebrow"><div class="eyebrow-dot"></div>New Offering &nbsp;·&nbsp; Powered by MCP</div>
-      <div class="s1-h1">Ask your enterprise<br><span class="grad">anything.</span><br>Get answers, not tickets.</div>
-      <div class="s1-sub">Enterprise data is locked in dozens of disconnected systems, each with its own login, schema, and owner. Leaders wait weeks for dashboards that answer yesterday's questions. We connect your existing systems through an AI-native intelligence layer: live, secure, and in plain language.</div>
-      <div class="s1-stats">
-        <div class="s1-stat"><div class="stat-n">131<sup>+</sup></div><div class="stat-l">Avg. enterprise<br>apps per org</div></div>
-        <div class="s1-stat"><div class="stat-n">3–18</div><div class="stat-l">Months to build<br>traditional BI</div></div>
-        <div class="s1-stat"><div class="stat-n">4–6</div><div class="stat-l">Weeks to a<br>working POC</div></div>
-      </div>
+<!-- ══════ SLIDE 1 · TITLE ══════ -->
+<div class="slide active">
+  <div class="si">
+    <div class="glow-r"></div><div class="glow-l"></div>
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Enterprise AI Track</strong> &nbsp;·&nbsp; June 2026</div>
     </div>
-    <div class="s1-right">
-      <div class="mockup">
-        <div class="mock-bar">
-          <div class="mock-dots"><span></span><span></span><span></span></div>
-          <div class="mock-ttl">Enterprise Intelligence &nbsp;·&nbsp; 4 systems connected</div>
-          <div class="mock-live">● Live</div>
+    <div class="sc s1">
+      <div class="s1-left">
+        <div class="eyebrow"><div class="eyebrow-dot"></div>New Offering &nbsp;·&nbsp; Powered by MCP</div>
+        <div class="s1-h1">Ask your enterprise<br><span class="grad">anything.</span><br>Get answers, not tickets.</div>
+        <div class="s1-sub">Enterprise data is locked in dozens of disconnected systems, each with its own login, schema, and owner. Leaders wait weeks for dashboards that answer yesterday's questions. We connect your existing systems through an AI-native intelligence layer: live, secure, and in plain language.</div>
+        <div class="s1-stats">
+          <div class="s1-stat"><div class="stat-n">131<sup>+</sup></div><div class="stat-l">Avg. enterprise<br>apps per org</div></div>
+          <div class="s1-stat"><div class="stat-n">3–18</div><div class="stat-l">Months to build<br>traditional BI</div></div>
+          <div class="s1-stat"><div class="stat-n">4–6</div><div class="stat-l">Weeks to a<br>working POC</div></div>
         </div>
-        <div class="mock-body">
-          <div class="msg u">
-            <div class="av av-u">CFO</div>
-            <div class="bbl b-u">What is our EMEA revenue vs. target for Q2, broken down by business unit?</div>
+      </div>
+      <div class="s1-right">
+        <div class="mockup">
+          <div class="mock-bar">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <div class="mock-ttl">Enterprise Intelligence &nbsp;·&nbsp; 4 systems connected</div>
+            <div class="mock-live">● Live</div>
           </div>
-          <div class="msg">
-            <div class="av av-ai">AI</div>
-            <div class="bbl b-ai">
-              EMEA Q2 is tracking at <strong>87% of target</strong>. Technology Services leads at 104%. Finance and Operations are below threshold.
-              <div class="mini-c">
-                <div class="mc-lbl">Q2 Revenue vs Target — EMEA by BU</div>
-                <div class="mc-bars">
-                  <div class="mc-bar" style="height:52px;background:linear-gradient(180deg,var(--orange),rgba(255,148,8,0.2))"><span class="mc-bar-l">Tech</span></div>
-                  <div class="mc-bar" style="height:46px;background:linear-gradient(180deg,#60A5FA,rgba(96,165,250,0.2))"><span class="mc-bar-l">Fin</span></div>
-                  <div class="mc-bar" style="height:38px;background:linear-gradient(180deg,#A78BFA,rgba(167,139,250,0.2))"><span class="mc-bar-l">Ops</span></div>
-                  <div class="mc-bar" style="height:43px;background:linear-gradient(180deg,#34D399,rgba(52,211,153,0.2))"><span class="mc-bar-l">Sales</span></div>
-                  <div class="mc-bar" style="height:48px;background:linear-gradient(180deg,#F87171,rgba(248,113,113,0.2))"><span class="mc-bar-l">Svcs</span></div>
-                </div>
-                <div class="mc-src">
-                  <span class="mc-tag">SAP ERP</span><span class="mc-tag">Salesforce</span><span class="mc-tag">Finance DB</span>
+          <div class="mock-body">
+            <div class="msg u">
+              <div class="av av-u">CFO</div>
+              <div class="bbl b-u">What is our EMEA revenue vs. target for Q2, broken down by business unit?</div>
+            </div>
+            <div class="msg">
+              <div class="av av-ai">AI</div>
+              <div class="bbl b-ai">
+                EMEA Q2 is tracking at <strong>87% of target</strong>. Technology Services leads at 104%. Finance and Operations are below threshold.
+                <div class="mini-c">
+                  <div class="mc-lbl">Q2 Revenue vs Target — EMEA by BU</div>
+                  <div class="mc-bars">
+                    <div class="mc-bar" style="height:64px;background:linear-gradient(180deg,var(--orange),rgba(255,148,8,.2))"><span class="mc-bar-l">Tech</span></div>
+                    <div class="mc-bar" style="height:56px;background:linear-gradient(180deg,#60A5FA,rgba(96,165,250,.2))"><span class="mc-bar-l">Fin</span></div>
+                    <div class="mc-bar" style="height:47px;background:linear-gradient(180deg,#A78BFA,rgba(167,139,250,.2))"><span class="mc-bar-l">Ops</span></div>
+                    <div class="mc-bar" style="height:53px;background:linear-gradient(180deg,#34D399,rgba(52,211,153,.2))"><span class="mc-bar-l">Sales</span></div>
+                    <div class="mc-bar" style="height:58px;background:linear-gradient(180deg,#F87171,rgba(248,113,113,.2))"><span class="mc-bar-l">Svcs</span></div>
+                  </div>
+                  <div class="mc-src">
+                    <span class="mc-tag">SAP ERP</span><span class="mc-tag">Salesforce</span><span class="mc-tag">Finance DB</span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div class="mock-input">
+              <span class="mi-t">Which regions are below 80% of forecast?</span>
+              <span class="mi-b">Ask →</span>
+            </div>
           </div>
-          <div class="mock-input">
-            <span class="mi-t">Which regions are below 80% of forecast?</span>
-            <span class="mi-b">Ask →</span>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>01</b> / 08</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 2 · THE PROBLEM ══════ -->
+<div class="slide">
+  <div class="si">
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
+    </div>
+    <div class="sc">
+      <div class="lbl">The Problem</div>
+      <div class="ttl">Your data exists. Your visibility doesn't.</div>
+      <div class="sub">Every enterprise has the data. The challenge is fragmentation, access complexity, and the time it takes to turn raw records into a decision.</div>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-n">131<small>+</small></div>
+          <div class="pain-l">Apps per enterprise</div>
+          <div class="pain-d">Large enterprises run 131 to 447 SaaS applications, each with its own login, schema, and owner. No unified view exists by default.</div>
+          <div class="pain-src">BetterCloud Enterprise SaaS Trends 2024</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-n">12 <small>hrs</small></div>
+          <div class="pain-l">Per week chasing data</div>
+          <div class="pain-d">Knowledge workers lose 12 hours every week searching for data across disconnected systems: time that should be spent making decisions.</div>
+          <div class="pain-src">Forrester Research</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-n">3–18 <small>mo</small></div>
+          <div class="pain-l">To build traditional BI</div>
+          <div class="pain-d">A traditional data warehouse and BI stack takes 3 to 18 months and $70K to $1M+ to build. 75% of those projects run over budget.</div>
+          <div class="pain-src">McKinsey / Gartner</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-n">80<small>%</small></div>
+          <div class="pain-l">Analyst time: finding, not analyzing</div>
+          <div class="pain-d">Data analysts spend 80% of their time locating and preparing data. 68% of organizations cite silos as their top obstacle to transformation.</div>
+          <div class="pain-src">DATAVERSITY 2024 / Forrester</div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>02</b> / 08</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 3 · THE SOLUTION ══════ -->
+<div class="slide">
+  <div class="si">
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
+    </div>
+    <div class="sc">
+      <div class="lbl">The Solution</div>
+      <div class="ttl">Agentic Enterprise Intelligence</div>
+      <div class="sub">We connect your existing enterprise systems through an AI-native orchestration layer, built on the Model Context Protocol (MCP): an open standard now governed by the Linux Foundation and adopted by Microsoft, Google, OpenAI, and AWS.</div>
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="an-lbl">Your Systems</div><div class="an-icon">🏢</div>
+          <div class="an-title">Enterprise Systems</div>
+          <div class="an-items">
+            <div class="an-item">SAP / Oracle ERP</div><div class="an-item">Salesforce CRM</div>
+            <div class="an-item">ServiceNow / ITSM</div><div class="an-item">Workday / HRIS</div>
+            <div class="an-item">Finance &amp; reporting</div><div class="an-item">Custom databases</div>
+          </div>
+        </div>
+        <div class="arch-arr">→</div>
+        <div class="arch-node hi">
+          <div class="an-lbl">Damco Builds</div><div class="an-icon">🔌</div>
+          <div class="an-title">MCP Connector Layer</div>
+          <div class="an-items">
+            <div class="an-item">Per-system MCP servers</div><div class="an-item">OAuth 2.1 + SSO</div>
+            <div class="an-item">Role-based access</div><div class="an-item">Full audit logging</div>
+            <div class="an-item">Data stays on-premise</div><div class="an-item">Sensitivity controls</div>
+          </div>
+        </div>
+        <div class="arch-arr">→</div>
+        <div class="arch-node hi">
+          <div class="an-lbl">AI Engine</div><div class="an-icon">🧠</div>
+          <div class="an-title">AI Orchestration Layer</div>
+          <div class="an-items">
+            <div class="an-item">Natural language parsing</div><div class="an-item">Multi-system routing</div>
+            <div class="an-item">Context memory</div><div class="an-item">Auto chart generation</div>
+            <div class="an-item">Follow-up handling</div><div class="an-item">Exportable outputs</div>
+          </div>
+        </div>
+        <div class="arch-arr">→</div>
+        <div class="arch-node">
+          <div class="an-lbl">Executives &amp; Leaders</div><div class="an-icon">💼</div>
+          <div class="an-title">Executive Interface</div>
+          <div class="an-items">
+            <div class="an-item">Chat-based queries</div><div class="an-item">Live charts &amp; tables</div>
+            <div class="an-item">Cross-system answers</div><div class="an-item">Drill-down follow-ups</div>
+            <div class="an-item">Exportable reports</div><div class="an-item">Mobile-ready</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-note">
+        Built on <b>Model Context Protocol (MCP)</b>: an open, model-agnostic standard governed by the Linux Foundation. Adopted by Microsoft, Google, OpenAI, AWS, Salesforce, ServiceNow, and Oracle. 97 million monthly SDK downloads. 5,800+ enterprise connectors.
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>03</b> / 08</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 4 · CAPABILITIES ══════ -->
+<div class="slide">
+  <div class="si">
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
+    </div>
+    <div class="sc">
+      <div class="lbl">What You Can Do</div>
+      <div class="ttl">Not dashboards. Intelligence.</div>
+      <div class="sub">Preset dashboards answer yesterday's questions. Agentic intelligence answers any question, live, in context, across all your systems — without raising a ticket to IT.</div>
+      <div class="cap-grid">
+        <div class="cap-card"><div class="cap-icon">💬</div><div class="cap-t">Ask Anything in Plain Language</div><div class="cap-d">No SQL. No pre-built reports. Ask "What is our churn rate in the UK this quarter?" and get an immediate, sourced answer drawn from live systems in seconds.</div></div>
+        <div class="cap-card"><div class="cap-icon">📊</div><div class="cap-t">Auto-Generated Charts and Tables</div><div class="cap-d">The AI determines the best format: bar chart, trend line, ranked table, or narrative, based on the data and the question. No manual charting, no spreadsheet exports.</div></div>
+        <div class="cap-card"><div class="cap-icon">🔗</div><div class="cap-t">Cross-System Analysis in One Session</div><div class="cap-d">"What are our top accounts by revenue, and how many open support tickets do they have?" Query your ERP, CRM, and ITSM simultaneously in one conversation.</div></div>
+        <div class="cap-card"><div class="cap-icon">🎯</div><div class="cap-t">Role-Based Data Visibility</div><div class="cap-d">Every user sees exactly what they are authorised to see. The AI inherits enterprise RBAC directly. No separate access model to design, configure, or maintain.</div></div>
+        <div class="cap-card"><div class="cap-icon">⚡</div><div class="cap-t">No Migration. No ETL. Live Data.</div><div class="cap-d">Data never moves. MCP servers query your existing systems in real time. No data warehouse to build, no pipeline to maintain, no batch lag: data is always current.</div></div>
+        <div class="cap-card"><div class="cap-icon">🔄</div><div class="cap-t">Conversational Follow-Ups</div><div class="cap-d">"Now show me only the underperforming regions." "Compare to last year." "Export this as a table." The AI holds full context across the session and drills into any answer.</div></div>
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>04</b> / 08</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 5 · SECURITY ══════ -->
+<div class="slide">
+  <div class="si">
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
+    </div>
+    <div class="sc">
+      <div class="lbl">Security and Compliance</div>
+      <div class="ttl">Enterprise-grade by design,<br>not by afterthought.</div>
+      <div class="sub">Every MCP deployment we build meets enterprise security standards from the ground up: integrated with your existing identity infrastructure, not layered on top of it.</div>
+      <div class="sec-grid">
+        <div class="sec-list">
+          <div class="sec-item"><div class="sec-ico">🏛️</div><div><div class="sec-t">Data Never Leaves Your Systems</div><div class="sec-d">MCP is a query protocol, not a data migration protocol. Your data stays on your infrastructure, behind your perimeter. The AI queries through the MCP server and never circumvents it.</div></div></div>
+          <div class="sec-item"><div class="sec-ico">🔐</div><div><div class="sec-t">Inherits Your Existing RBAC and SSO</div><div class="sec-d">OAuth 2.1 authentication plugs directly into your existing identity provider: Okta, Azure AD, Ping Identity, via OIDC and SAML. No separate access model to configure or maintain.</div></div></div>
+          <div class="sec-item"><div class="sec-ico">📋</div><div><div class="sec-t">Full Audit Trail on Every Query</div><div class="sec-d">Every AI operation is logged: who asked, which tool was called, what data was accessed, and when. Satisfies GDPR, SOC 2, HIPAA, and SOX audit requirements without additional tooling.</div></div></div>
+          <div class="sec-item"><div class="sec-ico">🛡️</div><div><div class="sec-t">Cannot Exceed User Permissions</div><div class="sec-d">The AI operates within the requesting user's authorisation scope on every single query. It is architecturally impossible for the system to return data the user is not cleared to see.</div></div></div>
+        </div>
+        <div class="sec-right">
+          <div class="sec-panel">
+            <div class="sp-t">Compliance Framework Alignment</div>
+            <div class="sp-s">MCP audit logging satisfies cross-framework requirements out of the box.</div>
+            <div class="comp-grid">
+              <div class="comp-badge">GDPR</div><div class="comp-badge">SOC 2</div><div class="comp-badge">ISO 27001</div>
+              <div class="comp-badge">HIPAA</div><div class="comp-badge">SOX</div><div class="comp-badge">FedRAMP</div>
+            </div>
+            <div class="sp-note">On-premise deployment eliminates GDPR cross-border data transfer risk. Sensitivity label evaluation and per-operation scope controls are built into the MCP specification.</div>
+          </div>
+          <div class="sec-panel">
+            <div class="sp-mcp-t">Why MCP is the Right Foundation</div>
+            <div class="sec-d">Released by Anthropic in November 2024 and donated to the Linux Foundation in December 2025, MCP is now a vendor-neutral open standard. Adopted by Microsoft, Google, OpenAI, AWS, Salesforce, ServiceNow, and Oracle within its first year. 97 million monthly SDK downloads and 5,800+ enterprise connectors confirm it as the standard for enterprise AI data connectivity.</div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>01</b> / 08</div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>05</b> / 08</div>
+    </div>
   </div>
 </div>
 
-<!-- ════════ SLIDE 2 · THE PROBLEM ════════ -->
+<!-- ══════ SLIDE 6 · COMPARISON ══════ -->
 <div class="slide">
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="lbl">The Problem</div>
-    <div class="ttl">Your data exists. Your visibility doesn't.</div>
-    <div class="sub">Every enterprise has the data. The challenge is fragmentation, access complexity, and the time it takes to turn raw records into a decision.</div>
-    <div class="pain-grid">
-      <div class="pain-card">
-        <div class="pain-n">131<small>+</small></div>
-        <div class="pain-l">Apps per enterprise</div>
-        <div class="pain-d">Large enterprises run 131 to 447 SaaS applications, each with its own login, schema, and owner. No unified view exists by default.</div>
-        <div class="pain-src">BetterCloud Enterprise SaaS Trends 2024</div>
-      </div>
-      <div class="pain-card">
-        <div class="pain-n">12 <small>hrs</small></div>
-        <div class="pain-l">Per week chasing data</div>
-        <div class="pain-d">Knowledge workers lose 12 hours every week searching for data across disconnected systems: time that should be spent making decisions.</div>
-        <div class="pain-src">Forrester Research</div>
-      </div>
-      <div class="pain-card">
-        <div class="pain-n">3–18 <small>mo</small></div>
-        <div class="pain-l">To build traditional BI</div>
-        <div class="pain-d">A traditional data warehouse and BI stack takes 3 to 18 months and $70K to $1M+ to build. 75% of those projects run over budget.</div>
-        <div class="pain-src">McKinsey / Gartner</div>
-      </div>
-      <div class="pain-card">
-        <div class="pain-n">80<small>%</small></div>
-        <div class="pain-l">Analyst time: finding, not analyzing</div>
-        <div class="pain-d">Data analysts spend 80% of their time locating and preparing data. 68% of organizations cite silos as their top obstacle to transformation.</div>
-        <div class="pain-src">DATAVERSITY 2024 / Forrester</div>
-      </div>
+  <div class="si">
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
     </div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>02</b> / 08</div>
+    <div class="sc">
+      <div class="lbl">Traditional BI vs. Agentic Intelligence</div>
+      <div class="ttl">The old approach doesn't fit<br>the new pace.</div>
+      <div class="sub" style="margin-bottom:14px;">Traditional data warehousing was designed for a world where data moved slowly and business questions were predictable. Neither is true anymore.</div>
+      <table class="cmp-table">
+        <thead>
+          <tr><th>Dimension</th><th>Traditional BI / Data Warehouse</th><th>Agentic Enterprise Intelligence</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Time to first insight</td><td class="bad">3 to 18 months</td><td class="gd">2 to 8 weeks (POC)</td></tr>
+          <tr><td>Upfront investment</td><td class="bad">$70,000 to $1,000,000+</td><td class="gd">Fixed-scope POC pricing</td></tr>
+          <tr><td>Schema and modelling</td><td class="bad">Extensive upfront design required</td><td class="gd">Minimal: AI discovers at runtime</td></tr>
+          <tr><td>Multi-system queries</td><td class="bad">ETL consolidation required first</td><td class="gd">Native: all systems in one session</td></tr>
+          <tr><td>Data freshness</td><td class="bad">Batch pipelines, often 5+ days stale</td><td class="gd">Live and near-real-time</td></tr>
+          <tr><td>Access model</td><td class="bad">Separate DW access layer to maintain</td><td class="gd">Inherits existing enterprise RBAC</td></tr>
+          <tr><td>Question flexibility</td><td class="bad">Preset reports and dashboards only</td><td class="gd">Any question, any time</td></tr>
+          <tr><td>Data migration risk</td><td class="bad">Full data movement required</td><td class="gd">Data stays in your systems</td></tr>
+          <tr><td>Budget and timeline risk</td><td class="bad">75% of projects run over budget</td><td class="gd">Fixed-scope, milestone-gated</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>06</b> / 08</div>
+    </div>
   </div>
 </div>
 
-<!-- ════════ SLIDE 3 · THE SOLUTION ════════ -->
+<!-- ══════ SLIDE 7 · POC ══════ -->
 <div class="slide">
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="lbl">The Solution</div>
-    <div class="ttl">Agentic Enterprise Intelligence</div>
-    <div class="sub">We connect your existing enterprise systems through an AI-native orchestration layer, built on the Model Context Protocol (MCP): an open standard now governed by the Linux Foundation and adopted by Microsoft, Google, OpenAI, and AWS.</div>
-    <div class="arch-flow">
-      <div class="arch-node">
-        <div class="an-lbl">Your Systems</div>
-        <div class="an-icon">🏢</div>
-        <div class="an-title">Enterprise Systems</div>
-        <div class="an-items">
-          <div class="an-item">SAP / Oracle ERP</div>
-          <div class="an-item">Salesforce CRM</div>
-          <div class="an-item">ServiceNow / ITSM</div>
-          <div class="an-item">Workday / HRIS</div>
-          <div class="an-item">Finance &amp; reporting</div>
-          <div class="an-item">Custom databases</div>
-        </div>
-      </div>
-      <div class="arch-arr">→</div>
-      <div class="arch-node hi">
-        <div class="an-lbl">Damco Builds</div>
-        <div class="an-icon">🔌</div>
-        <div class="an-title">MCP Connector Layer</div>
-        <div class="an-items">
-          <div class="an-item">Per-system MCP servers</div>
-          <div class="an-item">OAuth 2.1 + SSO</div>
-          <div class="an-item">Role-based access</div>
-          <div class="an-item">Full audit logging</div>
-          <div class="an-item">Data stays on-premise</div>
-          <div class="an-item">Sensitivity controls</div>
-        </div>
-      </div>
-      <div class="arch-arr">→</div>
-      <div class="arch-node hi">
-        <div class="an-lbl">AI Engine</div>
-        <div class="an-icon">🧠</div>
-        <div class="an-title">AI Orchestration Layer</div>
-        <div class="an-items">
-          <div class="an-item">Natural language parsing</div>
-          <div class="an-item">Multi-system routing</div>
-          <div class="an-item">Context memory</div>
-          <div class="an-item">Auto chart generation</div>
-          <div class="an-item">Follow-up handling</div>
-          <div class="an-item">Exportable outputs</div>
-        </div>
-      </div>
-      <div class="arch-arr">→</div>
-      <div class="arch-node">
-        <div class="an-lbl">Executives &amp; Leaders</div>
-        <div class="an-icon">💼</div>
-        <div class="an-title">Executive Interface</div>
-        <div class="an-items">
-          <div class="an-item">Chat-based queries</div>
-          <div class="an-item">Live charts &amp; tables</div>
-          <div class="an-item">Cross-system answers</div>
-          <div class="an-item">Drill-down follow-ups</div>
-          <div class="an-item">Exportable reports</div>
-          <div class="an-item">Mobile-ready</div>
-        </div>
-      </div>
+  <div class="si">
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
     </div>
-    <div class="arch-note">
-      Built on <b>Model Context Protocol (MCP)</b>: an open, model-agnostic standard governed by the Linux Foundation. Adopted by Microsoft, Google, OpenAI, AWS, Salesforce, ServiceNow, and Oracle. 97 million monthly SDK downloads. 5,800+ enterprise connectors.
-    </div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>03</b> / 08</div>
-  </div>
-</div>
-
-<!-- ════════ SLIDE 4 · CAPABILITIES ════════ -->
-<div class="slide">
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="lbl">What You Can Do</div>
-    <div class="ttl">Not dashboards. Intelligence.</div>
-    <div class="sub">Preset dashboards answer yesterday's questions. Agentic intelligence answers any question, live, in context, across all your systems — without raising a ticket to IT.</div>
-    <div class="cap-grid">
-      <div class="cap-card">
-        <div class="cap-icon">💬</div>
-        <div class="cap-t">Ask Anything in Plain Language</div>
-        <div class="cap-d">No SQL. No pre-built reports. Ask "What is our churn rate in the UK this quarter?" and get an immediate, sourced answer drawn from live systems in seconds.</div>
-      </div>
-      <div class="cap-card">
-        <div class="cap-icon">📊</div>
-        <div class="cap-t">Auto-Generated Charts and Tables</div>
-        <div class="cap-d">The AI determines the best format: bar chart, trend line, ranked table, or narrative, based on the data and the question. No manual charting, no spreadsheet exports.</div>
-      </div>
-      <div class="cap-card">
-        <div class="cap-icon">🔗</div>
-        <div class="cap-t">Cross-System Analysis in One Session</div>
-        <div class="cap-d">"What are our top accounts by revenue, and how many open support tickets do they have?" Query your ERP, CRM, and ITSM simultaneously in one conversation.</div>
-      </div>
-      <div class="cap-card">
-        <div class="cap-icon">🎯</div>
-        <div class="cap-t">Role-Based Data Visibility</div>
-        <div class="cap-d">Every user sees exactly what they are authorised to see. The AI inherits enterprise RBAC directly. No separate access model to design, configure, or maintain.</div>
-      </div>
-      <div class="cap-card">
-        <div class="cap-icon">⚡</div>
-        <div class="cap-t">No Migration. No ETL. Live Data.</div>
-        <div class="cap-d">Data never moves. MCP servers query your existing systems in real time. No data warehouse to build, no pipeline to maintain, no batch lag: data is always current.</div>
-      </div>
-      <div class="cap-card">
-        <div class="cap-icon">🔄</div>
-        <div class="cap-t">Conversational Follow-Ups</div>
-        <div class="cap-d">"Now show me only the underperforming regions." "Compare to last year." "Export this as a table." The AI holds full context across the session and drills into any answer.</div>
-      </div>
-    </div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>04</b> / 08</div>
-  </div>
-</div>
-
-<!-- ════════ SLIDE 5 · SECURITY ════════ -->
-<div class="slide">
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="lbl">Security and Compliance</div>
-    <div class="ttl">Enterprise-grade by design,<br>not by afterthought.</div>
-    <div class="sub">Every MCP deployment we build meets enterprise security standards from the ground up: integrated with your existing identity infrastructure, not layered on top of it.</div>
-    <div class="sec-grid">
-      <div class="sec-list">
-        <div class="sec-item">
-          <div class="sec-ico">🏛️</div>
-          <div><div class="sec-t">Data Never Leaves Your Systems</div><div class="sec-d">MCP is a query protocol, not a data migration protocol. Your data stays on your infrastructure, behind your perimeter. The AI queries through the MCP server and never circumvents it.</div></div>
+    <div class="sc">
+      <div class="lbl">Our Offer</div>
+      <div class="ttl">Proof of Concept<br>in 4 to 6 Weeks.</div>
+      <div class="sub">We do not ask for a transformation commitment. We prove the concept on your data, with your systems, in your environment: then you decide.</div>
+      <div class="poc-grid">
+        <div class="poc-steps">
+          <div class="poc-step"><div class="poc-num">1</div><div class="poc-body"><div class="poc-t">Discovery and System Mapping — Weeks 1 and 2</div><div class="poc-d">Map 2 to 3 of your highest-value enterprise systems. Define the business questions leadership needs answered. Agree RBAC and compliance requirements upfront.</div></div></div>
+          <div class="poc-step"><div class="poc-num">2</div><div class="poc-body"><div class="poc-t">MCP Connector Build and Security Layer — Weeks 2 to 4</div><div class="poc-d">Build MCP servers for your target systems. Configure OAuth 2.1 against your identity provider. Set up RBAC rules, audit logging, and sensitivity controls.</div></div></div>
+          <div class="poc-step"><div class="poc-num">3</div><div class="poc-body"><div class="poc-t">AI Orchestration and Executive Interface — Weeks 3 to 5</div><div class="poc-d">Deploy the AI orchestration layer. Build the executive query interface. Tune for your specific business context, terminology, and reporting needs.</div></div></div>
+          <div class="poc-step"><div class="poc-num">4</div><div class="poc-body" style="padding-bottom:0;"><div class="poc-t">Live Demonstration and ROI Assessment — Weeks 5 to 6</div><div class="poc-d">Present a working system to your leadership team. Quantify the value: time saved, decisions accelerated, data accessed. Agree the path forward.</div></div></div>
         </div>
-        <div class="sec-item">
-          <div class="sec-ico">🔐</div>
-          <div><div class="sec-t">Inherits Your Existing RBAC and SSO</div><div class="sec-d">OAuth 2.1 authentication plugs directly into your existing identity provider: Okta, Azure AD, Ping Identity, via OIDC and SAML. No separate access model to configure or maintain.</div></div>
-        </div>
-        <div class="sec-item">
-          <div class="sec-ico">📋</div>
-          <div><div class="sec-t">Full Audit Trail on Every Query</div><div class="sec-d">Every AI operation is logged: who asked, which tool was called, what data was accessed, and when. Satisfies GDPR, SOC 2, HIPAA, and SOX audit requirements without additional tooling.</div></div>
-        </div>
-        <div class="sec-item">
-          <div class="sec-ico">🛡️</div>
-          <div><div class="sec-t">Cannot Exceed User Permissions</div><div class="sec-d">The AI operates within the requesting user's authorisation scope on every single query. It is architecturally impossible for the system to return data the user is not cleared to see.</div></div>
-        </div>
-      </div>
-      <div class="sec-right">
-        <div class="sec-panel">
-          <div class="sp-t">Compliance Framework Alignment</div>
-          <div class="sp-s">MCP audit logging satisfies cross-framework requirements out of the box.</div>
-          <div class="comp-grid">
-            <div class="comp-badge">GDPR</div><div class="comp-badge">SOC 2</div><div class="comp-badge">ISO 27001</div>
-            <div class="comp-badge">HIPAA</div><div class="comp-badge">SOX</div><div class="comp-badge">FedRAMP</div>
+        <div class="poc-card">
+          <div class="poc-card-t">What you get from the <b>POC</b></div>
+          <div class="poc-items">
+            <div class="poc-item">A working AI intelligence layer connected to your real systems, not a demo environment</div>
+            <div class="poc-item">2 to 3 enterprise systems connected via MCP with live data access</div>
+            <div class="poc-item">Role-based access verified against your existing identity provider</div>
+            <div class="poc-item">Live natural language query interface for your leadership team</div>
+            <div class="poc-item">Full audit trail and compliance documentation</div>
+            <div class="poc-item">Validated ROI model and roadmap for full enterprise rollout</div>
           </div>
-          <div class="sp-note">On-premise deployment eliminates GDPR cross-border data transfer risk. Sensitivity label evaluation and per-operation scope controls are built into the MCP specification.</div>
-        </div>
-        <div class="sec-panel">
-          <div class="sp-mcp-t">Why MCP is the Right Foundation</div>
-          <div class="sec-d">Released by Anthropic in November 2024 and donated to the Linux Foundation in December 2025, MCP is now a vendor-neutral open standard. Adopted by Microsoft, Google, OpenAI, AWS, Salesforce, ServiceNow, and Oracle within its first year. 97 million monthly SDK downloads and 5,800+ enterprise connectors confirm it as the standard for enterprise AI data connectivity.</div>
+          <div class="poc-note"><b>Our commitment:</b> The POC is scoped with a fixed, agreed outcome. You will have a working, demonstrated system at the end, not a slide deck. We engage as a custom development partner: if it does not meet the agreed specification, we do not invoice for the build.</div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>05</b> / 08</div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>07</b> / 08</div>
+    </div>
   </div>
 </div>
 
-<!-- ════════ SLIDE 6 · COMPARISON ════════ -->
+<!-- ══════ SLIDE 8 · CLOSING ══════ -->
 <div class="slide">
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="lbl">Traditional BI vs. Agentic Intelligence</div>
-    <div class="ttl">The old approach doesn't fit<br>the new pace.</div>
-    <div class="sub" style="margin-bottom:12px;">Traditional data warehousing was designed for a world where data moved slowly and business questions were predictable. Neither is true anymore.</div>
-    <table class="cmp-table">
-      <thead>
-        <tr>
-          <th>Dimension</th>
-          <th>Traditional BI / Data Warehouse</th>
-          <th>Agentic Enterprise Intelligence</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Time to first insight</td><td class="bad">3 to 18 months</td><td class="gd">2 to 8 weeks (POC)</td></tr>
-        <tr><td>Upfront investment</td><td class="bad">$70,000 to $1,000,000+</td><td class="gd">Fixed-scope POC pricing</td></tr>
-        <tr><td>Schema and modelling</td><td class="bad">Extensive upfront design required</td><td class="gd">Minimal: AI discovers at runtime</td></tr>
-        <tr><td>Multi-system queries</td><td class="bad">ETL consolidation required first</td><td class="gd">Native: all systems in one session</td></tr>
-        <tr><td>Data freshness</td><td class="bad">Batch pipelines, often 5+ days stale</td><td class="gd">Live and near-real-time</td></tr>
-        <tr><td>Access model</td><td class="bad">Separate DW access layer to maintain</td><td class="gd">Inherits existing enterprise RBAC</td></tr>
-        <tr><td>Question flexibility</td><td class="bad">Preset reports and dashboards only</td><td class="gd">Any question, any time</td></tr>
-        <tr><td>Data migration risk</td><td class="bad">Full data movement required</td><td class="gd">Data stays in your systems</td></tr>
-        <tr><td>Budget and timeline risk</td><td class="bad">75% of projects run over budget</td><td class="gd">Fixed-scope, milestone-gated</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>06</b> / 08</div>
-  </div>
-</div>
-
-<!-- ════════ SLIDE 7 · POC ════════ -->
-<div class="slide">
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="lbl">Our Offer</div>
-    <div class="ttl">Proof of Concept<br>in 4 to 6 Weeks.</div>
-    <div class="sub">We do not ask for a transformation commitment. We prove the concept on your data, with your systems, in your environment: then you decide.</div>
-    <div class="poc-grid">
-      <div class="poc-steps">
-        <div class="poc-step">
-          <div class="poc-num">1</div>
-          <div class="poc-body"><div class="poc-t">Discovery and System Mapping — Weeks 1 and 2</div><div class="poc-d">Map 2 to 3 of your highest-value enterprise systems. Define the business questions leadership needs answered. Agree RBAC and compliance requirements upfront.</div></div>
-        </div>
-        <div class="poc-step">
-          <div class="poc-num">2</div>
-          <div class="poc-body"><div class="poc-t">MCP Connector Build and Security Layer — Weeks 2 to 4</div><div class="poc-d">Build MCP servers for your target systems. Configure OAuth 2.1 against your identity provider. Set up RBAC rules, audit logging, and sensitivity controls.</div></div>
-        </div>
-        <div class="poc-step">
-          <div class="poc-num">3</div>
-          <div class="poc-body"><div class="poc-t">AI Orchestration and Executive Interface — Weeks 3 to 5</div><div class="poc-d">Deploy the AI orchestration layer. Build the executive query interface. Tune for your specific business context, terminology, and reporting needs.</div></div>
-        </div>
-        <div class="poc-step">
-          <div class="poc-num">4</div>
-          <div class="poc-body" style="padding-bottom:0;"><div class="poc-t">Live Demonstration and ROI Assessment — Weeks 5 to 6</div><div class="poc-d">Present a working system to your leadership team. Quantify the value: time saved, decisions accelerated, data accessed. Agree the path forward.</div></div>
-        </div>
-      </div>
-      <div class="poc-card">
-        <div class="poc-card-t">What you get from the <b>POC</b></div>
-        <div class="poc-items">
-          <div class="poc-item">A working AI intelligence layer connected to your real systems, not a demo environment</div>
-          <div class="poc-item">2 to 3 enterprise systems connected via MCP with live data access</div>
-          <div class="poc-item">Role-based access verified against your existing identity provider</div>
-          <div class="poc-item">Live natural language query interface for your leadership team</div>
-          <div class="poc-item">Full audit trail and compliance documentation</div>
-          <div class="poc-item">Validated ROI model and roadmap for full enterprise rollout</div>
-        </div>
-        <div class="poc-note"><b>Our commitment:</b> The POC is scoped with a fixed, agreed outcome. You will have a working, demonstrated system at the end, not a slide deck. We engage as a custom development partner: if it does not meet the agreed specification, we do not invoice for the build.</div>
-      </div>
+  <div class="si">
+    <div class="glow-r"></div><div class="glow-l"></div>
+    <div class="sh">
+      <div class="sh-logo">Damco <b>Solutions</b></div>
+      <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
     </div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>07</b> / 08</div>
-  </div>
-</div>
-
-<!-- ════════ SLIDE 8 · CLOSING ════════ -->
-<div class="slide s8">
-  <div class="glow-r"></div><div class="glow-l"></div>
-  <div class="sh">
-    <div class="sh-logo">Damco <b>Solutions</b></div>
-    <div class="sh-event">London Tech Week 2026 &nbsp;·&nbsp; <strong>Agentic Enterprise Intelligence</strong></div>
-  </div>
-  <div class="sc">
-    <div class="s8-eye">Ready when you are</div>
-    <div class="s8-h1">See it working<br>on <span class="grad">your</span> data.</div>
-    <div class="s8-sub">We do not need months of preparation. We need 2 to 3 of your most valuable systems, your compliance requirements, and your biggest unanswered business question. We will show you a working answer in 4 to 6 weeks.</div>
-    <div class="s8-contacts">
-      <div class="s8-contact"><div class="s8-cl">Email</div><div class="s8-cv">ai@thedamcogroup.com</div></div>
-      <div class="s8-contact"><div class="s8-cl">Website</div><div class="s8-cv">damcogroup.com</div></div>
-      <div class="s8-contact"><div class="s8-cl">Talk to us</div><div class="s8-cv"><a>Book a discovery call →</a></div></div>
+    <div class="sc s8">
+      <div class="s8-eye">Ready when you are</div>
+      <div class="s8-h1">See it working<br>on <span class="grad">your</span> data.</div>
+      <div class="s8-sub">We do not need months of preparation. We need 2 to 3 of your most valuable systems, your compliance requirements, and your biggest unanswered business question. We will show you a working answer in 4 to 6 weeks.</div>
+      <div class="s8-contacts">
+        <div class="s8-contact"><div class="s8-cl">Email</div><div class="s8-cv">ai@thedamcogroup.com</div></div>
+        <div class="s8-contact"><div class="s8-cl">Website</div><div class="s8-cv">damcogroup.com</div></div>
+        <div class="s8-contact"><div class="s8-cl">Talk to us</div><div class="s8-cv"><a>Book a discovery call →</a></div></div>
+      </div>
+      <div class="s8-brand">Damco <b>Solutions</b></div>
+      <div class="s8-bs">Custom Development &nbsp;·&nbsp; Enterprise AI &nbsp;·&nbsp; Technology Transformation</div>
     </div>
-    <div class="s8-brand">Damco <b>Solutions</b></div>
-    <div class="s8-bs">Custom Development &nbsp;·&nbsp; Enterprise AI &nbsp;·&nbsp; Technology Transformation</div>
-  </div>
-  <div class="sf">
-    <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
-    <div class="sf-r"><b>08</b> / 08</div>
+    <div class="sf">
+      <div class="sf-l">Confidential &nbsp;·&nbsp; Damco Solutions 2026</div>
+      <div class="sf-r"><b>08</b> / 08</div>
+    </div>
   </div>
 </div>
 
 </div><!-- #deck -->
 
-<!-- Navigation controls (screen only) -->
-<button class="nav-btn" id="btn-prev">&#8249;</button>
-<button class="nav-btn" id="btn-next">&#8250;</button>
-<div id="counter"><b>1</b> / 8</div>
-<div id="dots"></div>
-<div id="progress"><div id="progress-bar" style="width:12.5%"></div></div>
+<!-- Navigation (screen only) -->
+<div class="nav-zone" id="nz-prev"><div class="nz-icon">&#8249;</div></div>
+<div class="nav-zone" id="nz-next"><div class="nz-icon">&#8250;</div></div>
+<div id="controls"></div>
+<div id="ctr"><b>1</b> / 8</div>
+<div id="pbar"><div id="pfill" style="width:12.5%"></div></div>
 
 <script>
 (function(){
   const slides = document.querySelectorAll('.slide');
+  const sis    = document.querySelectorAll('.si');
   const total  = slides.length;
   let cur = 0;
 
-  // Build dots
-  const dotsEl = document.getElementById('dots');
+  // Build dot navigation
+  const ctrl = document.getElementById('controls');
   slides.forEach((_,i)=>{
     const d = document.createElement('div');
-    d.className = 'dot' + (i===0?' on':'');
+    d.className = 'dot'+(i===0?' on':'');
     d.addEventListener('click', ()=>go(i));
-    dotsEl.appendChild(d);
+    ctrl.appendChild(d);
   });
 
   function go(n){
     slides[cur].classList.remove('active');
-    document.querySelectorAll('.dot')[cur].classList.remove('on');
+    ctrl.children[cur].classList.remove('on');
     cur = (n + total) % total;
     slides[cur].classList.add('active');
-    document.querySelectorAll('.dot')[cur].classList.add('on');
-    document.getElementById('counter').innerHTML = '<b>'+(cur+1)+'</b> / '+total;
-    document.getElementById('progress-bar').style.width = ((cur+1)/total*100)+'%';
+    ctrl.children[cur].classList.add('on');
+    document.getElementById('ctr').innerHTML = '<b>'+(cur+1)+'</b> / '+total;
+    document.getElementById('pfill').style.width = ((cur+1)/total*100)+'%';
   }
 
-  // Scale slides to fill viewport
+  // Scale each .si canvas to fill the viewport perfectly
   function scale(){
-    const W=1400, H=990;
-    const s = Math.min(window.innerWidth/W, window.innerHeight/H) * 0.97;
-    slides.forEach(sl=>{ sl.style.transform='scale('+s+')'; });
+    const W = 1920, H = 1080;
+    const s = Math.min(window.innerWidth/W, window.innerHeight/H);
+    const tx = -W/2 + 'px';
+    const ty = -H/2 + 'px';
+    sis.forEach(si=>{
+      si.style.transform = `translate(${tx}, ${ty}) scale(${s})`;
+    });
   }
 
-  // Keyboard navigation
+  // Keyboard
   document.addEventListener('keydown', e=>{
-    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); go(cur+1); }
-    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')                { e.preventDefault(); go(cur-1); }
+    if(['ArrowRight','ArrowDown',' '].includes(e.key)){ e.preventDefault(); go(cur+1); }
+    if(['ArrowLeft','ArrowUp'].includes(e.key)){        e.preventDefault(); go(cur-1); }
   });
 
-  // Touch / swipe
-  let tx=0;
-  document.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; }, {passive:true});
+  // Touch swipe
+  let tx0=0;
+  document.addEventListener('touchstart', e=>{ tx0=e.touches[0].clientX; },{passive:true});
   document.addEventListener('touchend',   e=>{
-    const dx = e.changedTouches[0].clientX - tx;
-    if(Math.abs(dx)>40){ dx<0 ? go(cur+1) : go(cur-1); }
+    const d = e.changedTouches[0].clientX - tx0;
+    if(Math.abs(d)>50){ d<0 ? go(cur+1) : go(cur-1); }
   },{passive:true});
 
-  document.getElementById('btn-prev').addEventListener('click', ()=>go(cur-1));
-  document.getElementById('btn-next').addEventListener('click', ()=>go(cur+1));
+  document.getElementById('nz-prev').addEventListener('click', ()=>go(cur-1));
+  document.getElementById('nz-next').addEventListener('click', ()=>go(cur+1));
 
   window.addEventListener('resize', scale);
   scale();
